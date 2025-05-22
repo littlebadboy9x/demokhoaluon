@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Chi tiết phòng</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Chi tiết phòng</h1>
+            
+            <!-- Thông tin phòng -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thông tin phòng [[${phong.tenPhong}]]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Mã phòng:</strong> [[${phong.maPhong}]]</p>
+                            <p><strong>Tên phòng:</strong> [[${phong.tenPhong}]]</p>
+                            <p><strong>Loại phòng:</strong> [[${phong.loaiPhong}]]</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Sức chứa:</strong> [[${phong.sucChua}]] người</p>
+                            <p><strong>Số người hiện tại:</strong> [[${phong.soNguoiHienTai}]] người</p>
+                            <p><strong>Giá phòng:</strong> [[${phong.giaPhong}]] VNĐ</p>
+                            <p><strong>Trạng thái:</strong> 
+                                <span th:class="${'badge ' + 
+                                    (phong.trangThai == T(com.dormitory.management.model.Phong.TrangThai).CON_TRONG ? 'bg-success' : 
+                                    (phong.trangThai == T(com.dormitory.management.model.Phong.TrangThai).DA_DU ? 'bg-danger' : 
+                                    'bg-warning'))}"
+                                    style="color: #ffffff !important;"
+                                    th:text="${phong.trangThaiDisplay}">
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách sinh viên -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong phòng</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>MSSV</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Giới tính</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Email</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="sinhVien : ${sinhVienList}">
+                                    <td th:text="${sinhVien.maSv}"></td>
+                                    <td th:text="${sinhVien.hoTen}"></td>
+                                    <td th:text="${#dates.format(sinhVien.ngaySinh, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${sinhVien.gioiTinh}"></td>
+                                    <td th:text="${sinhVien.soDienThoai}"></td>
+                                    <td th:text="${sinhVien.email}"></td>
+                                    <td>
+                                        <a th:href="@{/admin/sinh-vien/edit/{maSv}(maSv=${sinhVien.maSv})}" 
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(sinhVienList)}">
+                                    <td colspan="7" class="text-center">Không có sinh viên nào trong phòng</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút quay lại -->
+            <div class="row">
+                <div class="col-12">
+                    <a href="/admin/phong" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

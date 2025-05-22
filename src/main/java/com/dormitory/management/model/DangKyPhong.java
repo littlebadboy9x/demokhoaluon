@@ -18,29 +18,52 @@ public class DangKyPhong {
     private SinhVien sinhVien;
 
     @ManyToOne
-    @JoinColumn(name = "ma_phong", nullable = false)
+    @JoinColumn(name = "ma_phong")
     private Phong phong;
 
     @Column(name = "ngay_dang_ky")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date ngayDangKy;
 
-    @Column(name = "ngay_duyet")
-    private Date ngayDuyet;
-
-    @Column(name = "ngay_vao_o")
-    private Date ngayVaoO;
-
-    @Column(name = "ngay_roi_di")
-    private Date ngayRoiDi;
-
-    @Column(name = "trang_thai")
     @Enumerated(EnumType.STRING)
+    @Column(name = "trang_thai")
     private TrangThai trangThai = TrangThai.CHO_DUYET;
+
+    @Column(name = "nguoi_duyet")
+    private String nguoiDuyet;
+
+    @Column(name = "ngay_duyet")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ngayDuyet;
 
     @Column(name = "ghi_chu")
     private String ghiChu;
 
     public enum TrangThai {
-        CHO_DUYET, DA_DUYET, TU_CHOI, DA_HUY
+        CHO_DUYET,
+        DA_DUYET,
+        TU_CHOI
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.ngayDangKy == null) {
+            this.ngayDangKy = new Date();
+        }
+    }
+
+    public String getTrangThaiDisplay() {
+        if (trangThai == null) return "";
+        
+        switch (trangThai) {
+            case CHO_DUYET:
+                return "Chờ duyệt";
+            case DA_DUYET:
+                return "Đã duyệt";
+            case TU_CHOI:
+                return "Từ chối";
+            default:
+                return "";
+        }
     }
 }

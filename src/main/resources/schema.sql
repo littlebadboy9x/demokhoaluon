@@ -35,6 +35,7 @@ CREATE TABLE sinh_vien (
     khoa VARCHAR(100),
     ngay_dang_ky TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     trang_thai ENUM('DANG_O', 'DA_RUT', 'BI_DINH_CHI') DEFAULT 'DANG_O',
+    ma_phong VARCHAR(20),
     FOREIGN KEY (ten_dang_nhap) REFERENCES nguoi_dung(ten_dang_nhap)
 );
 
@@ -58,9 +59,16 @@ CREATE TABLE phong (
     gia_phong DOUBLE NOT NULL,
     gia_dien DOUBLE NOT NULL,
     phi_ve_sinh DOUBLE NOT NULL,
+    phi_dich_vu DOUBLE NOT NULL DEFAULT 100000.0,
     mo_ta TEXT,
     ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Thêm khóa ngoại cho bảng sinh_viên sau khi đã tạo bảng phòng
+ALTER TABLE sinh_vien
+ADD CONSTRAINT fk_sinh_vien_phong
+    FOREIGN KEY (ma_phong)
+    REFERENCES phong(ma_phong);
 
 -- Bảng đăng ký phòng
 CREATE TABLE dang_ky_phong (

@@ -56,7 +56,7 @@ public class AdminDashboardController {
         model.addAttribute("unpaidBills", hoaDonService.countByTrangThai(HoaDon.TrangThai.CHUA_THANH_TOAN));
 
         // Sự cố chờ xử lý
-        model.addAttribute("pendingIssues", suCoService.countByTrangThai(SuCo.TrangThai.CHUA_XU_LY));
+        model.addAttribute("pendingIssues", suCoService.countByTrangThai(SuCo.TrangThai.CHO_XU_LY));
 
         return "admin/dashboard";
     }

@@ -44,8 +44,10 @@
                                 <label for="gioiTinh" class="form-label">Giới tính <span class="text-danger">*</span></label>
                                 <select class="form-select" id="gioiTinh" th:field="*{gioiTinh}" required>
                                     <option value="">-- Chọn giới tính --</option>
-                                    <option value="NAM">Nam</option>
-                                    <option value="NU">Nữ</option>
+                                    <option th:each="gioiTinh : ${T(com.dormitory.management.model.SinhVien.GioiTinh).values()}"
+                                            th:value="${gioiTinh}"
+                                            th:text="${gioiTinh == T(com.dormitory.management.model.SinhVien.GioiTinh).NAM ? 'Nam' : 'Nữ'}">
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -55,16 +57,16 @@
                                 <input type="text" class="form-control" id="cccd" th:field="*{cccd}">
                             </div>
                             <div class="mb-3">
-                                <label for="soDienThoai" class="form-label">Số điện thoại</label>
-                                <input type="tel" class="form-control" id="soDienThoai" th:field="*{soDienThoai}">
-                            </div>
-                            <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" th:field="*{email}">
                             </div>
                             <div class="mb-3">
+                                <label for="soDienThoai" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="soDienThoai" th:field="*{soDienThoai}">
+                            </div>
+                            <div class="mb-3">
                                 <label for="diaChi" class="form-label">Địa chỉ</label>
-                                <textarea class="form-control" id="diaChi" th:field="*{diaChi}" rows="2"></textarea>
+                                <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}">
                             </div>
                         </div>
                     </div>
@@ -94,15 +96,21 @@
                         </div>
                     </div>
 
-                    <!-- Thông tin tài khoản -->
+                    <!-- Thông tin phòng -->
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <h5 class="border-bottom pb-2">Thông tin tài khoản</h5>
+                            <h5 class="border-bottom pb-2">Thông tin phòng</h5>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="tenDangNhap" class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="tenDangNhap" th:field="*{tenDangNhap}" required>
+                                <label for="phong" class="form-label">Phòng</label>
+                                <select class="form-select" id="phong" th:field="*{phong}">
+                                    <option value="">-- Chọn phòng --</option>
+                                    <option th:each="p : ${phongList}"
+                                            th:value="${p.maPhong}"
+                                            th:text="${p.tenPhong + ' (Còn ' + (p.sucChua - p.soNguoiHienTai) + ' chỗ)'}">
+                                    </option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -110,12 +118,12 @@
                     <!-- Buttons -->
                     <div class="row">
                         <div class="col-12">
-                            <a href="/admin/sinh-vien" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Quay lại
-                            </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Thêm mới
+                                <i class="fas fa-save"></i> Lưu
                             </button>
+                            <a href="/admin/sinh-vien" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Hủy
+                            </a>
                         </div>
                     </div>
                 </form>

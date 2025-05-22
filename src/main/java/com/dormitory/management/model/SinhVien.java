@@ -60,6 +60,10 @@ public class SinhVien {
     @JoinColumn(name = "ten_dang_nhap", referencedColumnName = "ten_dang_nhap", insertable = false, updatable = false)
     private NguoiDung nguoiDung;
 
+    @ManyToOne
+    @JoinColumn(name = "ma_phong")
+    private Phong phong;
+
     public enum GioiTinh {
         NAM, NU
     }

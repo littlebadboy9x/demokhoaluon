@@ -43,6 +43,7 @@
                                 <th>Lớp</th>
                                 <th>Ngành</th>
                                 <th>Khoa</th>
+                                <th>Phòng</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -54,6 +55,10 @@
                                 <td th:text="${sv.lop}">CNTT1</td>
                                 <td th:text="${sv.nganh}">Công nghệ thông tin</td>
                                 <td th:text="${sv.khoa}">CNTT</td>
+                                <td>
+                                    <span th:if="${sv.phong != null}" th:text="${sv.phong.tenPhong}">P101</span>
+                                    <span th:unless="${sv.phong != null}" class="text-muted">Chưa có phòng</span>
+                                </td>
                                 <td>
                                     <span th:class="${'badge ' + 
                                         (sv.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DANG_O ? 'bg-success' : 

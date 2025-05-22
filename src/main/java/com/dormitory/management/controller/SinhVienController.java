@@ -5,6 +5,7 @@ import com.dormitory.management.exception.ResourceNotFoundException;
 import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.service.SinhVienService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,10 +26,10 @@ public class SinhVienController {
     }
 
     @GetMapping("/{maSv}")
-    public SinhVienDTO getSinhVien(@PathVariable String maSv) {
-        SinhVien sinhVien = sinhVienService.findById(maSv)
-                .orElseThrow(() -> new ResourceNotFoundException("Sinh viên không tồn tại với mã: " + maSv));
-        return convertToDTO(sinhVien);
+    public ResponseEntity<SinhVien> getSinhVien(@PathVariable String maSv) {
+        return sinhVienService.findById(maSv)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping

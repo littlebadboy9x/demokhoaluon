@@ -3,7 +3,9 @@ package com.dormitory.management.controller.admin;
 import com.dormitory.management.model.Phong;
 import com.dormitory.management.model.Phong.TrangThai;
 import com.dormitory.management.model.Phong.LoaiPhong;
+import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.service.PhongService;
+import com.dormitory.management.service.SinhVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/phong")
@@ -21,6 +24,9 @@ public class AdminPhongController {
 
     @Autowired
     private PhongService phongService;
+
+    @Autowired
+    private SinhVienService sinhVienService;
 
     @GetMapping
     public String listPhong(
@@ -39,6 +45,20 @@ public class AdminPhongController {
         } else {
             phongPage = phongService.findAll(PageRequest.of(page, size));
         }
+
+        // Cập nhật số người hiện tại và trạng thái cho từng phòng
+        phongPage.getContent().forEach(phong -> {
+            List<SinhVien> sinhVienList = sinhVienService.findByPhong(phong);
+            phong.setSoNguoiHienTai(sinhVienList.size());
+            
+            // Cập nhật trạng thái phòng dựa trên số người
+            if (sinhVienList.size() >= phong.getSucChua()) {
+                phong.setTrangThai(Phong.TrangThai.DA_DU);
+            } else if (phong.getTrangThai() != Phong.TrangThai.DANG_SUA_CHUA) {
+                phong.setTrangThai(Phong.TrangThai.CON_TRONG);
+            }
+            phongService.save(phong);
+        });
         
         model.addAttribute("phongPage", phongPage);
         model.addAttribute("currentPage", page);
@@ -142,5 +162,30 @@ public class AdminPhongController {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi xóa phòng: " + e.getMessage());
         }
         return "redirect:/admin/phong";
+    }
+
+    @GetMapping("/detail/{maPhong}")
+    public String viewPhongDetail(@PathVariable String maPhong, Model model) {
+        Phong phong = phongService.findById(maPhong)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng với mã: " + maPhong));
+        
+        List<SinhVien> sinhVienList = sinhVienService.findByPhong(phong);
+        
+        // Cập nhật số người hiện tại
+        phong.setSoNguoiHienTai(sinhVienList.size());
+        phongService.save(phong);
+        
+        // Cập nhật trạng thái phòng dựa trên số người
+        if (sinhVienList.size() >= phong.getSucChua()) {
+            phong.setTrangThai(Phong.TrangThai.DA_DU);
+        } else if (phong.getTrangThai() != Phong.TrangThai.DANG_SUA_CHUA) {
+            phong.setTrangThai(Phong.TrangThai.CON_TRONG);
+        }
+        phongService.save(phong);
+        
+        model.addAttribute("phong", phong);
+        model.addAttribute("sinhVienList", sinhVienList);
+        
+        return "admin/phong/detail";
     }
 } 

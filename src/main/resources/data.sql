@@ -18,23 +18,23 @@ INSERT INTO nguoi_dung (ten_dang_nhap, mat_khau, loai_nguoi_dung, trang_thai) VA
 INSERT INTO quan_tri_vien (ma_qt, ten_dang_nhap, ho_ten, quyen_han) VALUES
 ('QTV001', 'admin', 'Administrator', 'QUAN_TRI');
 
--- Thêm dữ liệu mẫu cho bảng sinh_vien
-INSERT INTO sinh_vien (ma_sv, ten_dang_nhap, ho_ten, ngay_sinh, gioi_tinh, cccd, email, so_dien_thoai, lop, nganh, khoa) VALUES
-('SV001', 'sv001', 'Nguyễn Văn A', '2003-05-15', 'NAM', '001203012345', 'sva@gmail.com', '0123456789', 'CNTT1', 'Công nghệ thông tin', 'Công nghệ thông tin'),
-('SV002', 'sv002', 'Trần Thị B', '2003-08-20', 'NU', '001203012346', 'svb@gmail.com', '0123456788', 'CNTT2', 'Công nghệ thông tin', 'Công nghệ thông tin'),
-('SV003', 'sv003', 'Lê Văn C', '2003-03-10', 'NAM', '001203012347', 'svc@gmail.com', '0123456787', 'CK1', 'Cơ khí', 'Cơ khí'),
-('SV004', 'sv004', 'Phạm Thị D', '2003-12-25', 'NU', '001203012348', 'svd@gmail.com', '0123456786', 'KT1', 'Kế toán', 'Kế toán'),
-('SV005', 'sv005', 'Hoàng Văn E', '2003-07-30', 'NAM', '001203012349', 'sve@gmail.com', '0123456785', 'DDT1', 'Điện - Điện tử', 'Điện - Điện tử');
+-- Thêm dữ liệu mẫu cho bảng phong (PHẢI THÊM TRƯỚC sinh viên vì có khóa ngoại)
+INSERT INTO phong (ma_phong, ten_phong, loai_phong, suc_chua, so_nguoi_hien_tai, trang_thai, gia_phong, gia_dien, phi_ve_sinh, phi_dich_vu, mo_ta) VALUES
+('P101', 'Phòng 101', 'NAM', 8, 6, 'CON_TRONG', 500000, 3500, 50000, 100000, 'Phòng tầng 1 - Khu A'),
+('P102', 'Phòng 102', 'NAM', 8, 8, 'DA_DU', 500000, 3500, 50000, 100000, 'Phòng tầng 1 - Khu A'),
+('P103', 'Phòng 103', 'NAM', 8, 4, 'CON_TRONG', 500000, 3500, 50000, 100000, 'Phòng tầng 1 - Khu A'),
+('P201', 'Phòng 201', 'NU', 8, 5, 'CON_TRONG', 500000, 3500, 50000, 100000, 'Phòng tầng 2 - Khu A'),
+('P202', 'Phòng 202', 'NU', 8, 7, 'CON_TRONG', 500000, 3500, 50000, 100000, 'Phòng tầng 2 - Khu A'),
+('P203', 'Phòng 203', 'NU', 8, 0, 'CON_TRONG', 500000, 3500, 50000, 100000, 'Phòng tầng 2 - Khu A'),
+('P301', 'Phòng 301', 'NAM', 8, 0, 'DANG_SUA_CHUA', 500000, 3500, 50000, 100000, 'Phòng tầng 3 - Khu A');
 
--- Thêm dữ liệu mẫu cho bảng phong
-INSERT INTO phong (ma_phong, ten_phong, loai_phong, suc_chua, so_nguoi_hien_tai, trang_thai, gia_phong, gia_dien, phi_ve_sinh, mo_ta) VALUES
-('P101', 'Phòng 101', 'NAM', 8, 6, 'CON_TRONG', 500000, 3500, 50000, 'Phòng tầng 1 - Khu A'),
-('P102', 'Phòng 102', 'NAM', 8, 8, 'DA_DU', 500000, 3500, 50000, 'Phòng tầng 1 - Khu A'),
-('P103', 'Phòng 103', 'NAM', 8, 4, 'CON_TRONG', 500000, 3500, 50000, 'Phòng tầng 1 - Khu A'),
-('P201', 'Phòng 201', 'NU', 8, 5, 'CON_TRONG', 500000, 3500, 50000, 'Phòng tầng 2 - Khu A'),
-('P202', 'Phòng 202', 'NU', 8, 7, 'CON_TRONG', 500000, 3500, 50000, 'Phòng tầng 2 - Khu A'),
-('P203', 'Phòng 203', 'NU', 8, 0, 'CON_TRONG', 500000, 3500, 50000, 'Phòng tầng 2 - Khu A'),
-('P301', 'Phòng 301', 'NAM', 8, 0, 'DANG_SUA_CHUA', 500000, 3500, 50000, 'Phòng tầng 3 - Khu A');
+-- Thêm dữ liệu mẫu cho bảng sinh_vien (SAU KHI đã thêm phòng)
+INSERT INTO sinh_vien (ma_sv, ten_dang_nhap, ho_ten, ngay_sinh, gioi_tinh, cccd, email, so_dien_thoai, lop, nganh, khoa, ma_phong) VALUES
+('SV001', 'sv001', 'Nguyễn Văn A', '2003-05-15', 'NAM', '001203012345', 'sva@gmail.com', '0123456789', 'CNTT1', 'Công nghệ thông tin', 'Công nghệ thông tin', 'P101'),
+('SV002', 'sv002', 'Trần Thị B', '2003-08-20', 'NU', '001203012346', 'svb@gmail.com', '0123456788', 'CNTT2', 'Công nghệ thông tin', 'Công nghệ thông tin', 'P201'),
+('SV003', 'sv003', 'Lê Văn C', '2003-03-10', 'NAM', '001203012347', 'svc@gmail.com', '0123456787', 'CK1', 'Cơ khí', 'Cơ khí', 'P102'),
+('SV004', 'sv004', 'Phạm Thị D', '2003-12-25', 'NU', '001203012348', 'svd@gmail.com', '0123456786', 'KT1', 'Kế toán', 'Kế toán', 'P102'),
+('SV005', 'sv005', 'Hoàng Văn E', '2003-07-30', 'NAM', '001203012349', 'sve@gmail.com', '0123456785', 'DDT1', 'Điện - Điện tử', 'Điện - Điện tử', 'P103');
 
 -- Thêm dữ liệu mẫu cho bảng dang_ky_phong
 INSERT INTO dang_ky_phong (ma_sv, ma_phong, ngay_dang_ky, trang_thai, ghi_chu) VALUES

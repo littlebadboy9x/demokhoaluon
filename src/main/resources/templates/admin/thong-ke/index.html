@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Thống kê</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Thống kê tổng quan</h1>
+
+            <!-- Cards -->
+            <div class="row">
+                <!-- Tổng số phòng -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Tổng số phòng</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${tongSoPhong}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-home fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Số phòng trống -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Phòng trống</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${soPhongTrong}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-door-open fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tổng số sinh viên -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Tổng số sinh viên</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${tongSoSinhVien}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doanh thu tháng -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Doanh thu tháng</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#numbers.formatDecimal(doanhThuThangHienTai != null ? doanhThuThangHienTai : 0, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row">
+                <!-- Biểu đồ doanh thu 6 tháng gần nhất -->
+                <div class="col-xl-8 col-lg-7">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Doanh thu 6 tháng gần nhất</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="doanhThuChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biểu đồ tỷ lệ sinh viên theo khoa -->
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Tỷ lệ sinh viên theo khoa</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-pie">
+                                <canvas id="sinhVienChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thống kê chi tiết -->
+            <div class="row">
+                <!-- Thống kê đăng ký -->
+                <div class="col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Thống kê đăng ký phòng</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <td>Đang chờ duyệt:</td>
+                                        <td><span class="badge badge-warning" th:text="${soDangKyChoDuyet}">0</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Đã duyệt:</td>
+                                        <td><span class="badge badge-success" th:text="${soDangKyDaDuyet}">0</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Từ chối:</td>
+                                        <td><span class="badge badge-danger" th:text="${soDangKyTuChoi}">0</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thống kê sự cố -->
+                <div class="col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Thống kê sự cố</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <td>Chưa xử lý:</td>
+                                        <td><span class="badge badge-warning" th:text="${soSuCoChuaXuLy}">0</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Đang xử lý:</td>
+                                        <td><span class="badge badge-info" th:text="${soSuCoDangXuLy}">0</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Đã xử lý:</td>
+                                        <td><span class="badge badge-success" th:text="${soSuCoDaXuLy}">0</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            // Dữ liệu doanh thu
+            var doanhThuData = /*[[${doanhThu6ThangGanNhat}]]*/ [];
+            var labels = doanhThuData.map(function(item) {
+                return 'Tháng ' + item.thang + '/' + item.nam;
+            });
+            var values = doanhThuData.map(function(item) {
+                return item.doanhThu;
+            });
+
+            // Biểu đồ doanh thu
+            var ctx = document.getElementById('doanhThuChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Dữ liệu sinh viên theo khoa
+            var tyLeSinhVienData = /*[[${tyLeSinhVienTheoKhoa}]]*/ {};
+            var khoaLabels = Object.keys(tyLeSinhVienData);
+            var tyLeValues = Object.values(tyLeSinhVienData);
+
+            // Biểu đồ sinh viên theo khoa
+            var ctx2 = document.getElementById('sinhVienChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: khoaLabels,
+                    datasets: [{
+                        data: tyLeValues,
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(153, 102, 255)',
+                            'rgb(255, 159, 64)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html> 

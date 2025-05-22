@@ -2,6 +2,7 @@ package com.dormitory.management.service.impl;
 
 import com.dormitory.management.model.SuCo;
 import com.dormitory.management.model.SuCo.TrangThai;
+import com.dormitory.management.model.SuCo.MucDoUuTien;
 import com.dormitory.management.repository.SuCoRepository;
 import com.dormitory.management.service.SuCoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class SuCoServiceImpl implements SuCoService {
     }
 
     @Override
-    public Optional<SuCo> findById(Long maSuCo) {
-        return suCoRepository.findById(maSuCo);
+    public Optional<SuCo> findById(Long idSuCo) {
+        return suCoRepository.findById(idSuCo);
     }
 
     @Override
@@ -39,8 +40,8 @@ public class SuCoServiceImpl implements SuCoService {
     }
 
     @Override
-    public void delete(Long maSuCo) {
-        suCoRepository.deleteById(maSuCo);
+    public void delete(Long idSuCo) {
+        suCoRepository.deleteById(idSuCo);
     }
 
     @Override
@@ -54,18 +55,18 @@ public class SuCoServiceImpl implements SuCoService {
     }
 
     @Override
-    public long countByMucDo(SuCo.MucDo mucDo) {
-        return suCoRepository.countByMucDo(mucDo);
+    public long countByMucDoUuTien(MucDoUuTien mucDoUuTien) {
+        return suCoRepository.countByMucDoUuTien(mucDoUuTien);
     }
 
     @Override
-    public Page<SuCo> search(String keyword, TrangThai trangThai, SuCo.MucDo mucDo, String maPhong, Pageable pageable) {
+    public Page<SuCo> search(String keyword, TrangThai trangThai, MucDoUuTien mucDoUuTien, String maPhong, Pageable pageable) {
         if (keyword != null && !keyword.trim().isEmpty()) {
-            return suCoRepository.findByTieuDeContainingIgnoreCaseOrMoTaContainingIgnoreCase(keyword, keyword, pageable);
+            return suCoRepository.findByMoTaContainingIgnoreCase(keyword, pageable);
         } else if (trangThai != null) {
             return suCoRepository.findByTrangThai(trangThai, pageable);
-        } else if (mucDo != null) {
-            return suCoRepository.findByMucDo(mucDo, pageable);
+        } else if (mucDoUuTien != null) {
+            return suCoRepository.findByMucDoUuTien(mucDoUuTien, pageable);
         } else if (maPhong != null && !maPhong.trim().isEmpty()) {
             return suCoRepository.findByPhong_MaPhong(maPhong, pageable);
         }

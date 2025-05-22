@@ -12,6 +12,12 @@
             <h1 class="h3 mb-0 text-gray-800">Tạo Hóa đơn mới</h1>
         </div>
 
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <!-- Form Card -->
         <div class="card shadow mb-4">
             <div class="card-body">
@@ -24,7 +30,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="sinhVien" class="form-label">Sinh viên <span class="text-danger">*</span></label>
-                                <select class="form-select" id="sinhVien" th:field="*{sinhVien}" required>
+                                <select class="form-select" id="sinhVien" name="sinhVien.maSv" required>
                                     <option value="">-- Chọn sinh viên --</option>
                                     <option th:each="sv : ${sinhVienList}"
                                             th:value="${sv.maSv}"
@@ -32,13 +38,9 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="phong" class="form-label">Phòng <span class="text-danger">*</span></label>
-                                <select class="form-select" id="phong" th:field="*{phong}" required>
-                                    <option value="">-- Chọn phòng --</option>
-                                    <option th:each="p : ${phongList}"
-                                            th:value="${p.maPhong}"
-                                            th:text="${p.tenPhong}">P101</option>
-                                </select>
+                                <label for="phong" class="form-label">Phòng</label>
+                                <input type="text" class="form-control" id="phongDisplay" readonly>
+                                <input type="hidden" id="phong" name="phong.maPhong">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -67,21 +69,27 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tienPhong" class="form-label">Tiền phòng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienPhong" th:field="*{tienPhong}" required min="0">
+                                <input type="number" class="form-control" id="tienPhong" th:field="*{tienPhong}" required min="0" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="tienDien" class="form-label">Tiền điện <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienDien" th:field="*{tienDien}" required min="0">
+                                <input type="number" class="form-control" id="tienDien" th:field="*{tienDien}" required min="0" onchange="tinhTongTien()">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tienNuoc" class="form-label">Tiền nước <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienNuoc" th:field="*{tienNuoc}" required min="0">
+                                <input type="number" class="form-control" id="tienNuoc" th:field="*{tienNuoc}" required min="0" onchange="tinhTongTien()">
                             </div>
                             <div class="mb-3">
                                 <label for="phiDichVu" class="form-label">Phí dịch vụ <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="phiDichVu" th:field="*{phiDichVu}" required min="0">
+                                <input type="number" class="form-control" id="phiDichVu" th:field="*{phiDichVu}" required min="0" onchange="tinhTongTien()">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="tongTien" class="form-label">Tổng tiền</label>
+                                <input type="number" class="form-control" id="tongTien" th:field="*{tongTien}" readonly>
                             </div>
                         </div>
                     </div>
@@ -111,5 +119,74 @@
             </div>
         </div>
     </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            // Khởi tạo giá trị mặc định cho tháng và năm
+            document.addEventListener('DOMContentLoaded', function() {
+                const today = new Date();
+                document.getElementById('thang').value = today.getMonth() + 1;
+                document.getElementById('nam').value = today.getFullYear();
+                
+                // Thiết lập hạn thanh toán mặc định (cuối tháng)
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                lastDayOfMonth.setHours(23, 59);
+                document.getElementById('hanThanhToan').value = lastDayOfMonth.toISOString().slice(0, 16);
+            });
+
+            // Xử lý khi chọn sinh viên
+            document.getElementById('sinhVien').addEventListener('change', function() {
+                const maSv = this.value;
+                if (!maSv) {
+                    resetForm();
+                    return;
+                }
+
+                // Gọi API để lấy thông tin sinh viên và phòng
+                fetch(`/api/sinh-vien/${maSv}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.phong) {
+                            // Cập nhật thông tin phòng
+                            document.getElementById('phongDisplay').value = data.phong.tenPhong;
+                            document.getElementById('phong').value = data.phong.maPhong;
+                            
+                            // Cập nhật chi phí
+                            document.getElementById('tienPhong').value = data.phong.giaPhong || 0;
+                            document.getElementById('phiDichVu').value = data.phong.phiDichVu || 0;
+                            tinhTongTien();
+                        } else {
+                            alert('Sinh viên chưa được phân phòng');
+                            resetForm();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi lấy thông tin:', error);
+                        alert('Không thể lấy thông tin sinh viên và phòng');
+                        resetForm();
+                    });
+            });
+
+            function resetForm() {
+                document.getElementById('phongDisplay').value = '';
+                document.getElementById('phong').value = '';
+                document.getElementById('tienPhong').value = '';
+                document.getElementById('phiDichVu').value = '';
+                document.getElementById('tienDien').value = '';
+                document.getElementById('tienNuoc').value = '';
+                document.getElementById('tongTien').value = '';
+            }
+
+            function tinhTongTien() {
+                const tienPhong = parseFloat(document.getElementById('tienPhong').value) || 0;
+                const tienDien = parseFloat(document.getElementById('tienDien').value) || 0;
+                const tienNuoc = parseFloat(document.getElementById('tienNuoc').value) || 0;
+                const phiDichVu = parseFloat(document.getElementById('phiDichVu').value) || 0;
+                
+                const tongTien = tienPhong + tienDien + tienNuoc + phiDichVu;
+                document.getElementById('tongTien').value = tongTien;
+            }
+        </script>
+    </th:block>
 </body>
 </html> 

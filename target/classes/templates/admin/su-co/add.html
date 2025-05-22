@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Thêm sự cố mới</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Thêm sự cố mới</h1>
+
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <!-- Form -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thông tin sự cố</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/su-co/add}" method="post" th:object="${suCo}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phong">Phòng <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="phong" name="phong.maPhong" required>
+                                        <option value="">-- Chọn phòng --</option>
+                                        <option th:each="phong : ${phongList}"
+                                                th:value="${phong.maPhong}"
+                                                th:text="${phong.tenPhong}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="loaiSuCo">Loại sự cố <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="loaiSuCo" name="loaiSuCo" required>
+                                        <option value="">-- Chọn loại sự cố --</option>
+                                        <option th:each="loai : ${loaiSuCoValues}"
+                                                th:value="${loai}"
+                                                th:text="${T(com.dormitory.management.model.SuCo).getLoaiSuCoDisplay(loai)}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="mucDoUuTien">Mức độ ưu tiên <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="mucDoUuTien" name="mucDoUuTien" required>
+                                        <option value="">-- Chọn mức độ ưu tiên --</option>
+                                        <option th:each="md : ${mucDoUuTienValues}"
+                                                th:value="${md}"
+                                                th:text="${T(com.dormitory.management.model.SuCo).getMucDoUuTienDisplay(md)}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="moTa">Mô tả <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="moTa" name="moTa" rows="5" required
+                                      placeholder="Nhập mô tả chi tiết sự cố"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ghiChu">Ghi chú</label>
+                            <textarea class="form-control" id="ghiChu" name="ghiChu" rows="3"
+                                      placeholder="Nhập ghi chú (nếu có)"></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                            <a th:href="@{/admin/su-co}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

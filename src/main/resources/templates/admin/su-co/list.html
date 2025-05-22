@@ -3,165 +3,161 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/layout}">
 <head>
-    <title>Quản lý Sự cố - KTX Lâm Nghiệp</title>
+    <title>Quản lý sự cố</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <!-- Page Heading -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Quản lý Sự cố</h1>
-            <a href="/admin/su-co/add" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Thêm Sự cố
-            </a>
-        </div>
-
-        <!-- Search Box -->
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo tiêu đề, mô tả...">
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" name="trangThai">
-                            <option value="">-- Trạng thái --</option>
-                            <option value="CHUA_XU_LY">Chưa xử lý</option>
-                            <option value="DANG_XU_LY">Đang xử lý</option>
-                            <option value="DA_XU_LY">Đã xử lý</option>
-                            <option value="DA_HUY">Đã hủy</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" name="mucDo">
-                            <option value="">-- Mức độ --</option>
-                            <option value="BINH_THUONG">Bình thường</option>
-                            <option value="QUAN_TRONG">Quan trọng</option>
-                            <option value="KHAN_CAP">Khẩn cấp</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" name="maPhong">
-                            <option value="">-- Chọn phòng --</option>
-                            <option th:each="phong : ${phongList}"
-                                    th:value="${phong.maPhong}"
-                                    th:text="${phong.tenPhong}">P101</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search"></i> Tìm kiếm
-                        </button>
-                    </div>
-                </form>
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Quản lý sự cố</h1>
+            
+            <!-- Search Form -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Tìm kiếm sự cố</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/su-co}" method="get">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="search" th:value="${search}" placeholder="Tìm kiếm...">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="trangThai">
+                                    <option value="">-- Trạng thái --</option>
+                                    <option th:each="entry : ${trangThaiMap}"
+                                            th:value="${entry.key}"
+                                            th:text="${entry.value}"
+                                            th:selected="${entry.key == trangThai}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="mucDoUuTien">
+                                    <option value="">-- Mức độ ưu tiên --</option>
+                                    <option th:each="entry : ${mucDoUuTienMap}"
+                                            th:value="${entry.key}"
+                                            th:text="${entry.value}"
+                                            th:selected="${entry.key == mucDoUuTien}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="maPhong">
+                                    <option value="">-- Phòng --</option>
+                                    <option th:each="phong : ${phongList}"
+                                            th:value="${phong.maPhong}"
+                                            th:text="${phong.tenPhong}"
+                                            th:selected="${phong.maPhong == maPhong}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                <a th:href="@{/admin/su-co/add}" class="btn btn-success">Thêm mới</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- DataTales Example -->
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tiêu đề</th>
-                                <th>Phòng</th>
-                                <th>Mức độ</th>
-                                <th>Ngày báo cáo</th>
-                                <th>Ngày xử lý</th>
-                                <th>Người xử lý</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="suCo : ${suCoPage.content}">
-                                <td th:text="${suCo.idSuCo}">1</td>
-                                <td>
-                                    <span th:text="${suCo.tieuDe}">Hỏng bóng đèn</span>
-                                    <p class="small text-muted mb-0" th:text="${#strings.abbreviate(suCo.moTa, 100)}">Mô tả chi tiết...</p>
-                                </td>
-                                <td th:text="${suCo.phong.tenPhong}">P101</td>
-                                <td>
-                                    <span th:class="${'badge ' + 
-                                        (suCo.mucDo == 'BINH_THUONG' ? 'bg-info' : 
-                                        (suCo.mucDo == 'QUAN_TRONG' ? 'bg-warning' : 'bg-danger'))}"
-                                          th:text="${suCo.mucDo == 'BINH_THUONG' ? 'Bình thường' : 
-                                                   (suCo.mucDo == 'QUAN_TRONG' ? 'Quan trọng' : 'Khẩn cấp')}">
-                                        Bình thường
-                                    </span>
-                                </td>
-                                <td th:text="${#dates.format(suCo.ngayBaoCao, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
-                                <td th:text="${suCo.ngayXuLy != null ? #dates.format(suCo.ngayXuLy, 'dd/MM/yyyy HH:mm') : ''}">02/01/2024 15:30</td>
-                                <td th:text="${suCo.nguoiXuLy}">Nguyễn Văn A</td>
-                                <td>
-                                    <span th:class="${'badge ' + 
-                                        (suCo.trangThai == 'CHUA_XU_LY' ? 'bg-warning' : 
-                                        (suCo.trangThai == 'DANG_XU_LY' ? 'bg-info' : 
-                                        (suCo.trangThai == 'DA_XU_LY' ? 'bg-success' : 'bg-secondary')))}"
-                                          th:text="${suCo.trangThai == 'CHUA_XU_LY' ? 'Chưa xử lý' : 
-                                                   (suCo.trangThai == 'DANG_XU_LY' ? 'Đang xử lý' : 
-                                                   (suCo.trangThai == 'DA_XU_LY' ? 'Đã xử lý' : 'Đã hủy'))}">
-                                        Chưa xử lý
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <div th:if="${suCo.trangThai == 'CHUA_XU_LY'}">
-                                            <a th:href="@{/admin/su-co/xu-ly/{idSuCo}(idSuCo=${suCo.idSuCo})}" 
-                                               class="btn btn-sm btn-info" title="Xử lý">
-                                                <i class="fas fa-tools"></i>
-                                            </a>
-                                        </div>
-                                        <div th:if="${suCo.trangThai == 'DANG_XU_LY'}">
-                                            <a th:href="@{/admin/su-co/hoan-thanh/{idSuCo}(idSuCo=${suCo.idSuCo})}" 
-                                               class="btn btn-sm btn-success" title="Hoàn thành">
-                                                <i class="fas fa-check"></i>
-                                            </a>
-                                        </div>
-                                        <a th:href="@{/admin/su-co/edit/{idSuCo}(idSuCo=${suCo.idSuCo})}" 
-                                           class="btn btn-sm btn-primary" title="Sửa">
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <!-- DataTales -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách sự cố</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Phòng</th>
+                                    <th>Mô tả</th>
+                                    <th>Loại sự cố</th>
+                                    <th>Mức độ ưu tiên</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày báo cáo</th>
+                                    <th>Ngày hoàn thành</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="suCo : ${suCoPage.content}">
+                                    <td th:text="${suCo.idSuCo}"></td>
+                                    <td th:text="${suCo.phong.tenPhong}"></td>
+                                    <td th:text="${suCo.moTa}"></td>
+                                    <td th:text="${suCo.loaiSuCoDisplay}"></td>
+                                    <td>
+                                        <span th:class="${'badge ' + 
+                                            (suCo.mucDoUuTien == T(com.dormitory.management.model.SuCo.MucDoUuTien).KHAN_CAP ? 'bg-danger' : 
+                                            (suCo.mucDoUuTien == T(com.dormitory.management.model.SuCo.MucDoUuTien).CAO ? 'bg-warning' : 
+                                            (suCo.mucDoUuTien == T(com.dormitory.management.model.SuCo.MucDoUuTien).TRUNG_BINH ? 'bg-primary' : 'bg-secondary')))}"
+                                            style="color: #ffffff !important;"
+                                            th:text="${mucDoUuTienMap[suCo.mucDoUuTien]}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span th:class="${'badge ' + 
+                                            (suCo.trangThai == T(com.dormitory.management.model.SuCo.TrangThai).CHO_XU_LY ? 'bg-warning' : 
+                                            (suCo.trangThai == T(com.dormitory.management.model.SuCo.TrangThai).DANG_XU_LY ? 'bg-primary' : 
+                                            (suCo.trangThai == T(com.dormitory.management.model.SuCo.TrangThai).DA_HOAN_THANH ? 'bg-success' : 'bg-danger')))}"
+                                            style="color: #ffffff !important;"
+                                            th:text="${trangThaiMap[suCo.trangThai]}">
+                                        </span>
+                                    </td>
+                                    <td th:text="${#dates.format(suCo.ngayBaoCao, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${suCo.ngayHoanThanh != null ? #dates.format(suCo.ngayHoanThanh, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+                                    <td>
+                                        <a th:href="@{/admin/su-co/edit/{id}(id=${suCo.idSuCo})}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <div th:if="${suCo.trangThai != 'DA_XU_LY' && suCo.trangThai != 'DA_HUY'}">
-                                            <a th:href="@{/admin/su-co/huy/{idSuCo}(idSuCo=${suCo.idSuCo})}"
-                                               class="btn btn-sm btn-danger" title="Hủy"
-                                               onclick="return confirm('Bạn có chắc chắn muốn hủy sự cố này?')">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        </div>
-                                        <a th:href="@{/admin/su-co/delete/{idSuCo}(idSuCo=${suCo.idSuCo})}"
-                                           class="btn btn-sm btn-danger" title="Xóa"
+                                        <a th:href="@{/admin/su-co/delete/{id}(id=${suCo.idSuCo})}" 
+                                           class="btn btn-danger btn-sm"
                                            onclick="return confirm('Bạn có chắc chắn muốn xóa sự cố này?')">
                                             <i class="fas fa-trash"></i>
                                         </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div th:if="${suCoPage.totalPages > 0}" class="d-flex justify-content-center mt-4">
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                                <a class="page-link" th:href="@{/admin/su-co(page=${currentPage - 1})}">
-                                    <span>&laquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, suCoPage.totalPages - 1)}"
-                                th:classappend="${currentPage == i ? 'active' : ''}">
-                                <a class="page-link" th:href="@{/admin/su-co(page=${i})}" th:text="${i + 1}">1</a>
-                            </li>
-                            <li class="page-item" th:classappend="${currentPage == suCoPage.totalPages - 1 ? 'disabled' : ''}">
-                                <a class="page-link" th:href="@{/admin/su-co(page=${currentPage + 1})}">
-                                    <span>&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div th:if="${suCoPage.totalPages > 0}" class="row">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info" role="status" aria-live="polite">
+                                Hiển thị từ [[${suCoPage.number * suCoPage.size + 1}]] 
+                                đến [[${suCoPage.number * suCoPage.size + suCoPage.numberOfElements}]]
+                                trong tổng số [[${suCoPage.totalElements}]] bản ghi
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers">
+                                <ul class="pagination justify-content-end">
+                                    <li class="paginate_button page-item previous" th:classappend="${suCoPage.first ? 'disabled' : ''}">
+                                        <a th:href="@{/admin/su-co(page=${suCoPage.number - 1}, size=${suCoPage.size}, search=${search}, trangThai=${trangThai}, mucDoUuTien=${mucDoUuTien}, maPhong=${maPhong})}"
+                                           class="page-link">Trước</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(0, suCoPage.totalPages - 1)}" 
+                                        class="paginate_button page-item" 
+                                        th:classappend="${i == suCoPage.number ? 'active' : ''}">
+                                        <a th:href="@{/admin/su-co(page=${i}, size=${suCoPage.size}, search=${search}, trangThai=${trangThai}, mucDoUuTien=${mucDoUuTien}, maPhong=${maPhong})}"
+                                           class="page-link" th:text="${i + 1}"></a>
+                                    </li>
+                                    <li class="paginate_button page-item next" th:classappend="${suCoPage.last ? 'disabled' : ''}">
+                                        <a th:href="@{/admin/su-co(page=${suCoPage.number + 1}, size=${suCoPage.size}, search=${search}, trangThai=${trangThai}, mucDoUuTien=${mucDoUuTien}, maPhong=${maPhong})}"
+                                           class="page-link">Sau</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

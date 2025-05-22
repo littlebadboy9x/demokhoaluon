@@ -4,6 +4,7 @@ import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.model.NguoiDung;
 import com.dormitory.management.service.SinhVienService;
 import com.dormitory.management.service.NguoiDungService;
+import com.dormitory.management.service.PhongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,9 @@ public class AdminSinhVienController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private PhongService phongService;
+
     @GetMapping
     public String listSinhVien(
             @RequestParam(defaultValue = "0") int page,
@@ -49,12 +53,14 @@ public class AdminSinhVienController {
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("sinhVien", new SinhVien());
+        model.addAttribute("phongList", phongService.findAll());
         return "admin/sinh-vien/add";
     }
 
     @PostMapping("/add")
     public String addSinhVien(@ModelAttribute SinhVien sinhVien, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("phongList", phongService.findAll());
             return "admin/sinh-vien/add";
         }
 
@@ -62,12 +68,14 @@ public class AdminSinhVienController {
             // Kiểm tra trùng mã sinh viên
             if (sinhVienService.findById(sinhVien.getMaSv()).isPresent()) {
                 model.addAttribute("error", "Mã sinh viên đã tồn tại!");
+                model.addAttribute("phongList", phongService.findAll());
                 return "admin/sinh-vien/add";
             }
 
             // Kiểm tra trùng tên đăng nhập
             if (nguoiDungService.existsByTenDangNhap(sinhVien.getTenDangNhap())) {
                 model.addAttribute("error", "Tên đăng nhập đã tồn tại trong hệ thống!");
+                model.addAttribute("phongList", phongService.findAll());
                 return "admin/sinh-vien/add";
             }
 
@@ -93,6 +101,7 @@ public class AdminSinhVienController {
             return "redirect:/admin/sinh-vien";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            model.addAttribute("phongList", phongService.findAll());
             return "admin/sinh-vien/add";
         }
     }
@@ -102,12 +111,14 @@ public class AdminSinhVienController {
         SinhVien sinhVien = sinhVienService.findById(maSv)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên với mã: " + maSv));
         model.addAttribute("sinhVien", sinhVien);
+        model.addAttribute("phongList", phongService.findAll());
         return "admin/sinh-vien/edit";
     }
 
     @PostMapping("/edit")
     public String editSinhVien(@ModelAttribute SinhVien sinhVien, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("phongList", phongService.findAll());
             return "admin/sinh-vien/edit";
         }
 
@@ -125,6 +136,7 @@ public class AdminSinhVienController {
             return "redirect:/admin/sinh-vien";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            model.addAttribute("phongList", phongService.findAll());
             return "admin/sinh-vien/edit";
         }
     }

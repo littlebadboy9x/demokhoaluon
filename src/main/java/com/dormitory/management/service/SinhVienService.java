@@ -1,5 +1,6 @@
 package com.dormitory.management.service;
 
+import com.dormitory.management.model.Phong;
 import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.model.SinhVien.TrangThai;
 import org.springframework.data.domain.Page;
@@ -13,17 +14,19 @@ public interface SinhVienService {
     
     Page<SinhVien> findAll(Pageable pageable);
     
-    Optional<SinhVien> findById(String maSv);
+    Optional<SinhVien> findById(String mssv);
     
     SinhVien save(SinhVien sinhVien);
     
-    void delete(String maSv);
+    void delete(String mssv);
     
     long countByTrangThai(TrangThai trangThai);
     
     Page<SinhVien> findByTrangThaiOrderByNgayDangKyDesc(TrangThai trangThai, Pageable pageable);
 
     long count();
+
+    List<SinhVien> findByPhong(Phong phong);
 
     default long demTongSoSinhVien() {
         return count();

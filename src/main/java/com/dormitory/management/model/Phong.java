@@ -37,6 +37,9 @@ public class Phong {
     @Column(name = "phi_ve_sinh", nullable = false)
     private Double phiVeSinh = 50000.0;
 
+    @Column(name = "phi_dich_vu", nullable = false)
+    private Double phiDichVu = 100000.0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai", nullable = false)
     private TrangThai trangThai = TrangThai.CON_TRONG;
@@ -75,6 +78,9 @@ public class Phong {
         }
         if (this.phiVeSinh == null) {
             this.phiVeSinh = 50000.0;
+        }
+        if (this.phiDichVu == null) {
+            this.phiDichVu = 100000.0;
         }
     }
 

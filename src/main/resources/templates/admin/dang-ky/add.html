@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Thêm đăng ký phòng mới</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Thêm đăng ký phòng mới</h1>
+
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <!-- Form -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thông tin đăng ký</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/dang-ky/add}" method="post" th:object="${dangKyPhong}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sinhVien">Sinh viên <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="sinhVien" name="sinhVien.maSinhVien" required>
+                                        <option value="">-- Chọn sinh viên --</option>
+                                        <option th:each="sv : ${sinhVienList}"
+                                                th:value="${sv.maSinhVien}"
+                                                th:text="${sv.hoTen + ' (' + sv.maSinhVien + ')'}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phong">Phòng <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="phong" name="phong.maPhong" required>
+                                        <option value="">-- Chọn phòng --</option>
+                                        <option th:each="phong : ${phongList}"
+                                                th:value="${phong.maPhong}"
+                                                th:text="${phong.tenPhong + ' (Còn ' + phong.soChoTrong + ' chỗ)'}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="ngayBatDau">Ngày bắt đầu <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="ngayBatDau" name="ngayBatDau" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="ngayKetThuc">Ngày kết thúc <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="ngayKetThuc" name="ngayKetThuc" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ghiChu">Ghi chú</label>
+                            <textarea class="form-control" id="ghiChu" name="ghiChu" rows="3"
+                                      placeholder="Nhập ghi chú (nếu có)"></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                            <a th:href="@{/admin/dang-ky}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            // Validate ngày bắt đầu và kết thúc
+            document.getElementById('ngayBatDau').addEventListener('change', validateDates);
+            document.getElementById('ngayKetThuc').addEventListener('change', validateDates);
+
+            function validateDates() {
+                var ngayBatDau = document.getElementById('ngayBatDau').value;
+                var ngayKetThuc = document.getElementById('ngayKetThuc').value;
+
+                if (ngayBatDau && ngayKetThuc) {
+                    if (new Date(ngayBatDau) > new Date(ngayKetThuc)) {
+                        alert('Ngày kết thúc phải sau ngày bắt đầu!');
+                        document.getElementById('ngayKetThuc').value = '';
+                    }
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html> 

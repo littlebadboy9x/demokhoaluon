@@ -1,5 +1,6 @@
 package com.dormitory.management.service.impl;
 
+import com.dormitory.management.model.Phong;
 import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.model.SinhVien.TrangThai;
 import com.dormitory.management.repository.SinhVienRepository;
@@ -29,8 +30,8 @@ public class SinhVienServiceImpl implements SinhVienService {
     }
 
     @Override
-    public Optional<SinhVien> findById(String maSv) {
-        return sinhVienRepository.findById(maSv);
+    public Optional<SinhVien> findById(String mssv) {
+        return sinhVienRepository.findById(mssv);
     }
 
     @Override
@@ -39,8 +40,8 @@ public class SinhVienServiceImpl implements SinhVienService {
     }
 
     @Override
-    public void delete(String maSv) {
-        sinhVienRepository.deleteById(maSv);
+    public void delete(String mssv) {
+        sinhVienRepository.deleteById(mssv);
     }
 
     @Override
@@ -56,5 +57,10 @@ public class SinhVienServiceImpl implements SinhVienService {
     @Override
     public long count() {
         return sinhVienRepository.count();
+    }
+
+    @Override
+    public List<SinhVien> findByPhong(Phong phong) {
+        return sinhVienRepository.findByPhong(phong);
     }
 } 

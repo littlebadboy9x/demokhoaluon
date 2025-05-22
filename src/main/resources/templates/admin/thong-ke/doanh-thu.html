@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Thống kê doanh thu</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Thống kê doanh thu</h1>
+
+            <!-- Filter Form -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lọc theo thời gian</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/thong-ke/doanh-thu}" method="get" class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="thang">Tháng</label>
+                                <select class="form-control" id="thang" name="thang">
+                                    <option value="">-- Chọn tháng --</option>
+                                    <option th:each="i : ${#numbers.sequence(1, 12)}"
+                                            th:value="${i}"
+                                            th:text="${i}"
+                                            th:selected="${i == thang}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="nam">Năm</label>
+                                <select class="form-control" id="nam" name="nam">
+                                    <option value="">-- Chọn năm --</option>
+                                    <option th:each="i : ${#numbers.sequence(2020, #dates.year(#dates.createNow()))}"
+                                            th:value="${i}"
+                                            th:text="${i}"
+                                            th:selected="${i == nam}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-search"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Doanh thu Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        Doanh thu [[${thang != null ? 'tháng ' + thang : ''}]] [[${nam != null ? 'năm ' + nam : ''}]]
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <h4 class="mb-0" th:text="${#numbers.formatDecimal(doanhThu != null ? doanhThu : 0, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biểu đồ doanh thu -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Biểu đồ doanh thu 6 tháng gần nhất</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="doanhThuChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            // Dữ liệu doanh thu
+            var doanhThuData = /*[[${doanhThu6ThangGanNhat}]]*/ [];
+            var labels = doanhThuData.map(function(item) {
+                return 'Tháng ' + item.thang + '/' + item.nam;
+            });
+            var values = doanhThuData.map(function(item) {
+                return item.doanhThu;
+            });
+
+            // Biểu đồ doanh thu
+            var ctx = document.getElementById('doanhThuChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html> 

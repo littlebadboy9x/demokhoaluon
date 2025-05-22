@@ -2,43 +2,56 @@ package com.dormitory.management.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
-
+@Data
 @Entity
 @Table(name = "phan_bo_phong")
-@Data
 public class PhanBoPhong {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_phan_bo")
     private Long idPhanBo;
 
-    @Column(name = "ma_sv", nullable = false)
-    private String maSv;
-
-    @Column(name = "ma_phong", nullable = false)
-    private String maPhong;
-
-    @Column(name = "ngay_nhan_phong", nullable = false)
-    private Date ngayNhanPhong;
-
-    @Column(name = "ngay_tra_phong")
-    private Date ngayTraPhong;
-
-    @Column(name = "trang_thai")
-    @Enumerated(EnumType.STRING)
-    private TrangThaiPhanBo trangThai;
-
     @ManyToOne
-    @JoinColumn(name = "ma_sv", referencedColumnName = "ma_sv", insertable = false, updatable = false)
+    @JoinColumn(name = "ma_sv", nullable = false)
     private SinhVien sinhVien;
 
     @ManyToOne
-    @JoinColumn(name = "ma_phong", referencedColumnName = "ma_phong", insertable = false, updatable = false)
+    @JoinColumn(name = "ma_phong", nullable = false)
     private Phong phong;
 
-    public enum TrangThaiPhanBo {
-        DANG_O, DA_KET_THUC, BI_HUY
+    @Column(name = "ngay_nhan_phong", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date ngayNhanPhong;
+
+    @Column(name = "ngay_tra_phong")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date ngayTraPhong;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trang_thai")
+    private TrangThai trangThai = TrangThai.DANG_O;
+
+    public enum TrangThai {
+        DANG_O,
+        DA_KET_THUC,
+        BI_HUY
+    }
+
+    public String getTrangThaiDisplay() {
+        if (trangThai == null) return "";
+        
+        switch (trangThai) {
+            case DANG_O:
+                return "Đang ở";
+            case DA_KET_THUC:
+                return "Đã kết thúc";
+            case BI_HUY:
+                return "Bị hủy";
+            default:
+                return "";
+        }
     }
 }

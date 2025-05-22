@@ -2,6 +2,7 @@ package com.dormitory.management.service;
 
 import com.dormitory.management.model.SuCo;
 import com.dormitory.management.model.SuCo.TrangThai;
+import com.dormitory.management.model.SuCo.MucDoUuTien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,7 +24,7 @@ public interface SuCoService {
     
     Page<SuCo> findByTrangThaiOrderByNgayBaoCaoDesc(TrangThai trangThai, Pageable pageable);
     
-    Page<SuCo> search(String keyword, TrangThai trangThai, SuCo.MucDo mucDo, String maPhong, Pageable pageable);
+    Page<SuCo> search(String keyword, TrangThai trangThai, MucDoUuTien mucDoUuTien, String maPhong, Pageable pageable);
     
-    long countByMucDo(SuCo.MucDo mucDo);
+    long countByMucDoUuTien(MucDoUuTien mucDoUuTien);
 } 
