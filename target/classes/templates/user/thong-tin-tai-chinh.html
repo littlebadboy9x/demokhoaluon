@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông tin tài chính - KTX Đại học Lâm nghiệp</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary-color: #2E7D32;
+      --secondary-color: #8BC34A;
+    }
+    
+    .university-header {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .finance-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: none;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .finance-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-icon {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+    
+    .total-balance {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #dc3545;
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .info-header {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="university-header py-3">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <a href="index.html">
+                <img src="C:\Users\User\demoKLTN\demokhoaluan\src\main\resources\static\images\logo.png" alt="Logo" class="me-3" style="max-height: 60px; width: auto;">
+            </a>
+            <div>
+              <h1 class="h4 mb-0">Đại học Lâm nghiệp Việt Nam</h1>
+              <p class="mb-0 small">Hệ thống Quản lý Ký túc xá Sinh viên</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <a href="huong-dan.html" class="btn btn-outline-light me-2">Hướng dẫn</a>
+          <a href="login.html" class="btn btn-light">Đăng xuất</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-5">
+    <div class="container">
+      <div class="finance-card">
+        <h2 class="info-header">THÔNG TIN TÀI CHÍNH</h2>
+        
+        <div class="text-center mb-4">
+          <h4>NGUYỄN CÔNG VÂN</h4>
+          <p>Mã sinh viên: 2174801040792 | SĐT: 0974623024</p>
+          <p class="total-balance">Tổng nợ: -4,690,000 đ</p>
+        </div>
+
+        <div class="row">
+          <!-- Cột 1 -->
+          <div class="col-md-4 mb-4">
+            <div class="finance-card text-center h-100">
+              <i class="bi bi-cash-coin card-icon"></i>
+              <h5>53,355,000 đ</h5>
+              <p class="text-muted">Khoản phải nộp</p>
+              <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+            </div>
+          </div>
+          
+          <!-- Cột 2 -->
+          <div class="col-md-4 mb-4">
+            <div class="finance-card text-center h-100">
+              <i class="bi bi-wallet2 card-icon"></i>
+              <h5>0 đ</h5>
+              <p class="text-muted">Khoản dư còn miễn</p>
+              <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+            </div>
+          </div>
+          
+          <!-- Cột 3 -->
+          <div class="col-md-4 mb-4">
+            <div class="finance-card text-center h-100">
+              <i class="bi bi-piggy-bank card-icon"></i>
+              <h5>48,665,000 đ</h5>
+              <p class="text-muted">Khoản đã nộp</p>
+              <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+            </div>
+          </div>
+          
+          <!-- Cột 4 -->
+          <div class="col-md-4 mb-4">
+            <div class="finance-card text-center h-100">
+              <i class="bi bi-credit-card card-icon"></i>
+              <h5>0 đ</h5>
+              <p class="text-muted">Khoản đã rút</p>
+              <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+            </div>
+          </div>
+          
+          <!-- Cột 5 -->
+          <div class="col-md-4 mb-4">
+            <div class="finance-card text-center h-100">
+              <i class="bi bi-piggy-bank-fill card-icon"></i>
+              <h5>4,690,000 đ</h5>
+              <p class="text-muted">Tổng dư còn khoản</p>
+              <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+            </div>
+          </div>
+          
+          <!-- Cột 6 -->
+          <div class="col-md-4 mb-4">
+            <div class="finance-card text-center h-100">
+              <i class="bi bi-calculator card-icon"></i>
+              <h5>0 đ</h5>
+              <p class="text-muted">Tổng dư chuyển khoản</p>
+              <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bảng danh sách phí -->
+        <div class="mt-5">
+          <h4 class="info-header">DANH SÁCH PHÍ</h4>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div class="finance-card text-center h-100">
+                <i class="bi bi-receipt card-icon"></i>
+                <h5>29,963,000 đ</h5>
+                <p class="text-muted">Danh sách phí đã thu</p>
+                <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+              <div class="finance-card text-center h-100">
+                <i class="bi bi-file-earmark-text card-icon"></i>
+                <h5>17,977,000 đ</h5>
+                <p class="text-muted">Danh sách phí hóa đơn</p>
+                <a href="#" class="btn btn-outline-primary">Chi tiết</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4">
+    <div class="container">
+      <div class="text-center">
+        <p class="mb-0">&copy; 2023 Hệ thống Quản lý Ký túc xá Đại học Lâm nghiệp. Bảo lưu mọi quyền.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

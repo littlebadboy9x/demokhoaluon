@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns : th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Phòng - KTX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E8B57;
+            --primary-hover: #3CB371;
+            --sidebar-color: #1A4D2E;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: var(--sidebar-color) !important;
+            min-height: 100vh;
+        }
+        
+        .nav-link {
+            color: white !important;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-hover) !important;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .badge {
+            padding: 0.5em 1em;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="university-header py-3 text-white" style="background-color: var(--sidebar-color);">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <img th:src="@{/assets/images/logo.png}" alt="Logo" class="me-3" style="max-height: 50px; width: auto;">
+                        <div>
+                            <h1 class="h4 mb-0">Đại học Lâm nghiệp Việt Nam</h1>
+                            <p class="mb-0 small">Hệ thống Quản lý Ký túc xá - Trang quản trị</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> Admin
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Tài khoản</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="login\login.html"><i class="bi bi-box-arrow-right me-2"></i> Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="student-management.html">
+                                <i class="bi bi-people me-2"></i> Quản lý sinh viên
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="room-management.html">
+                                <i class="bi bi-door-open me-2"></i> Quản lý phòng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="payment-management.html">
+                                <i class="bi bi-cash-coin me-2"></i> Thanh toán
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="report.html">
+                                <i class="bi bi-graph-up me-2"></i> Báo cáo
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="settings.html">
+                                <i class="bi bi-gear me-2"></i> Cài đặt
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-md-4 py-4 position-relative">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center main-header">
+                    <h2 class="h3 mb-0">Quản lý Phòng</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                        <i class="bi bi-plus-circle me-1"></i> Thêm phòng
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Danh sách phòng</div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Số phòng</th>
+                                    <th>Sức chứa</th>
+                                    <th>Đã ở</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomTableBody">
+                                <!-- Dữ liệu phòng sẽ được thêm bằng JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Thêm phòng -->
+    <div class="modal fade" id="addRoomModal" tabindex="-1" aria-labelledby="addRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" id="addRoomForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRoomModalLabel">Thêm phòng mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="roomNumber" class="form-label">Số phòng</label>
+                        <input type="text" class="form-control" id="roomNumber" name="roomNumber" required>
+                        <div class="invalid-feedback">Vui lòng nhập số phòng.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="capacity" class="form-label">Sức chứa</label>
+                        <input type="number" class="form-control" id="capacity" name="capacity" min="1" required>
+                        <div class="invalid-feedback">Vui lòng nhập sức chứa (số dương).</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const tbody = document.getElementById('roomTableBody');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // Function to show/hide loading overlay
+            function toggleLoading(show) {
+                loadingOverlay.classList.toggle('active', show);
+            }
+
+            // Fetch danh sách phòng
+            toggleLoading(true);
+            try {
+                const response = await fetch('/api/admin/rooms', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const rooms = await response.json();
+                    tbody.innerHTML = '';
+                    rooms.forEach(room => {
+                        const status = room.currentOccupancy >= room.capacity ? 'Đầy' : 'Còn chỗ';
+                        const statusColor = status === 'Đầy' ? 'danger' : 'success';
+                        const row = `
+                            <tr>
+                                <td>${room.roomNumber}</td>
+                                <td>${room.capacity}</td>
+                                <td>${room.currentOccupancy}</td>
+                                <td><span class="badge bg-${statusColor}">${status}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-1" onclick="editRoom('${room.roomNumber}')">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteRoom('${room.roomNumber}')">
+                                        <i class="bi bi-trash"></i> Xoá
+                                    </button>
+                                </td>
+                            </tr>`;
+                        tbody.insertAdjacentHTML('beforeend', row);
+                    });
+                    console.log('Room data loaded successfully');
+                } else {
+                    throw new Error('Failed to fetch rooms: ' + response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching rooms:', error);
+                alert('Có lỗi khi tải danh sách phòng. Vui lòng kiểm tra console để biết thêm chi tiết.');
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Không thể tải dữ liệu phòng.</td></tr>';
+            } finally {
+                toggleLoading(false);
+            }
+
+            // Handle form submission for adding a room
+            document.getElementById('addRoomForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                const roomData = {
+                    roomNumber: form.roomNumber.value,
+                    capacity: parseInt(form.capacity.value)
+                };
+
+                toggleLoading(true);
+                try {
+                    const response = await fetch('/api/admin/rooms', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(roomData)
+                    });
+
+                    if (response.ok) {
+                        const newRoom = await response.json();
+                        const status = newRoom.currentOccupancy >= newRoom.capacity ? 'Đầy' : 'Còn chỗ';
+                        const statusColor = status === 'Đầy' ? 'danger' : 'success';
+                        const row = `
+                            <tr>
+                                <td>${newRoom.roomNumber}</td>
+                                <td>${newRoom.capacity}</td>
+                                <td>${newRoom.currentOccupancy}</td>
+                                <td><span class="badge bg-${statusColor}">${status}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-1" onclick="editRoom('${newRoom.roomNumber}')">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteRoom('${newRoom.roomNumber}')">
+                                        <i class="bi bi-trash"></i> Xoá
+                                    </button>
+                                </td>
+                            </tr>`;
+                        tbody.insertAdjacentHTML('beforeend', row);
+                        form.reset();
+                        form.classList.remove('was-validated');
+                        bootstrap.Modal.getInstance(document.getElementById('addRoomModal')).hide();
+                        console.log('Room added successfully:', newRoom);
+                    } else {
+                        throw new Error('Failed to add room: ' + response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error adding room:', error);
+                    alert('Có lỗi khi thêm phòng. Vui lòng kiểm tra console để biết thêm chi tiết.');
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+
+            // Placeholder functions for edit and delete (to be implemented)
+            window.editRoom = function(roomNumber) {
+                console.log('Edit room:', roomNumber);
+                alert('Chức năng sửa phòng chưa được triển khai.');
+            };
+
+            window.deleteRoom = async function(roomNumber) {
+                if (!confirm(`Bạn có chắc muốn xóa phòng ${roomNumber}?`)) return;
+
+                toggleLoading(true);
+                try {
+                    const response = await fetch(`/api/admin/rooms/${roomNumber}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        const rows = tbody.querySelectorAll('tr');
+                        rows.forEach(row => {
+                            if (row.cells[0].textContent === roomNumber) {
+                                row.remove();
+                            }
+                        });
+                        console.log(`Room ${roomNumber} deleted successfully`);
+                    } else {
+                        throw new Error('Failed to delete room: ' + response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error deleting room:', error);
+                    alert('Có lỗi khi xóa phòng. Vui lòng kiểm tra console để biết thêm chi tiết.');
+                } finally {
+                    toggleLoading(false);
+                }
+            };
+        });
+    </script>
+</body>
+</html>

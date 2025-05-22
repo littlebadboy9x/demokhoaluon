@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý KTX - Yêu cầu thanh toán</title>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css}" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E8B57;
+            --primary-hover: #3CB371;
+            --sidebar-color: #1A4D2E;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: var(--sidebar-color) !important;
+            min-height: 100vh;
+        }
+        
+        .nav-link {
+            color: white !important;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-hover) !important;
+        }
+        
+        .card-stat {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card-stat:hover {
+            transform: translateY(-5px);
+        }
+        
+        .main-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+        
+        .status-pending {
+            color: #FFC107;
+            font-weight: 500;
+        }
+        
+        .status-paid {
+            color: #28A745;
+            font-weight: 500;
+        }
+        
+        .status-overdue {
+            color: #DC3545;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="university-header py-3 text-white" style="background-color: var(--sidebar-color);">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <img th:src="@{/assets/images/logo.png}" alt="Logo" class="me-3" style="max-height: 50px; width: auto;">
+                        <div>
+                            <h1 class="h4 mb-0">Đại học Lâm nghiệp Việt Nam</h1>
+                            <p class="mb-0 small">Hệ thống Quản lý Ký túc xá - Trang quản trị</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> Admin
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Tài khoản</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" th:href="@{login\login.html}"><i class="bi bi-box-arrow-right me-2"></i> Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{index.html}">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{student-management.html">
+                                <i class="bi bi-people me-2"></i> Quản lý sinh viên
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{room-management.html}">
+                                <i class="bi bi-door-open me-2"></i> Quản lý phòng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{payment-management.html}">
+                                <i class="bi bi-cash-coin me-2"></i> Thanh toán
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{report.html}">
+                                <i class="bi bi-graph-up me-2"></i> Báo cáo
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{settings.html}">
+                                <i class="bi bi-gear me-2"></i> Cài đặt
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between align-items-center main-header">
+                    <h2 class="h3 mb-0">Quản lý Yêu cầu Thanh toán</h2>
+                    <div>
+                        <button class="btn btn-primary-custom text-white" data-bs-toggle="modal" data-bs-target="#createInvoiceModal">
+                            <i class="bi bi-plus-circle me-1"></i> Tạo yêu cầu thanh toán
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filter Section -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-body">
+                        <form id="paymentFilterForm">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="statusFilter" class="form-label">Trạng thái</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="all">Tất cả</option>
+                                        <option value="pending">Chờ thanh toán</option>
+                                        <option value="paid">Đã thanh toán</option>
+                                        <option value="overdue">Quá hạn</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="monthFilter" class="form-label">Tháng</label>
+                                    <select class="form-select" id="monthFilter">
+                                        <option value="all">Tất cả tháng</option>
+                                        <option value="1">Tháng 1</option>
+                                        <option value="2">Tháng 2</option>
+                                        <!-- Thêm các tháng khác -->
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="searchInput" class="form-label">Tìm kiếm sinh viên</label>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Nhập MSSV hoặc tên sinh viên">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary-custom text-white w-100">
+                                        <i class="bi bi-funnel me-1"></i> Lọc
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Payment Requests Table -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Danh sách yêu cầu thanh toán</h5>
+                        <div class="text-muted small">Tổng số: <span id="totalPayments">0</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="paymentRequestsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Mã hóa đơn</th>
+                                        <th>MSSV</th>
+                                        <th>Tên sinh viên</th>
+                                        <th>Phòng</th>
+                                        <th>Số tiền</th>
+                                        <th>Hạn thanh toán</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Invoice Modal -->
+    <div class="modal fade" id="createInvoiceModal" tabindex="-1" aria-labelledby="createInvoiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createInvoiceModalLabel">Tạo yêu cầu thanh toán mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createInvoiceForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="studentSelect" class="form-label">Chọn sinh viên</label>
+                                <select class="form-select" id="studentSelect" required>
+                                    <option value="" selected disabled>Chọn sinh viên</option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="roomInfo" class="form-label">Phòng hiện tại</label>
+                                <input type="text" class="form-control" id="roomInfo" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="electricityUnits" class="form-label">Số điện tiêu thụ (kWh)</label>
+                                <input type="number" class="form-control" id="electricityUnits" min="0" step="0.1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="electricityPrice" class="form-label">Giá điện mỗi kWh (VNĐ)</label>
+                                <input type="number" class="form-control" id="electricityPrice" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="roomFee" class="form-label">Tiền phòng (VNĐ)</label>
+                                <input type="number" class="form-control" id="roomFee" min="0" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sanitationFee" class="form-label">Tiền vệ sinh (VNĐ)</label>
+                                <input type="number" class="form-control" id="sanitationFee" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="additionalFee" class="form-label">Chi phí phát sinh (VNĐ)</label>
+                                <input type="number" class="form-control" id="additionalFee" min="0" value="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dueDate" class="form-label">Hạn thanh toán</label>
+                                <input type="date" class="form-control" id="dueDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="totalAmount" class="form-label">Tổng số tiền (VNĐ)</label>
+                                <input type="number" class="form-control" id="totalAmount" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="invoiceDescription" class="form-label">Nội dung thanh toán</label>
+                            <textarea class="form-control" id="invoiceDescription" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary-custom text-white" id="submitInvoiceBtn">Gửi yêu cầu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Details Modal -->
+    <div class="modal fade" id="paymentDetailsModal" tabindex="-1" aria-labelledby="paymentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentDetailsModalLabel">Chi tiết hóa đơn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <h6>Thông tin sinh viên</h6>
+                        <p id="detailStudentName" class="mb-1"></p>
+                        <p id="detailStudentCode" class="mb-1"></p>
+                        <p id="detailRoom" class="mb-1"></p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Thông tin thanh toán</h6>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Số điện (kWh):</span>
+                            <strong id="detailElectricityUnits"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Giá điện mỗi kWh:</span>
+                            <strong id="detailElectricityPrice"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tiền phòng:</span>
+                            <strong id="detailRoomFee"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tiền vệ sinh:</span>
+                            <strong id="detailSanitationFee"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Chi phí phát sinh:</span>
+                            <strong id="detailAdditionalFee"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tổng số tiền:</span>
+                            <strong id="detailAmount"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Hạn thanh toán:</span>
+                            <strong id="detailDueDate"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Trạng thái:</span>
+                            <strong id="detailStatus"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Ngày tạo:</span>
+                            <strong id="detailCreatedDate"></strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Nội dung</h6>
+                        <p id="detailDescription"></p>
+                    </div>
+                    
+                    <div id="paymentProofSection" class="d-none">
+                        <h6>Ảnh chứng từ thanh toán</h6>
+                        <img id="paymentProofImage" src="" class="img-fluid rounded" alt="Chứng từ thanh toán">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-success d-none" id="approvePaymentBtn">Xác nhận thanh toán</button>
+                    <button type="button" class="btn btn-danger d-none" id="rejectPaymentBtn">Từ chối</button>
+                    <button type="button" class="btn btn-primary-custom text-white d-none" id="sendReminderBtn">Gửi nhắc nhở</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        // Sample data for demonstration
+        const students = [
+            { id: 1, code: '20210001', name: 'Nguyễn Văn A', room: 'A101' },
+            { id: 2, code: '20210025', name: 'Trần Thị B', room: 'B205' },
+            { id: 3, code: '20210112', name: 'Lê Văn C', room: 'C302' }
+        ];
+        
+        const paymentRequests = [
+            { 
+                id: 'INV-2023-001', 
+                studentId: 1, 
+                electricityUnits: 100,
+                electricityPrice: 2000,
+                roomFee: 1000000,
+                sanitationFee: 200000,
+                additionalFee: 0,
+                amount: 1200000, 
+                dueDate: '2023-07-15', 
+                createdDate: '2023-06-25', 
+                status: 'pending', 
+                description: 'Tiền phòng ký túc xá tháng 7/2023' 
+            },
+            { 
+                id: 'INV-2023-002', 
+                studentId: 2, 
+                electricityUnits: 120,
+                electricityPrice: 2000,
+                roomFee: 1000000,
+                sanitationFee: 200000,
+                additionalFee: 10000,
+                amount: 1450000, 
+                dueDate: '2023-07-15', 
+                createdDate: '2023-06-26', 
+                status: 'paid', 
+                description: 'Tiền phòng ký túc xá tháng 7/2023',
+                paymentDate: '2023-07-10',
+                paymentProof: 'https://via.placeholder.com/300'
+            },
+            { 
+                id: 'INV-2023-003', 
+                studentId: 3, 
+                electricityUnits: 80,
+                electricityPrice: 2000,
+                roomFee: 1000000,
+                sanitationFee: 200000,
+                additionalFee: 50000,
+                amount: 1410000, 
+                dueDate: '2023-06-15', 
+                createdDate: '2023-05-25', 
+                status: 'overdue', 
+                description: 'Tiền phòng ký túc xá tháng 6/2023' 
+            }
+        ];
+
+        // Load data when page is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate student select in modal
+            const studentSelect = document.getElementById('studentSelect');
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = `${student.code} - ${student.name}`;
+                studentSelect.appendChild(option);
+            });
+            
+            // Update room info when student is selected
+            studentSelect.addEventListener('change', function() {
+                const selectedStudent = students.find(s => s.id == this.value);
+                if (selectedStudent) {
+                    document.getElementById('roomInfo').value = selectedStudent.room;
+                }
+            });
+            
+            // Load payment requests
+            loadPaymentRequests();
+            
+            // Set default due date to 10 days from now
+            const today = new Date();
+            const dueDate = new Date();
+            dueDate.setDate(today.getDate() + 10);
+            document.getElementById('dueDate').valueAsDate = dueDate;
+            
+            // Set current month in description
+            const monthNames = ["tháng 1", "tháng 2", "tháng 3", "tháng 4", "tháng 5", "tháng 6",
+                              "tháng 7", "tháng 8", "tháng 9", "tháng 10", "tháng 11", "tháng 12"];
+            const currentMonth = monthNames[today.getMonth()];
+            document.getElementById('invoiceDescription').value = `Tiền phòng ký túc xá ${currentMonth}/${today.getFullYear()}`;
+            
+            // Add event listeners for auto-calculating total amount
+            const costInputs = ['electricityUnits', 'electricityPrice', 'roomFee', 'sanitationFee', 'additionalFee'];
+            costInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', updateTotalAmount);
+            });
+            
+            // Initial calculation
+            updateTotalAmount();
+        });
+        
+        // Function to calculate and update total amount
+        function updateTotalAmount() {
+            const electricityUnits = parseFloat(document.getElementById('electricityUnits').value) || 0;
+            const electricityPrice = parseFloat(document.getElementById('electricityPrice').value) || 0;
+            const roomFee = parseFloat(document.getElementById('roomFee').value) || 0;
+            const sanitationFee = parseFloat(document.getElementById('sanitationFee').value) || 0;
+            const additionalFee = parseFloat(document.getElementById('additionalFee').value) || 0;
+            
+            const totalAmount = (electricityUnits * electricityPrice) + roomFee + sanitationFee + additionalFee;
+            document.getElementById('totalAmount').value = Math.round(totalAmount);
+        }
+        
+        // Load payment requests into table
+        function loadPaymentRequests(filter = {}) {
+            const tbody = document.querySelector('#paymentRequestsTable tbody');
+            tbody.innerHTML = '';
+            
+            let filteredRequests = [...paymentRequests];
+            
+            // Apply filters
+            if (filter.status && filter.status !== 'all') {
+                filteredRequests = filteredRequests.filter(req => req.status === filter.status);
+            }
+            
+            if (filter.search) {
+                const searchTerm = filter.search.toLowerCase();
+                filteredRequests = filteredRequests.filter(req => {
+                    const student = students.find(s => s.id === req.studentId);
+                    return student.code.toLowerCase().includes(searchTerm) || 
+                           student.name.toLowerCase().includes(searchTerm);
+                });
+            }
+            
+            // Update total count
+            document.getElementById('totalPayments').textContent = filteredRequests.length;
+            
+            // Populate table
+            filteredRequests.forEach(request => {
+                const student = students.find(s => s.id === request.studentId);
+                const row = document.createElement('tr');
+                
+                // Format status
+                let statusBadge;
+                if (request.status === 'pending') {
+                    statusBadge = '<span class="status-pending"><i class="bi bi-clock me-1"></i> Chờ thanh toán</span>';
+                } else if (request.status === 'paid') {
+                    statusBadge = '<span class="status-paid"><i class="bi bi-check-circle me-1"></i> Đã thanh toán</span>';
+                } else {
+                    statusBadge = '<span class="status-overdue"><i class="bi bi-exclamation-circle me-1"></i> Quá hạn</span>';
+                }
+                
+                row.innerHTML = `
+                    <td>${request.id}</td>
+                    <td>${student.code}</td>
+                    <td>${student.name}</td>
+                    <td>${student.room}</td>
+                    <td>${request.amount.toLocaleString('vi-VN')} VNĐ</td>
+                    <td>${new Date(request.dueDate).toLocaleDateString('vi-VN')}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${request.id}">
+                            <i class="bi bi-eye"></i> Xem
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showPaymentDetails(this.getAttribute('data-id'));
+                });
+            });
+        }
+        
+        // Show payment details in modal
+        function showPaymentDetails(invoiceId) {
+            const request = paymentRequests.find(req => req.id === invoiceId);
+            const student = students.find(s => s.id === request.studentId);
+            
+            // Set modal content
+            document.getElementById('detailStudentName').textContent = `Họ tên: ${student.name}`;
+            document.getElementById('detailStudentCode').textContent = `MSSV: ${student.code}`;
+            document.getElementById('detailRoom').textContent = `Phòng: ${student.room}`;
+            document.getElementById('detailElectricityUnits').textContent = `${request.electricityUnits} kWh`;
+            document.getElementById('detailElectricityPrice').textContent = `${request.electricityPrice.toLocaleString('vi-VN')} VNĐ`;
+            document.getElementById('detailRoomFee').textContent = `${request.roomFee.toLocaleString('vi-VN')} VNĐ`;
+            document.getElementById('detailSanitationFee').textContent = `${request.sanitationFee.toLocaleString('vi-VN')} VNĐ`;
+            document.getElementById('detailAdditionalFee').textContent = `${request.additionalFee.toLocaleString('vi-VN')} VNĐ`;
+            document.getElementById('detailAmount').textContent = `${request.amount.toLocaleString('vi-VN')} VNĐ`;
+            document.getElementById('detailDueDate').textContent = new Date(request.dueDate).toLocaleDateString('vi-VN');
+            document.getElementById('detailDescription').textContent = request.description;
+            document.getElementById('detailCreatedDate').textContent = new Date(request.createdDate).toLocaleDateString('vi-VN');
+            
+            // Set status
+            let statusText;
+            if (request.status === 'pending') {
+                statusText = '<span class="status-pending">Chờ thanh toán</span>';
+            } else if (request.status === 'paid') {
+                statusText = '<span class="status-paid">Đã thanh toán</span>';
+            } else {
+                statusText = '<span class="status-overdue">Quá hạn</span>';
+            }
+            document.getElementById('detailStatus').innerHTML = statusText;
+            
+            // Show/hide sections based on status
+            const paymentProofSection = document.getElementById('paymentProofSection');
+            const approveBtn = document.getElementById('approvePaymentBtn');
+            const rejectBtn = document.getElementById('rejectPaymentBtn');
+            const reminderBtn = document.getElementById('sendReminderBtn');
+            
+            if (request.status === 'paid' && request.paymentProof) {
+                paymentProofSection.classList.remove('d-none');
+                document.getElementById('paymentProofImage').src = request.paymentProof;
+                approveBtn.classList.add('d-none');
+                rejectBtn.classList.add('d-none');
+                reminderBtn.classList.add('d-none');
+            } else {
+                paymentProofSection.classList.add('d-none');
+                
+                if (request.status === 'pending') {
+                    approveBtn.classList.add('d-none');
+                    rejectBtn.classList.remove('d-none');
+                    reminderBtn.classList.remove('d-none');
+                } else if (request.status === 'overdue') {
+                    approveBtn.classList.add('d-none');
+                    rejectBtn.classList.add('d-none');
+                    reminderBtn.classList.remove('d-none');
+                } else {
+                    approveBtn.classList.add('d-none');
+                    rejectBtn.classList.add('d-none');
+                    reminderBtn.classList.add('d-none');
+                }
+            }
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('paymentDetailsModal'));
+            modal.show();
+        }
+        
+        // Handle form submission for creating new invoice
+        document.getElementById('submitInvoiceBtn').addEventListener('click', function() {
+            const studentId = document.getElementById('studentSelect').value;
+            const electricityUnits = document.getElementById('electricityUnits').value;
+            const electricityPrice = document.getElementById('electricityPrice').value;
+            const roomFee = document.getElementById('roomFee').value;
+            const sanitationFee = document.getElementById('sanitationFee').value;
+            const additionalFee = document.getElementById('additionalFee').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const description = document.getElementById('invoiceDescription').value;
+            
+            if (!studentId || !electricityUnits || !electricityPrice || !roomFee || !sanitationFee || !dueDate || !description) {
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc');
+                return;
+            }
+            
+            // Calculate total amount
+            const totalAmount = (parseFloat(electricityUnits) * parseFloat(electricityPrice)) +
+                              parseFloat(roomFee) + parseFloat(sanitationFee) + 
+                              (parseFloat(additionalFee) || 0);
+            
+            // Create new invoice
+            const student = students.find(s => s.id == studentId);
+            const newInvoice = {
+                id: `INV-2023-${paymentRequests.length + 1}`,
+                studentId: parseInt(studentId),
+                electricityUnits: parseFloat(electricityUnits),
+                electricityPrice: parseFloat(electricityPrice),
+                roomFee: parseFloat(roomFee),
+                sanitationFee: parseFloat(sanitationFee),
+                additionalFee: parseFloat(additionalFee) || 0,
+                amount: Math.round(totalAmount),
+                dueDate: dueDate,
+                createdDate: new Date().toISOString().split('T')[0],
+                status: 'pending',
+                description: description
+            };
+            
+            paymentRequests.unshift(newInvoice);
+            
+            // Close modal and refresh table
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createInvoiceModal'));
+            modal.hide();
+            
+            loadPaymentRequests();
+            
+            // Reset form
+            document.getElementById('createInvoiceForm').reset();
+            document.getElementById('totalAmount').value = '';
+            
+            alert('Đã tạo yêu cầu thanh toán thành công!');
+        });
+        
+        // Handle filter form submission
+        document.getElementById('paymentFilterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const status = document.getElementById('statusFilter').value;
+            const search = document.getElementById('searchInput').value;
+            
+            loadPaymentRequests({ status, search });
+        });
+        
+        // Handle send reminder button
+        document.getElementById('sendReminderBtn').addEventListener('click', function() {
+            alert('Đã gửi nhắc nhở thanh toán đến sinh viên!');
+        });
+        
+        // Handle reject payment button
+        document.getElementById('rejectPaymentBtn').addEventListener('click', function() {
+            if (confirm('Bạn có chắc chắn muốn từ chối thanh toán này?')) {
+                alert('Đã từ chối thanh toán!');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Dashboard - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+
+            <!-- Content Row -->
+            <div class="row">
+                <!-- Tổng số sinh viên Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Sinh viên đang ở</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalSinhVien}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phòng trống Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Phòng trống</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${phongStats.CON_TRONG}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-door-open fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Đơn đăng ký Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Đơn đăng ký chờ duyệt</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${pendingRegistrations}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hóa đơn chưa thanh toán Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Hóa đơn chưa thanh toán</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${unpaidBills}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+                <!-- Thống kê phòng -->
+                <div class="col-xl-8 col-lg-7">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Thống kê phòng</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-bar">
+                                <canvas id="phongChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sự cố đang chờ xử lý -->
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Sự cố chờ xử lý</h6>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="small font-weight-bold">Số lượng: <span th:text="${pendingIssues}">0</span></h4>
+                            <a href="/admin/su-co" class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-arrow-right"></i>
+                                </span>
+                                <span class="text">Xem chi tiết</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page level custom scripts -->
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            // Biểu đồ thống kê phòng
+            var ctx = document.getElementById("phongChart");
+            var phongStats = /*[[${phongStats}]]*/ {};
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Còn trống", "Đã đủ", "Đang sửa chữa"],
+                    datasets: [{
+                        label: "Số lượng",
+                        backgroundColor: ["#1cc88a", "#4e73df", "#f6c23e"],
+                        data: [
+                            phongStats.CON_TRONG,
+                            phongStats.DA_DU,
+                            phongStats.DANG_SUA_CHUA
+                        ],
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html> 

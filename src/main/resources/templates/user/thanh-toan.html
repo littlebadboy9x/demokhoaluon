@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thanh toán Online - KTX Đại học Lâm nghiệp</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2E7D32;
+      --secondary-color: #8BC34A;
+    }
+
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .university-header {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .payment-container {
+      max-width: 850px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .info-header {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .total-amount {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #dc3545;
+    }
+
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .bank-select {
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="university-header py-3">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <div class="d-flex align-items-center">
+            <a href="index.html">
+                <img src="C:\Users\User\demoKLTN\demokhoaluan\src\main\resources\static\images\logo.png" alt="Logo" class="me-3" style="max-height: 60px; width: auto;">
+            </a>
+          <div>
+            <h1 class="h5 mb-0">Đại học Lâm nghiệp Việt Nam</h1>
+            <p class="mb-0 small">Hệ thống Quản lý Ký túc xá Sinh viên</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 text-end">
+        <a href="huong-dan.html" class="btn btn-outline-light me-2">Hướng dẫn</a>
+        <a href="login.html" class="btn btn-light">Đăng xuất</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="py-5">
+  <div class="container">
+    <div class="payment-container">
+      <h2 class="info-header">THANH TOÁN ONLINE</h2>
+
+      <!-- Thông tin sinh viên -->
+      <div class="mb-4">
+        <h5>Thông tin sinh viên</h5>
+        <div class="row">
+          <div class="col-md-6">Họ tên: <strong>Nguyễn Công Vân</strong></div>
+          <div class="col-md-6">Mã sinh viên: <strong>2174801040792</strong></div>
+          <div class="col-md-6">Ngày sinh: <strong>30/10/2003</strong></div>
+          <div class="col-md-6">Lớp: <strong>K66B_HTTT</strong></div>
+          <div class="col-md-6">Ngành: <strong>Hệ thống thông tin</strong></div>
+          <div class="col-md-6">Khóa: <strong>K66</strong></div>
+        </div>
+      </div>
+
+      <!-- Thông tin khoản cần thanh toán -->
+      <div class="mb-4">
+        <h5>Chi tiết khoản thanh toán</h5>
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>STT</th>
+              <th>Nội dung</th>
+              <th>Số tiền (VNĐ)</th>
+              <th>Ghi chú</th>
+              <th>Chọn</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Học phí Học kỳ 2024.2_2025.2 Đợt học 10</td>
+              <td class="total-amount">4.690.000</td>
+              <td>Tiền điện: 0</td>
+              <td><input type="checkbox" checked></td>
+            </tr>
+            <tr>
+              <th colspan="2">Tổng cộng</th>
+              <th class="total-amount">4.690.000</th>
+              <th colspan="2"></th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Ngân hàng & thanh toán -->
+      <div class="mb-4">
+        <label for="bankSelect" class="form-label">Chọn ngân hàng để thanh toán:</label>
+        <div class="d-flex align-items-center flex-wrap gap-3">
+          <select class="form-select bank-select" id="bankSelect">
+            <option selected disabled>Chọn ngân hàng</option>
+            <option value="vcb">Vietcombank</option>
+            <option value="tcb">Techcombank</option>
+            <option value="mb">MB Bank</option>
+          </select>
+          <button class="btn btn-outline-primary" onclick="thanhToan()">Thanh toán</button>
+        </div>
+      </div>
+
+      <!-- Kết quả thông báo -->
+      <div id="thongBao" class="mt-3 text-center"></div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4">
+  <div class="container text-center">
+    <p class="mb-0">&copy; 2025 Hệ thống Quản lý Ký túc xá Đại học Lâm nghiệp. Bảo lưu mọi quyền.</p>
+  </div>
+</footer>
+
+<!-- Script -->
+<script>
+  function thanhToan() {
+    const bank = document.getElementById("bankSelect").value;
+    const resultBox = document.getElementById("thongBao");
+
+    if (!bank) {
+      resultBox.innerHTML = `<div class="alert alert-warning">Vui lòng chọn ngân hàng trước khi thanh toán.</div>`;
+      return;
+    }
+
+    const bankName = {
+      vcb: "Vietcombank",
+      tcb: "Techcombank",
+      mb: "MB Bank"
+    }[bank];
+
+    resultBox.innerHTML = `
+      <div class="alert alert-success">
+        Đang xử lý thanh toán qua <strong>${bankName}</strong>...
+      </div>
+    `;
+
+    setTimeout(() => {
+      resultBox.innerHTML = `
+        <div class="alert alert-info">
+          Thanh toán thành công! Cảm ơn bạn đã sử dụng hệ thống.
+        </div>
+      `;
+    }, 2000);
+  }
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
