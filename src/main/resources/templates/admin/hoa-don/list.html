@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Quản lý Hóa đơn - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Quản lý Hóa đơn</h1>
+            <a href="/admin/hoa-don/add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tạo Hóa đơn
+            </a>
+        </div>
+
+        <!-- Search Box -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="search" placeholder="Tìm kiếm theo mã hóa đơn...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="trangThai">
+                            <option value="">-- Trạng thái --</option>
+                            <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
+                            <option value="DA_THANH_TOAN">Đã thanh toán</option>
+                            <option value="DA_HUY">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="month" class="form-control" name="thangNam" placeholder="Tháng/Năm">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Mã hóa đơn</th>
+                                <th>Phòng</th>
+                                <th>Tháng/Năm</th>
+                                <th>Tiền phòng</th>
+                                <th>Tiền điện</th>
+                                <th>Tiền nước</th>
+                                <th>Phí dịch vụ</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="hoaDon : ${hoaDonPage.content}">
+                                <td th:text="${hoaDon.maHoaDon}">HD001</td>
+                                <td th:text="${hoaDon.phong.tenPhong}">P101</td>
+                                <td th:text="${hoaDon.thang + '/' + hoaDon.nam}">01/2024</td>
+                                <td th:text="${#numbers.formatDecimal(hoaDon.tienPhong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500000</td>
+                                <td th:text="${#numbers.formatDecimal(hoaDon.tienDien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">200000</td>
+                                <td th:text="${#numbers.formatDecimal(hoaDon.tienNuoc, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100000</td>
+                                <td th:text="${#numbers.formatDecimal(hoaDon.phiDichVu, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">50000</td>
+                                <td th:text="${#numbers.formatDecimal(hoaDon.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">850000</td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (hoaDon.trangThai == 'CHUA_THANH_TOAN' ? 'bg-warning' : 
+                                        (hoaDon.trangThai == 'DA_THANH_TOAN' ? 'bg-success' : 'bg-secondary'))}"
+                                          th:text="${hoaDon.trangThai == 'CHUA_THANH_TOAN' ? 'Chưa thanh toán' : 
+                                                   (hoaDon.trangThai == 'DA_THANH_TOAN' ? 'Đã thanh toán' : 'Đã hủy')}">
+                                        Chưa thanh toán
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:if="${hoaDon.trangThai == 'CHUA_THANH_TOAN'}"
+                                           th:href="@{/admin/hoa-don/thanh-toan/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}" 
+                                           class="btn btn-sm btn-success" title="Thanh toán">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a th:href="@{/admin/hoa-don/edit/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}" 
+                                           class="btn btn-sm btn-primary" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a th:if="${hoaDon.trangThai == 'CHUA_THANH_TOAN'}"
+                                           th:href="@{/admin/hoa-don/huy/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}"
+                                           class="btn btn-sm btn-danger" title="Hủy"
+                                           onclick="return confirm('Bạn có chắc chắn muốn hủy hóa đơn này?')">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a th:href="@{/admin/hoa-don/delete/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}"
+                                           class="btn btn-sm btn-danger" title="Xóa"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${hoaDonPage.totalPages > 0}" class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/hoa-don(page=${currentPage - 1})}">
+                                    <span>&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, hoaDonPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/admin/hoa-don(page=${i})}" th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == hoaDonPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/hoa-don(page=${currentPage + 1})}">
+                                    <span>&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

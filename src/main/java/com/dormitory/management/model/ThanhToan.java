@@ -33,8 +33,20 @@ public class ThanhToan {
     @Column(name = "ghi_chu")
     private String ghiChu;
 
+    @Column(name = "ma_giao_dich_momo")
+    private String maGiaoDichMomo;
+
+    @Column(name = "trang_thai_momo")
+    private String trangThaiMomo;
+
+    @Column(name = "url_thanh_toan")
+    private String urlThanhToan;
+
+    @Column(name = "thoi_gian_het_han")
+    private Timestamp thoiGianHetHan;
+
     @ManyToOne
-    @JoinColumn(name = "id_hoa_don", nullable = false)
+    @JoinColumn(name = "ma_hoa_don", referencedColumnName = "ma_hoa_don", insertable = false, updatable = false)
     private HoaDon hoaDon;
 
     public enum PhuongThuc {

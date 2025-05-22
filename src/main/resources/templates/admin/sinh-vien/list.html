@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Quản lý Sinh viên - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Quản lý Sinh viên</h1>
+            <a href="/admin/sinh-vien/add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm Sinh viên
+            </a>
+        </div>
+
+        <!-- Search Box -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="search" placeholder="Tìm kiếm theo tên, mã SV, lớp...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Mã SV</th>
+                                <th>Họ tên</th>
+                                <th>Lớp</th>
+                                <th>Ngành</th>
+                                <th>Khoa</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="sv : ${sinhVienPage.content}">
+                                <td th:text="${sv.maSv}">SV001</td>
+                                <td th:text="${sv.hoTen}">Nguyễn Văn A</td>
+                                <td th:text="${sv.lop}">CNTT1</td>
+                                <td th:text="${sv.nganh}">Công nghệ thông tin</td>
+                                <td th:text="${sv.khoa}">CNTT</td>
+                                <td>
+                                    <span th:class="${'badge ' + (sv.trangThai == 'DANG_O' ? 'bg-success' : 'bg-secondary')}"
+                                          th:text="${sv.trangThai == 'DANG_O' ? 'Đang ở' : 'Đã rút'}">
+                                        Đang ở
+                                    </span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/sinh-vien/edit/{maSv}(maSv=${sv.maSv})}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/admin/sinh-vien/delete/{maSv}(maSv=${sv.maSv})}"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa sinh viên này?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${sinhVienPage.totalPages > 0}" class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/sinh-vien(page=${currentPage - 1})}">
+                                    <span>&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, sinhVienPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/admin/sinh-vien(page=${i})}" th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == sinhVienPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/sinh-vien(page=${currentPage + 1})}">
+                                    <span>&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

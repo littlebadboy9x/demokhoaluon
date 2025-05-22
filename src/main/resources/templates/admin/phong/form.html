@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title th:text="${phong.maPhong == null ? 'Thêm Phòng mới' : 'Cập nhật Phòng'} + ' - KTX Lâm Nghiệp'">Thêm/Sửa Phòng</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800" th:text="${phong.maPhong == null ? 'Thêm Phòng mới' : 'Cập nhật Phòng'}">
+                Thêm/Sửa Phòng
+            </h1>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/phong/save}" th:object="${phong}" method="post">
+                    <input type="hidden" th:field="*{maPhong}" th:if="${phong.maPhong != null}"/>
+                    
+                    <!-- Thông tin cơ bản -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin cơ bản</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="maPhong" class="form-label">Mã phòng <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="maPhong" th:field="*{maPhong}" required
+                                       th:readonly="${phong.maPhong != null}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="tenPhong" class="form-label">Tên phòng <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="tenPhong" th:field="*{tenPhong}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="loaiPhong" class="form-label">Loại phòng <span class="text-danger">*</span></label>
+                                <select class="form-select" id="loaiPhong" th:field="*{loaiPhong}" required>
+                                    <option value="">-- Chọn loại phòng --</option>
+                                    <option value="NAM">Nam</option>
+                                    <option value="NU">Nữ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="sucChua" class="form-label">Sức chứa <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="sucChua" th:field="*{sucChua}" required min="1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="giaPhong" class="form-label">Giá phòng (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="giaPhong" th:field="*{giaPhong}" required min="0" step="1000">
+                            </div>
+                            <div class="mb-3">
+                                <label for="trangThai" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="trangThai" th:field="*{trangThai}">
+                                    <option value="CON_TRONG">Còn trống</option>
+                                    <option value="DA_DU">Đã đủ</option>
+                                    <option value="DANG_SUA_CHUA">Đang sửa chữa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin thêm -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin thêm</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="moTa" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="moTa" th:field="*{moTa}" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="/admin/phong" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

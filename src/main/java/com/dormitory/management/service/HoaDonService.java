@@ -13,15 +13,19 @@ public interface HoaDonService {
     
     Page<HoaDon> findAll(Pageable pageable);
     
-    Optional<HoaDon> findById(Long id);
+    Optional<HoaDon> findById(String maHoaDon);
     
     HoaDon save(HoaDon hoaDon);
     
-    void delete(Long id);
+    void delete(String maHoaDon);
     
     long countByTrangThai(TrangThai trangThai);
     
     Page<HoaDon> findByTrangThaiOrderByNgayTaoDesc(TrangThai trangThai, Pageable pageable);
     
     Double tinhTongDoanhThuTheoThangNam(int thang, int nam);
+    
+    Page<HoaDon> search(String keyword, TrangThai trangThai, Integer thang, Integer nam, Pageable pageable);
+    
+    Double tinhTongDoanhThu(Integer thang, Integer nam);
 }

@@ -8,35 +8,54 @@ import java.util.Date;
 @Entity
 @Table(name = "su_co")
 public class SuCo {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @Column(name = "id_su_co")
+    private Long idSuCo;
+    
+    @ManyToOne
+    @JoinColumn(name = "ma_phong", nullable = false)
+    private Phong phong;
+    
     @Column(name = "tieu_de", nullable = false)
     private String tieuDe;
-
-    @Column(name = "mo_ta")
+    
+    @Column(name = "mo_ta", nullable = false, columnDefinition = "TEXT")
     private String moTa;
-
-    @Column(name = "ngay_bao_cao")
-    private Date ngayBaoCao;
-
-    @Column(name = "ngay_xu_ly")
-    private Date ngayXuLy;
-
-    @Column(name = "trang_thai")
+    
+    @Column(name = "muc_do", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MucDo mucDo = MucDo.BINH_THUONG;
+    
+    @Column(name = "trang_thai", nullable = false)
     @Enumerated(EnumType.STRING)
     private TrangThai trangThai = TrangThai.CHUA_XU_LY;
-
-    @ManyToOne
-    @JoinColumn(name = "ma_phong")
-    private Phong phong;
-
-    @ManyToOne
-    @JoinColumn(name = "ma_sv")
-    private SinhVien sinhVien;
-
+    
+    @Column(name = "ngay_bao_cao", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ngayBaoCao;
+    
+    @Column(name = "ngay_xu_ly")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ngayXuLy;
+    
+    @Column(name = "nguoi_xu_ly")
+    private String nguoiXuLy;
+    
+    @Column(name = "ghi_chu")
+    private String ghiChu;
+    
+    public enum MucDo {
+        BINH_THUONG,
+        QUAN_TRONG,
+        KHAN_CAP
+    }
+    
     public enum TrangThai {
-        CHUA_XU_LY, DANG_XU_LY, DA_XU_LY, HUY
+        CHUA_XU_LY,
+        DANG_XU_LY,
+        DA_XU_LY,
+        DA_HUY
     }
 } 

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Quản lý Phòng - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Quản lý Phòng</h1>
+            <a href="/admin/phong/add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm Phòng
+            </a>
+        </div>
+
+        <!-- Search Box -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="search" placeholder="Tìm kiếm theo mã phòng, tên phòng...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Mã phòng</th>
+                                <th>Tên phòng</th>
+                                <th>Loại phòng</th>
+                                <th>Sức chứa</th>
+                                <th>Số người hiện tại</th>
+                                <th>Giá phòng</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="phong : ${phongPage.content}">
+                                <td th:text="${phong.maPhong}">P001</td>
+                                <td th:text="${phong.tenPhong}">Phòng 101</td>
+                                <td th:text="${phong.loaiPhong}">Nam</td>
+                                <td th:text="${phong.sucChua}">4</td>
+                                <td th:text="${phong.soNguoiHienTai}">2</td>
+                                <td th:text="${#numbers.formatDecimal(phong.giaPhong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500000</td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (phong.trangThai == 'CON_TRONG' ? 'bg-success' : 
+                                        (phong.trangThai == 'DA_DU' ? 'bg-warning' : 'bg-danger'))}"
+                                          th:text="${phong.trangThai == 'CON_TRONG' ? 'Còn trống' : 
+                                                   (phong.trangThai == 'DA_DU' ? 'Đã đủ' : 'Đang sửa chữa')}">
+                                        Còn trống
+                                    </span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/phong/edit/{maPhong}(maPhong=${phong.maPhong})}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/admin/phong/delete/{maPhong}(maPhong=${phong.maPhong})}"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${phongPage.totalPages > 0}" class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/phong(page=${currentPage - 1})}">
+                                    <span>&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, phongPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/admin/phong(page=${i})}" th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == phongPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/phong(page=${currentPage + 1})}">
+                                    <span>&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

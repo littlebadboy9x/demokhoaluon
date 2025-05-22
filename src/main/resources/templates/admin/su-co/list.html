@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Quản lý Sự cố - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Quản lý Sự cố</h1>
+            <a href="/admin/su-co/add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm Sự cố
+            </a>
+        </div>
+
+        <!-- Search Box -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo tiêu đề, mô tả...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="trangThai">
+                            <option value="">-- Trạng thái --</option>
+                            <option value="CHUA_XU_LY">Chưa xử lý</option>
+                            <option value="DANG_XU_LY">Đang xử lý</option>
+                            <option value="DA_XU_LY">Đã xử lý</option>
+                            <option value="DA_HUY">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="mucDo">
+                            <option value="">-- Mức độ --</option>
+                            <option value="BINH_THUONG">Bình thường</option>
+                            <option value="QUAN_TRONG">Quan trọng</option>
+                            <option value="KHAN_CAP">Khẩn cấp</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="maPhong">
+                            <option value="">-- Chọn phòng --</option>
+                            <option th:each="phong : ${phongList}"
+                                    th:value="${phong.maPhong}"
+                                    th:text="${phong.tenPhong}">P101</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tiêu đề</th>
+                                <th>Phòng</th>
+                                <th>Mức độ</th>
+                                <th>Ngày báo cáo</th>
+                                <th>Ngày xử lý</th>
+                                <th>Người xử lý</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="suCo : ${suCoPage.content}">
+                                <td th:text="${suCo.idSuCo}">1</td>
+                                <td>
+                                    <span th:text="${suCo.tieuDe}">Hỏng bóng đèn</span>
+                                    <p class="small text-muted mb-0" th:text="${#strings.abbreviate(suCo.moTa, 100)}">Mô tả chi tiết...</p>
+                                </td>
+                                <td th:text="${suCo.phong.tenPhong}">P101</td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (suCo.mucDo == 'BINH_THUONG' ? 'bg-info' : 
+                                        (suCo.mucDo == 'QUAN_TRONG' ? 'bg-warning' : 'bg-danger'))}"
+                                          th:text="${suCo.mucDo == 'BINH_THUONG' ? 'Bình thường' : 
+                                                   (suCo.mucDo == 'QUAN_TRONG' ? 'Quan trọng' : 'Khẩn cấp')}">
+                                        Bình thường
+                                    </span>
+                                </td>
+                                <td th:text="${#dates.format(suCo.ngayBaoCao, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                                <td th:text="${suCo.ngayXuLy != null ? #dates.format(suCo.ngayXuLy, 'dd/MM/yyyy HH:mm') : ''}">02/01/2024 15:30</td>
+                                <td th:text="${suCo.nguoiXuLy}">Nguyễn Văn A</td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (suCo.trangThai == 'CHUA_XU_LY' ? 'bg-warning' : 
+                                        (suCo.trangThai == 'DANG_XU_LY' ? 'bg-info' : 
+                                        (suCo.trangThai == 'DA_XU_LY' ? 'bg-success' : 'bg-secondary')))}"
+                                          th:text="${suCo.trangThai == 'CHUA_XU_LY' ? 'Chưa xử lý' : 
+                                                   (suCo.trangThai == 'DANG_XU_LY' ? 'Đang xử lý' : 
+                                                   (suCo.trangThai == 'DA_XU_LY' ? 'Đã xử lý' : 'Đã hủy'))}">
+                                        Chưa xử lý
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <div th:if="${suCo.trangThai == 'CHUA_XU_LY'}">
+                                            <a th:href="@{/admin/su-co/xu-ly/{idSuCo}(idSuCo=${suCo.idSuCo})}" 
+                                               class="btn btn-sm btn-info" title="Xử lý">
+                                                <i class="fas fa-tools"></i>
+                                            </a>
+                                        </div>
+                                        <div th:if="${suCo.trangThai == 'DANG_XU_LY'}">
+                                            <a th:href="@{/admin/su-co/hoan-thanh/{idSuCo}(idSuCo=${suCo.idSuCo})}" 
+                                               class="btn btn-sm btn-success" title="Hoàn thành">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                        </div>
+                                        <a th:href="@{/admin/su-co/edit/{idSuCo}(idSuCo=${suCo.idSuCo})}" 
+                                           class="btn btn-sm btn-primary" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <div th:if="${suCo.trangThai != 'DA_XU_LY' && suCo.trangThai != 'DA_HUY'}">
+                                            <a th:href="@{/admin/su-co/huy/{idSuCo}(idSuCo=${suCo.idSuCo})}"
+                                               class="btn btn-sm btn-danger" title="Hủy"
+                                               onclick="return confirm('Bạn có chắc chắn muốn hủy sự cố này?')">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </div>
+                                        <a th:href="@{/admin/su-co/delete/{idSuCo}(idSuCo=${suCo.idSuCo})}"
+                                           class="btn btn-sm btn-danger" title="Xóa"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa sự cố này?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${suCoPage.totalPages > 0}" class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/su-co(page=${currentPage - 1})}">
+                                    <span>&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, suCoPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/admin/su-co(page=${i})}" th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == suCoPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/su-co(page=${currentPage + 1})}">
+                                    <span>&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

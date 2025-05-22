@@ -29,8 +29,8 @@ public class SuCoServiceImpl implements SuCoService {
     }
 
     @Override
-    public Optional<SuCo> findById(Long id) {
-        return suCoRepository.findById(id);
+    public Optional<SuCo> findById(Long maSuCo) {
+        return suCoRepository.findById(maSuCo);
     }
 
     @Override
@@ -39,8 +39,8 @@ public class SuCoServiceImpl implements SuCoService {
     }
 
     @Override
-    public void delete(Long id) {
-        suCoRepository.deleteById(id);
+    public void delete(Long maSuCo) {
+        suCoRepository.deleteById(maSuCo);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public Optional<HoaDon> findById(Long id) {
+    public Optional<HoaDon> findById(String id) {
         return hoaDonRepository.findById(id);
     }
 
@@ -39,7 +39,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String id) {
         hoaDonRepository.deleteById(id);
     }
 

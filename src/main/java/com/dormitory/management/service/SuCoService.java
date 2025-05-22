@@ -13,13 +13,17 @@ public interface SuCoService {
     
     Page<SuCo> findAll(Pageable pageable);
     
-    Optional<SuCo> findById(Long id);
+    Optional<SuCo> findById(Long idSuCo);
     
     SuCo save(SuCo suCo);
     
-    void delete(Long id);
+    void delete(Long idSuCo);
     
     long countByTrangThai(TrangThai trangThai);
     
     Page<SuCo> findByTrangThaiOrderByNgayBaoCaoDesc(TrangThai trangThai, Pageable pageable);
+    
+    Page<SuCo> search(String keyword, TrangThai trangThai, SuCo.MucDo mucDo, String maPhong, Pageable pageable);
+    
+    long countByMucDo(SuCo.MucDo mucDo);
 } 
