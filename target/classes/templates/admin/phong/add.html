@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Thêm Phòng mới - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Thêm Phòng mới</h1>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/phong/add}" th:object="${phong}" method="post">
+                    <!-- Thông tin cơ bản -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin cơ bản</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="maPhong" class="form-label">Mã phòng <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="maPhong" th:field="*{maPhong}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tenPhong" class="form-label">Tên phòng <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="tenPhong" th:field="*{tenPhong}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="loaiPhong" class="form-label">Loại phòng <span class="text-danger">*</span></label>
+                                <select class="form-select" id="loaiPhong" th:field="*{loaiPhong}" required>
+                                    <option value="">-- Chọn loại phòng --</option>
+                                    <option th:each="loai : ${loaiPhongValues}"
+                                            th:value="${loai}"
+                                            th:text="${loai == T(com.dormitory.management.model.Phong.LoaiPhong).NAM ? 'Nam' : 'Nữ'}">Nam</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sucChua" class="form-label">Sức chứa <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="sucChua" th:field="*{sucChua}" required min="1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="giaPhong" class="form-label">Giá phòng (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="giaPhong" th:field="*{giaPhong}" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="giaDien" class="form-label">Giá điện (VNĐ/kWh) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="giaDien" th:field="*{giaDien}" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phiVeSinh" class="form-label">Phí vệ sinh (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="phiVeSinh" th:field="*{phiVeSinh}" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="trangThai" class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                                <select class="form-select" id="trangThai" th:field="*{trangThai}" required>
+                                    <option value="">-- Chọn trạng thái --</option>
+                                    <option th:each="trangThaiOpt : ${trangThaiValues}"
+                                            th:value="${trangThaiOpt}"
+                                            th:text="${trangThaiOpt == T(com.dormitory.management.model.Phong.TrangThai).CON_TRONG ? 'Còn trống' :
+                                                     (trangThaiOpt == T(com.dormitory.management.model.Phong.TrangThai).DA_DU ? 'Đã đủ' : 'Đang sửa chữa')}">Còn trống</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="moTa" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="moTa" th:field="*{moTa}" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <a th:href="@{/admin/phong}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Thêm mới
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

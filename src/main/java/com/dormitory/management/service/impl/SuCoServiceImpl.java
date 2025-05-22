@@ -52,4 +52,23 @@ public class SuCoServiceImpl implements SuCoService {
     public Page<SuCo> findByTrangThaiOrderByNgayBaoCaoDesc(TrangThai trangThai, Pageable pageable) {
         return suCoRepository.findByTrangThaiOrderByNgayBaoCaoDesc(trangThai, pageable);
     }
+
+    @Override
+    public long countByMucDo(SuCo.MucDo mucDo) {
+        return suCoRepository.countByMucDo(mucDo);
+    }
+
+    @Override
+    public Page<SuCo> search(String keyword, TrangThai trangThai, SuCo.MucDo mucDo, String maPhong, Pageable pageable) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return suCoRepository.findByTieuDeContainingIgnoreCaseOrMoTaContainingIgnoreCase(keyword, keyword, pageable);
+        } else if (trangThai != null) {
+            return suCoRepository.findByTrangThai(trangThai, pageable);
+        } else if (mucDo != null) {
+            return suCoRepository.findByMucDo(mucDo, pageable);
+        } else if (maPhong != null && !maPhong.trim().isEmpty()) {
+            return suCoRepository.findByPhong_MaPhong(maPhong, pageable);
+        }
+        return suCoRepository.findAll(pageable);
+    }
 } 

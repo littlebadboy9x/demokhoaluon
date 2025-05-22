@@ -2,6 +2,7 @@ package com.dormitory.management.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
@@ -19,6 +20,7 @@ public class SinhVien {
     private String hoTen;
 
     @Column(name = "ngay_sinh")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date ngaySinh;
 
     @Column(name = "gioi_tinh", nullable = false)
@@ -47,6 +49,7 @@ public class SinhVien {
     private String khoa;
 
     @Column(name = "ngay_dang_ky")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date ngayDangKy;
 
     @Column(name = "trang_thai")
@@ -63,5 +66,20 @@ public class SinhVien {
 
     public enum TrangThai {
         DANG_O, DA_RUT, BI_DINH_CHI
+    }
+
+    public String getTrangThaiDisplay() {
+        if (trangThai == null) return "";
+        
+        switch (trangThai) {
+            case DANG_O:
+                return "Đang ở";
+            case DA_RUT:
+                return "Đã rút";
+            case BI_DINH_CHI:
+                return "Bị đình chỉ";
+            default:
+                return "";
+        }
     }
 }

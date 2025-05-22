@@ -50,12 +50,15 @@ CREATE TABLE quan_tri_vien (
 -- Bảng phòng
 CREATE TABLE phong (
     ma_phong VARCHAR(20) PRIMARY KEY,
+    ten_phong VARCHAR(255),
+    loai_phong ENUM('NAM', 'NU') NOT NULL,
     suc_chua INT NOT NULL,
     so_nguoi_hien_tai INT DEFAULT 0,
     trang_thai ENUM('CON_TRONG', 'DA_DU', 'DANG_SUA_CHUA') DEFAULT 'CON_TRONG',
     gia_phong DOUBLE NOT NULL,
     gia_dien DOUBLE NOT NULL,
     phi_ve_sinh DOUBLE NOT NULL,
+    mo_ta TEXT,
     ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -68,6 +71,7 @@ CREATE TABLE dang_ky_phong (
     trang_thai ENUM('CHO_DUYET', 'DA_DUYET', 'TU_CHOI') DEFAULT 'CHO_DUYET',
     nguoi_duyet VARCHAR(50),
     ngay_duyet TIMESTAMP,
+    ghi_chu VARCHAR(255),
     FOREIGN KEY (ma_sv) REFERENCES sinh_vien(ma_sv),
     FOREIGN KEY (ma_phong) REFERENCES phong(ma_phong)
 );
@@ -92,14 +96,15 @@ CREATE TABLE hoa_don (
     thang INT NOT NULL,
     nam INT NOT NULL,
     tien_phong DOUBLE NOT NULL,
-    dien_tieu_thu DOUBLE,
     tien_dien DOUBLE,
-    phi_ve_sinh DOUBLE,
-    phi_khac DOUBLE,
+    tien_nuoc DOUBLE,
+    phi_dich_vu DOUBLE,
     tong_tien DOUBLE NOT NULL,
     han_thanh_toan DATE NOT NULL,
-    trang_thai ENUM('CHO_THANH_TOAN', 'DA_THANH_TOAN', 'QUA_HAN') DEFAULT 'CHO_THANH_TOAN',
+    trang_thai ENUM('CHUA_THANH_TOAN', 'DA_THANH_TOAN', 'QUA_HAN') DEFAULT 'CHUA_THANH_TOAN',
     ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ngay_thanh_toan TIMESTAMP NULL,
+    ghi_chu VARCHAR(255),
     FOREIGN KEY (ma_sv) REFERENCES sinh_vien(ma_sv),
     FOREIGN KEY (ma_phong) REFERENCES phong(ma_phong)
 );

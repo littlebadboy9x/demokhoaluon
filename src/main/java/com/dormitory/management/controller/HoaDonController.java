@@ -21,7 +21,7 @@ public class HoaDonController {
     }
 
     @GetMapping("/{maHoaDon}")
-    public HoaDon getHoaDon(@PathVariable Long maHoaDon) {
+    public HoaDon getHoaDon(@PathVariable String maHoaDon) {
         return hoaDonService.findById(maHoaDon)
                 .orElseThrow(() -> new ResourceNotFoundException("Hóa đơn không tồn tại với mã: " + maHoaDon));
     }
@@ -32,7 +32,7 @@ public class HoaDonController {
     }
 
     @DeleteMapping("/{maHoaDon}")
-    public void deleteHoaDon(@PathVariable Long maHoaDon) {
+    public void deleteHoaDon(@PathVariable String maHoaDon) {
         if (!hoaDonService.findById(maHoaDon).isPresent()) {
             throw new ResourceNotFoundException("Hóa đơn không tồn tại với mã: " + maHoaDon);
         }

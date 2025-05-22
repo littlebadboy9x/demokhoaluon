@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Tạo Hóa đơn mới - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tạo Hóa đơn mới</h1>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/hoa-don/create}" th:object="${hoaDon}" method="post">
+                    <!-- Thông tin cơ bản -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin cơ bản</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="sinhVien" class="form-label">Sinh viên <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sinhVien" th:field="*{sinhVien}" required>
+                                    <option value="">-- Chọn sinh viên --</option>
+                                    <option th:each="sv : ${sinhVienList}"
+                                            th:value="${sv.maSv}"
+                                            th:text="${sv.hoTen + ' (' + sv.maSv + ')'}">Nguyễn Văn A (SV001)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phong" class="form-label">Phòng <span class="text-danger">*</span></label>
+                                <select class="form-select" id="phong" th:field="*{phong}" required>
+                                    <option value="">-- Chọn phòng --</option>
+                                    <option th:each="p : ${phongList}"
+                                            th:value="${p.maPhong}"
+                                            th:text="${p.tenPhong}">P101</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="thang" class="form-label">Tháng <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="thang" th:field="*{thang}" required min="1" max="12">
+                            </div>
+                            <div class="mb-3">
+                                <label for="nam" class="form-label">Năm <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="nam" th:field="*{nam}" required min="2024">
+                            </div>
+                            <div class="mb-3">
+                                <label for="hanThanhToan" class="form-label">Hạn thanh toán <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="hanThanhToan" 
+                                    th:field="*{hanThanhToan}"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin chi phí -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin chi phí</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tienPhong" class="form-label">Tiền phòng <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="tienPhong" th:field="*{tienPhong}" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="tienDien" class="form-label">Tiền điện <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="tienDien" th:field="*{tienDien}" required min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tienNuoc" class="form-label">Tiền nước <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="tienNuoc" th:field="*{tienNuoc}" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phiDichVu" class="form-label">Phí dịch vụ <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="phiDichVu" th:field="*{phiDichVu}" required min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ghi chú -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="ghiChu" class="form-label">Ghi chú</label>
+                                <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="/admin/hoa-don" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

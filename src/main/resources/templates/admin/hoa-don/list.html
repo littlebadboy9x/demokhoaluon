@@ -27,7 +27,7 @@
                             <option value="">-- Trạng thái --</option>
                             <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
                             <option value="DA_THANH_TOAN">Đã thanh toán</option>
-                            <option value="DA_HUY">Đã hủy</option>
+                            <option value="QUA_HAN">Quá hạn</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -64,7 +64,7 @@
                         <tbody>
                             <tr th:each="hoaDon : ${hoaDonPage.content}">
                                 <td th:text="${hoaDon.maHoaDon}">HD001</td>
-                                <td th:text="${hoaDon.phong.tenPhong}">P101</td>
+                                <td th:text="${hoaDon.phong.maPhong}">P101</td>
                                 <td th:text="${hoaDon.thang + '/' + hoaDon.nam}">01/2024</td>
                                 <td th:text="${#numbers.formatDecimal(hoaDon.tienPhong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500000</td>
                                 <td th:text="${#numbers.formatDecimal(hoaDon.tienDien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">200000</td>
@@ -73,34 +73,29 @@
                                 <td th:text="${#numbers.formatDecimal(hoaDon.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">850000</td>
                                 <td>
                                     <span th:class="${'badge ' + 
-                                        (hoaDon.trangThai == 'CHUA_THANH_TOAN' ? 'bg-warning' : 
-                                        (hoaDon.trangThai == 'DA_THANH_TOAN' ? 'bg-success' : 'bg-secondary'))}"
-                                          th:text="${hoaDon.trangThai == 'CHUA_THANH_TOAN' ? 'Chưa thanh toán' : 
-                                                   (hoaDon.trangThai == 'DA_THANH_TOAN' ? 'Đã thanh toán' : 'Đã hủy')}">
-                                        Chưa thanh toán
+                                            (#strings.equals(hoaDon.trangThai, 'CHUA_THANH_TOAN') ? 'bg-warning text-dark' : 
+                                            (#strings.equals(hoaDon.trangThai, 'DA_THANH_TOAN') ? 'bg-success' : 'bg-danger'))}"
+                                          th:text="${#strings.equals(hoaDon.trangThai, 'CHUA_THANH_TOAN') ? 'Chưa thanh toán' : 
+                                                   (#strings.equals(hoaDon.trangThai, 'DA_THANH_TOAN') ? 'Đã thanh toán' : 'Quá hạn')}">
                                     </span>
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a th:if="${hoaDon.trangThai == 'CHUA_THANH_TOAN'}"
+                                        <a th:if="${#strings.equals(hoaDon.trangThai, 'CHUA_THANH_TOAN')}"
                                            th:href="@{/admin/hoa-don/thanh-toan/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}" 
                                            class="btn btn-sm btn-success" title="Thanh toán">
                                             <i class="fas fa-check"></i>
                                         </a>
-                                        <a th:href="@{/admin/hoa-don/edit/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}" 
+                                        <a th:if="${!#strings.equals(hoaDon.trangThai, 'DA_THANH_TOAN')}"
+                                           th:href="@{/admin/hoa-don/edit/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}" 
                                            class="btn btn-sm btn-primary" title="Sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a th:if="${hoaDon.trangThai == 'CHUA_THANH_TOAN'}"
-                                           th:href="@{/admin/hoa-don/huy/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}"
-                                           class="btn btn-sm btn-danger" title="Hủy"
-                                           onclick="return confirm('Bạn có chắc chắn muốn hủy hóa đơn này?')">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a th:href="@{/admin/hoa-don/delete/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}"
-                                           class="btn btn-sm btn-danger" title="Xóa"
-                                           onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
-                                            <i class="fas fa-trash"></i>
+                                        <a th:if="${#strings.equals(hoaDon.trangThai, 'CHUA_THANH_TOAN')}"
+                                           th:href="@{/admin/hoa-don/qua-han/{maHoaDon}(maHoaDon=${hoaDon.maHoaDon})}"
+                                           class="btn btn-sm btn-danger" title="Đánh dấu quá hạn"
+                                           onclick="return confirm('Bạn có chắc chắn muốn đánh dấu hóa đơn này là quá hạn?')">
+                                            <i class="fas fa-clock"></i>
                                         </a>
                                     </div>
                                 </td>

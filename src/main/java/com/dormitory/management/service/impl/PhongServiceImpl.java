@@ -2,6 +2,7 @@ package com.dormitory.management.service.impl;
 
 import com.dormitory.management.model.Phong;
 import com.dormitory.management.model.Phong.TrangThai;
+import com.dormitory.management.model.Phong.LoaiPhong;
 import com.dormitory.management.repository.PhongRepository;
 import com.dormitory.management.service.PhongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,16 @@ public class PhongServiceImpl implements PhongService {
     }
 
     @Override
+    public long count() {
+        return phongRepository.count();
+    }
+
+    @Override
+    public List<Phong> findPhongTrong() {
+        return phongRepository.findByTrangThai(TrangThai.CON_TRONG);
+    }
+
+    @Override
     public long countByTrangThai(TrangThai trangThai) {
         return phongRepository.countByTrangThai(trangThai);
     }
@@ -56,5 +67,15 @@ public class PhongServiceImpl implements PhongService {
     @Override
     public List<Phong> findByTrangThai(TrangThai trangThai) {
         return phongRepository.findByTrangThai(trangThai);
+    }
+
+    @Override
+    public Page<Phong> search(String search, LoaiPhong loaiPhong, TrangThai trangThai, Pageable pageable) {
+        return phongRepository.search(
+            search != null && !search.trim().isEmpty() ? search.trim() : null,
+            loaiPhong,
+            trangThai,
+            pageable
+        );
     }
 } 

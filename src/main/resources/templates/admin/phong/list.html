@@ -19,8 +19,28 @@
         <div class="card shadow mb-4">
             <div class="card-body">
                 <form method="get" class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="search" placeholder="Tìm kiếm theo mã phòng, tên phòng...">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="search" th:value="${search}" 
+                               placeholder="Tìm kiếm theo mã phòng, tên phòng...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="loaiPhong">
+                            <option value="">-- Loại phòng --</option>
+                            <option th:each="loai : ${loaiPhongValues}"
+                                    th:value="${loai}"
+                                    th:text="${loai == T(com.dormitory.management.model.Phong.LoaiPhong).NAM ? 'Nam' : 'Nữ'}"
+                                    th:selected="${loai == loaiPhong}">Nam</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="trangThai">
+                            <option value="">-- Trạng thái --</option>
+                            <option th:each="trangThaiOpt : ${trangThaiValues}"
+                                    th:value="${trangThaiOpt}"
+                                    th:text="${trangThaiOpt == T(com.dormitory.management.model.Phong.TrangThai).CON_TRONG ? 'Còn trống' :
+                                             (trangThaiOpt == T(com.dormitory.management.model.Phong.TrangThai).DA_DU ? 'Đã đủ' : 'Đang sửa chữa')}"
+                                    th:selected="${trangThaiOpt == trangThai}">Còn trống</option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">
@@ -50,31 +70,32 @@
                         </thead>
                         <tbody>
                             <tr th:each="phong : ${phongPage.content}">
-                                <td th:text="${phong.maPhong}">P001</td>
+                                <td th:text="${phong.maPhong}">P101</td>
                                 <td th:text="${phong.tenPhong}">Phòng 101</td>
-                                <td th:text="${phong.loaiPhong}">Nam</td>
+                                <td th:text="${phong.loaiPhongDisplay}">Nam</td>
                                 <td th:text="${phong.sucChua}">4</td>
                                 <td th:text="${phong.soNguoiHienTai}">2</td>
-                                <td th:text="${#numbers.formatDecimal(phong.giaPhong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500000</td>
+                                <td th:text="${#numbers.formatDecimal(phong.giaPhong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">1,500,000 VNĐ</td>
                                 <td>
                                     <span th:class="${'badge ' + 
-                                        (phong.trangThai == 'CON_TRONG' ? 'bg-success' : 
-                                        (phong.trangThai == 'DA_DU' ? 'bg-warning' : 'bg-danger'))}"
-                                          th:text="${phong.trangThai == 'CON_TRONG' ? 'Còn trống' : 
-                                                   (phong.trangThai == 'DA_DU' ? 'Đã đủ' : 'Đang sửa chữa')}">
+                                        (phong.trangThai == T(com.dormitory.management.model.Phong.TrangThai).CON_TRONG ? 'bg-success' : 
+                                        (phong.trangThai == T(com.dormitory.management.model.Phong.TrangThai).DA_DU ? 'bg-primary' : 'bg-warning'))}"
+                                          th:text="${phong.trangThaiDisplay}">
                                         Còn trống
                                     </span>
                                 </td>
                                 <td>
-                                    <a th:href="@{/admin/phong/edit/{maPhong}(maPhong=${phong.maPhong})}" 
-                                       class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a th:href="@{/admin/phong/delete/{maPhong}(maPhong=${phong.maPhong})}"
-                                       class="btn btn-sm btn-danger"
-                                       onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    <div class="btn-group">
+                                        <a th:href="@{/admin/phong/edit/{maPhong}(maPhong=${phong.maPhong})}" 
+                                           class="btn btn-sm btn-primary" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a th:href="@{/admin/phong/delete/{maPhong}(maPhong=${phong.maPhong})}" 
+                                           class="btn btn-sm btn-danger" title="Xóa"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -86,18 +107,23 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                                <a class="page-link" th:href="@{/admin/phong(page=${currentPage - 1})}">
-                                    <span>&laquo;</span>
-                                </a>
+                                <a class="page-link" th:href="@{/admin/phong(page=${currentPage - 1},
+                                    search=${search},
+                                    loaiPhong=${loaiPhong},
+                                    trangThai=${trangThai})}">&laquo;</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, phongPage.totalPages - 1)}"
                                 th:classappend="${currentPage == i ? 'active' : ''}">
-                                <a class="page-link" th:href="@{/admin/phong(page=${i})}" th:text="${i + 1}">1</a>
+                                <a class="page-link" th:href="@{/admin/phong(page=${i},
+                                    search=${search},
+                                    loaiPhong=${loaiPhong},
+                                    trangThai=${trangThai})}" th:text="${i + 1}">1</a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == phongPage.totalPages - 1 ? 'disabled' : ''}">
-                                <a class="page-link" th:href="@{/admin/phong(page=${currentPage + 1})}">
-                                    <span>&raquo;</span>
-                                </a>
+                                <a class="page-link" th:href="@{/admin/phong(page=${currentPage + 1},
+                                    search=${search},
+                                    loaiPhong=${loaiPhong},
+                                    trangThai=${trangThai})}">&raquo;</a>
                             </li>
                         </ul>
                     </nav>

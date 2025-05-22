@@ -2,7 +2,6 @@ package com.dormitory.management.dto;
 
 import lombok.Data;
 import java.util.Date;
-import com.dormitory.management.model.HoaDon.TrangThai;
 
 @Data
 public class HoaDonDTO {
@@ -17,6 +16,6 @@ public class HoaDonDTO {
     private Double tongTien;
     private Date ngayTao;
     private Date ngayThanhToan;
-    private TrangThai trangThai;
+    private String trangThai;
     private String ghiChu;
 }

@@ -28,7 +28,7 @@ public class ThongKeService {
 
     public Double tinhDoanhThuNamHienTai() {
         int namHienTai = LocalDate.now().getYear();
-        return hoaDonRepository.tinhTongDoanhThuTheoNam(namHienTai, TrangThai.DA_THANH_TOAN);
+        return hoaDonRepository.tinhTongDoanhThu(null, namHienTai);
     }
 
     public List<Map<String, Object>> thongKeDoanhThu6ThangGanNhat() {

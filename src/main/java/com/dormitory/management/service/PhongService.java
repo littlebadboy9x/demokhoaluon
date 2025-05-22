@@ -2,6 +2,7 @@ package com.dormitory.management.service;
 
 import com.dormitory.management.model.Phong;
 import com.dormitory.management.model.Phong.TrangThai;
+import com.dormitory.management.model.Phong.LoaiPhong;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,20 +20,26 @@ public interface PhongService {
     
     void delete(String maPhong);
     
+    long count();
+    
+    List<Phong> findPhongTrong();
+    
     long countByTrangThai(TrangThai trangThai);
     
     Page<Phong> findByTrangThaiOrderByNgayTaoDesc(TrangThai trangThai, Pageable pageable);
     
     List<Phong> findByTrangThai(TrangThai trangThai);
-
+    
+    Page<Phong> search(String search, LoaiPhong loaiPhong, TrangThai trangThai, Pageable pageable);
+    
     default long demTongSoPhong() {
-        return findAll().size();
+        return count();
     }
-
+    
     default long demSoPhongConTrong() {
         return countByTrangThai(TrangThai.CON_TRONG);
     }
-
+    
     default long demSoPhongDangSuaChua() {
         return countByTrangThai(TrangThai.DANG_SUA_CHUA);
     }

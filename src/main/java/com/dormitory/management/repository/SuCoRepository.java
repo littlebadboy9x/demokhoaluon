@@ -21,4 +21,6 @@ public interface SuCoRepository extends JpaRepository<SuCo, Long> {
     long countByTrangThai(SuCo.TrangThai trangThai);
     
     long countByMucDo(SuCo.MucDo mucDo);
+
+    Page<SuCo> findByTrangThaiOrderByNgayBaoCaoDesc(SuCo.TrangThai trangThai, Pageable pageable);
 } 

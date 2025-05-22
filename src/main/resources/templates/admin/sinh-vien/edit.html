@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Cập nhật Sinh viên - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Cập nhật Sinh viên</h1>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/sinh-vien/edit}" method="post" th:object="${sinhVien}">
+                    <input type="hidden" th:field="*{maSv}"/>
+                    <input type="hidden" th:field="*{tenDangNhap}"/>
+                    <input type="hidden" th:field="*{ngayDangKy}"/>
+                    
+                    <!-- Thông tin cơ bản -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin cơ bản</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Mã sinh viên</label>
+                                <input type="text" class="form-control" th:value="*{maSv}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="hoTen" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="hoTen" th:field="*{hoTen}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ngaySinh" class="form-label">Ngày sinh</label>
+                                <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="gioiTinh" class="form-label">Giới tính <span class="text-danger">*</span></label>
+                                <select class="form-select" id="gioiTinh" th:field="*{gioiTinh}" required>
+                                    <option value="NAM">Nam</option>
+                                    <option value="NU">Nữ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cccd" class="form-label">CCCD</label>
+                                <input type="text" class="form-control" id="cccd" th:field="*{cccd}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="soDienThoai" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="soDienThoai" th:field="*{soDienThoai}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="diaChi" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" id="diaChi" th:field="*{diaChi}" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin học tập -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin học tập</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="lop" class="form-label">Lớp <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lop" th:field="*{lop}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="nganh" class="form-label">Ngành <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nganh" th:field="*{nganh}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="khoa" class="form-label">Khoa <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="khoa" th:field="*{khoa}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin trạng thái -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">Thông tin trạng thái</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" th:value="*{tenDangNhap}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="trangThai" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="trangThai" th:field="*{trangThai}">
+                                    <option value="DANG_O">Đang ở</option>
+                                    <option value="DA_RUT">Đã rút</option>
+                                    <option value="BI_DINH_CHI">Bị đình chỉ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="/admin/sinh-vien" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Cập nhật
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

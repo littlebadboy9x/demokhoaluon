@@ -52,4 +52,9 @@ public class SinhVienServiceImpl implements SinhVienService {
     public Page<SinhVien> findByTrangThaiOrderByNgayDangKyDesc(TrangThai trangThai, Pageable pageable) {
         return sinhVienRepository.findByTrangThaiOrderByNgayDangKyDesc(trangThai, pageable);
     }
+
+    @Override
+    public long count() {
+        return sinhVienRepository.count();
+    }
 } 

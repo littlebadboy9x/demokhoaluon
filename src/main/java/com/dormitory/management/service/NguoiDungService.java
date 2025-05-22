@@ -22,6 +22,10 @@ public class NguoiDungService {
         return nguoiDungRepository.findById(tenDangNhap);
     }
 
+    public boolean existsByTenDangNhap(String tenDangNhap) {
+        return nguoiDungRepository.existsById(tenDangNhap);
+    }
+
     public NguoiDung save(NguoiDung nguoiDung) {
         return nguoiDungRepository.save(nguoiDung);
     }

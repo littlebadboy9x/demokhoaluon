@@ -55,8 +55,10 @@
                                 <td th:text="${sv.nganh}">Công nghệ thông tin</td>
                                 <td th:text="${sv.khoa}">CNTT</td>
                                 <td>
-                                    <span th:class="${'badge ' + (sv.trangThai == 'DANG_O' ? 'bg-success' : 'bg-secondary')}"
-                                          th:text="${sv.trangThai == 'DANG_O' ? 'Đang ở' : 'Đã rút'}">
+                                    <span th:class="${'badge ' + 
+                                        (sv.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DANG_O ? 'bg-success' : 
+                                        (sv.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DA_RUT ? 'bg-secondary' : 'bg-danger'))}"
+                                          th:text="${sv.trangThaiDisplay}">
                                         Đang ở
                                     </span>
                                 </td>

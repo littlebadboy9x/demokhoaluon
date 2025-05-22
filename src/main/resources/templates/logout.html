@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng xuất - KTX Lâm Nghiệp</title>
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mt-5">
+                <h2>Đang đăng xuất...</h2>
+                <p>Vui lòng đợi trong giây lát.</p>
+                <form id="logoutForm" th:action="@{/logout}" method="post">
+                    <!-- CSRF token sẽ được Thymeleaf tự động thêm vào -->
+                </form>
+                <script>
+                    document.getElementById('logoutForm').submit();
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

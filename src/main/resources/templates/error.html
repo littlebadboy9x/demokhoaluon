@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error - KTX Lâm Nghiệp</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="display-1 text-danger">Oops!</h1>
+                        <h2 class="card-title" th:text="${status}">500</h2>
+                        <p class="card-text" th:text="${error}">Internal Server Error</p>
+                        <p class="card-text text-muted" th:text="${message}">Something went wrong</p>
+                        <hr>
+                        <a href="/admin" class="btn btn-primary">Quay về trang chủ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

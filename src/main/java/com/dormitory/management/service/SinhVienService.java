@@ -23,7 +23,9 @@ public interface SinhVienService {
     
     Page<SinhVien> findByTrangThaiOrderByNgayDangKyDesc(TrangThai trangThai, Pageable pageable);
 
+    long count();
+
     default long demTongSoSinhVien() {
-        return findAll().size();
+        return count();
     }
 }
