@@ -1,7 +1,7 @@
 package com.dormitory.management.controller;
 
-import com.dormitory.management.model.SinhVien;
-import com.dormitory.management.service.SinhVienService;
+import com.dormitory.management.model.NguoiDung;
+import com.dormitory.management.service.NguoiDungService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class HomeController {
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private NguoiDungService nguoiDungService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -28,46 +28,35 @@ public class HomeController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-        model.addAttribute("sinhVien", new SinhVien());
+        model.addAttribute("nguoiDung", new NguoiDung());
         return "auth/register";
     }
 
     @PostMapping("/register")
-    public String registerSinhVien(@ModelAttribute SinhVien sinhVien,
-                                 BindingResult result,
-                                 RedirectAttributes redirectAttributes) {
+    public String register(@ModelAttribute NguoiDung nguoiDung,
+                         @ModelAttribute("matKhau") String matKhau,
+                         BindingResult result,
+                         RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "auth/register";
         }
 
         try {
             // Kiểm tra trùng lặp
-            if (sinhVienService.existsByTenDangNhap(sinhVien.getTenDangNhap())) {
+            if (nguoiDungService.existsByTenDangNhap(nguoiDung.getTenDangNhap())) {
                 redirectAttributes.addFlashAttribute("error", "Tên đăng nhập đã tồn tại!");
                 return "redirect:/register";
             }
-            if (sinhVienService.existsByEmail(sinhVien.getEmail())) {
-                redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng!");
-                return "redirect:/register";
-            }
-            if (sinhVienService.existsByMaSv(sinhVien.getMaSv())) {
-                redirectAttributes.addFlashAttribute("error", "Mã sinh viên đã tồn tại!");
-                return "redirect:/register";
-            }
 
-            // Mã hóa mật khẩu
-            sinhVien.setMatKhau(passwordEncoder.encode(sinhVien.getMatKhau()));
+            // Thiết lập thông tin người dùng
+            nguoiDung.setMatKhau(passwordEncoder.encode(matKhau));
+            nguoiDung.setLoaiNguoiDung(NguoiDung.LoaiNguoiDung.SINH_VIEN);
+            nguoiDung.setTrangThai(true);
             
-            // Thiết lập vai trò mặc định là SINH_VIEN
-            sinhVien.setVaiTro("SINH_VIEN");
-            
-            // Thiết lập trạng thái hoạt động
-            sinhVien.setTrangThai(SinhVien.TrangThai.HOAT_DONG);
+            // Lưu người dùng
+            nguoiDungService.save(nguoiDung);
 
-            // Lưu sinh viên
-            sinhVienService.save(sinhVien);
-
-            redirectAttributes.addFlashAttribute("success", "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+            redirectAttributes.addFlashAttribute("success", "Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục đăng ký thông tin sinh viên.");
             return "redirect:/login";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());

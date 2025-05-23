@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - KTX Lâm Nghiệp">KTX Lâm Nghiệp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #f8f9fa;
+        }
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .nav-link {
+            color: #333;
+            padding: .5rem 1rem;
+            border-radius: .25rem;
+            margin: .25rem 1rem;
+        }
+        .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        main {
+            padding-top: 48px;
+        }
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            padding: 3px 6px;
+            border-radius: 50%;
+            background: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/sinh-vien/dashboard">
+                <i class="fas fa-school me-2"></i>KTX Lâm Nghiệp
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span th:if="${unreadNotifications > 0}" class="notification-badge" 
+                                  th:text="${unreadNotifications}"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                            <li th:each="notification : ${notifications}">
+                                <a class="dropdown-item" href="#" th:text="${notification.noiDung}"></a>
+                            </li>
+                            <li th:if="${#lists.isEmpty(notifications)}">
+                                <span class="dropdown-item">Không có thông báo mới</span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-2"></i>
+                            <span th:text="${#authentication.name}"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/sinh-vien/thong-tin">
+                                <i class="fas fa-id-card me-2"></i>Thông tin cá nhân</a></li>
+                            <li><a class="dropdown-item" href="/sinh-vien/doi-mat-khau">
+                                <i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="dropdown-item">
+                                    <button type="submit" class="btn btn-link text-danger p-0">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPath == '/sinh-vien/dashboard' ? 'active' : ''}" 
+                               href="/sinh-vien/dashboard">
+                                <i class="fas fa-home me-2"></i>
+                                Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPath == '/sinh-vien/thong-tin-phong' ? 'active' : ''}" 
+                               href="/sinh-vien/thong-tin-phong">
+                                <i class="fas fa-bed me-2"></i>
+                                Thông tin phòng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPath == '/sinh-vien/danh-sach-phong' ? 'active' : ''}" 
+                               href="/sinh-vien/danh-sach-phong">
+                                <i class="fas fa-list me-2"></i>
+                                Danh sách phòng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPath == '/sinh-vien/hoa-don' ? 'active' : ''}" 
+                               href="/sinh-vien/hoa-don">
+                                <i class="fas fa-file-invoice-dollar me-2"></i>
+                                Hóa đơn
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPath == '/sinh-vien/su-co' ? 'active' : ''}" 
+                               href="/sinh-vien/su-co">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Báo cáo sự cố
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPath == '/sinh-vien/thong-bao' ? 'active' : ''}" 
+                               href="/sinh-vien/thong-bao">
+                                <i class="fas fa-bell me-2"></i>
+                                Thông báo
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div layout:fragment="content">
+                    <!-- Content will be injected here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <th:block layout:fragment="scripts">
+        <!-- Additional scripts will be injected here -->
+    </th:block>
+</body>
+</html> 

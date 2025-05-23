@@ -94,7 +94,7 @@ INSERT INTO kiem_tra_phong (ma_phong, ngay_kiem_tra, nguoi_kiem_tra, danh_gia, n
 ('P101', '2024-05-01', 'admin', 'TOT', 'Kiểm tra định kỳ tháng 5', 'Phòng sạch sẽ, ngăn nắp'),
 ('P201', '2024-05-01', 'admin', 'KHA', 'Kiểm tra định kỳ tháng 5', 'Cần dọn dẹp thêm');
 
---Thêm dữ lệu
+
 INSERT INTO nguoi_dung (ten_dang_nhap, mat_khau, loai_nguoi_dung, trang_thai) VALUES
 ('sv007', '$2a$12$kgdEsi9NRMVl5jzoxz5Nt.U85irGvVnKEqGUWxTpXmfQNqaokzM5O', 'SINH_VIEN', true),
 ('sv008', '$2a$12$kgdEsi9NRMVl5jzoxz5Nt.U85irGvVnKEqGUWxTpXmfQNqaokzM5O', 'SINH_VIEN', true),

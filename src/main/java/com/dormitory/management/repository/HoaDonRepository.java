@@ -2,6 +2,7 @@ package com.dormitory.management.repository;
 
 import com.dormitory.management.model.HoaDon;
 import com.dormitory.management.model.HoaDon.TrangThai;
+import com.dormitory.management.model.SinhVien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 @Repository
 public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
     long countByTrangThai(TrangThai trangThai);
+    long countBySinhVienAndTrangThai(SinhVien sinhVien, TrangThai trangThai);
     List<HoaDon> findByTrangThai(TrangThai trangThai);
     Page<HoaDon> findByTrangThaiOrderByNgayTaoDesc(TrangThai trangThai, Pageable pageable);
     
@@ -35,4 +37,11 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
         @Param("nam") Integer nam,
         Pageable pageable
     );
+
+    Page<HoaDon> findBySinhVien(SinhVien sinhVien, Pageable pageable);
+    
+    List<HoaDon> findBySinhVienAndTrangThai(SinhVien sinhVien, TrangThai trangThai);
+    
+    @Query("SELECT SUM(h.tongTien) FROM HoaDon h WHERE h.sinhVien = :sinhVien AND h.trangThai = :trangThai")
+    Double tinhTongTienTheoTrangThai(@Param("sinhVien") SinhVien sinhVien, @Param("trangThai") TrangThai trangThai);
 }

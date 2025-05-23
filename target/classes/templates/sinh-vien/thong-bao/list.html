@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Thông báo - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Thông báo</h1>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Thông báo List -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="list-group">
+                    <a th:each="thongBao : ${thongBaoPage.content}"
+                       th:href="@{/sinh-vien/thong-bao/{id}(id=${thongBao.idThongBao})}"
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1" th:text="${thongBao.tieuDe}">Tiêu đề thông báo</h5>
+                            <small th:text="${#dates.format(thongBao.ngayTao, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</small>
+                        </div>
+                        <p class="mb-1" th:text="${#strings.abbreviate(thongBao.noiDung, 200)}">Nội dung thông báo...</p>
+                        <small>
+                            <span th:text="${thongBao.loaiThongBaoDisplay}" class="badge bg-primary">Loại thông báo</span>
+                            <span th:if="${thongBao.phong != null}" th:text="'Phòng: ' + ${thongBao.phong.tenPhong}" class="ms-2">Phòng: P101</span>
+                        </small>
+                    </a>
+                    <div th:if="${#lists.isEmpty(thongBaoPage.content)}" class="text-center py-3">
+                        Không có thông báo nào
+                    </div>
+                </div>
+
+                <!-- Phân trang -->
+                <div th:if="${thongBaoPage.totalPages > 1}" class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/sinh-vien/thong-bao(page=${currentPage - 1})}">&laquo;</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, thongBaoPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/sinh-vien/thong-bao(page=${i})}" th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == thongBaoPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/sinh-vien/thong-bao(page=${currentPage + 1})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

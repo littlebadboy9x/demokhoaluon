@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Thông tin sinh viên</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Thông tin sinh viên</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Mã sinh viên:</label>
+                                        <p th:text="${sinhVien.maSv}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Họ và tên:</label>
+                                        <p th:text="${sinhVien.hoTen}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Ngày sinh:</label>
+                                        <p th:text="${#temporals.format(sinhVien.ngaySinh, 'dd/MM/yyyy')}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Giới tính:</label>
+                                        <p th:text="${sinhVien.gioiTinh == T(com.dormitory.management.model.SinhVien.GioiTinh).NAM ? 'Nam' : 'Nữ'}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">CCCD:</label>
+                                        <p th:text="${sinhVien.cccd}"></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Email:</label>
+                                        <p th:text="${sinhVien.email}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Số điện thoại:</label>
+                                        <p th:text="${sinhVien.soDienThoai}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Lớp:</label>
+                                        <p th:text="${sinhVien.lop}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Ngành:</label>
+                                        <p th:text="${sinhVien.nganh}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Khoa:</label>
+                                        <p th:text="${sinhVien.khoa}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Địa chỉ:</label>
+                                        <p th:text="${sinhVien.diaChi}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Phòng hiện tại:</label>
+                                        <p th:text="${sinhVien.phong != null ? sinhVien.phong.tenPhong : 'Chưa có phòng'}"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Trạng thái:</label>
+                                        <p>
+                                            <span th:class="${'badge ' + 
+                                                (sinhVien.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DANG_O ? 'bg-success' : 
+                                                (sinhVien.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DA_RUT ? 'bg-warning' : 'bg-danger'))}"
+                                                th:text="${sinhVien.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DANG_O ? 'Đang ở' : 
+                                                        (sinhVien.trangThai == T(com.dormitory.management.model.SinhVien.TrangThai).DA_RUT ? 'Đã rút' : 'Bị đình chỉ')}">
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Ngày đăng ký:</label>
+                                        <p th:text="${#temporals.format(sinhVien.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12 text-end">
+                                    <a href="/sinh-vien/cap-nhat-thong-tin" class="btn btn-primary">
+                                        <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

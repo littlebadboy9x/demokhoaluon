@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid py-4">
+            <!-- Thông tin chung -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Phòng hiện tại</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${sinhVien.phong != null ? sinhVien.phong.tenPhong : 'Chưa có phòng'}">
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-home fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Hóa đơn chưa thanh toán</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${hoaDonChuaThanhToan}">
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Thông báo mới</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${thongBaoMoi}">
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-bell fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Sự cố đang xử lý</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${suCoDangXuLy}">
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông báo mới nhất -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Thông báo mới nhất</h6>
+                            <a href="/sinh-vien/thong-bao" class="btn btn-primary btn-sm">
+                                Xem tất cả
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tiêu đề</th>
+                                            <th>Nội dung</th>
+                                            <th>Ngày</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="thongBao : ${thongBaoList}">
+                                            <td th:text="${thongBao.tieuDe}"></td>
+                                            <td th:text="${thongBao.noiDung}"></td>
+                                            <td th:text="${#temporals.format(thongBao.ngayTao, 'dd/MM/yyyy HH:mm')}"></td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(thongBaoList)}">
+                                            <td colspan="3" class="text-center">Không có thông báo mới</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin phòng và Danh sách phòng trống -->
+            <div class="row">
+                <!-- Thông tin phòng hiện tại -->
+                <div class="col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Thông tin phòng hiện tại</h6>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${sinhVien.phong != null}">
+                                <p><strong>Tên phòng:</strong> <span th:text="${sinhVien.phong.tenPhong}"></span></p>
+                                <p><strong>Loại phòng:</strong> <span th:text="${sinhVien.phong.loaiPhong}"></span></p>
+                                <p><strong>Số người hiện tại:</strong> <span th:text="${sinhVien.phong.soNguoiHienTai + '/' + sinhVien.phong.sucChua}"></span></p>
+                                <p><strong>Giá phòng:</strong> <span th:text="${#numbers.formatDecimal(sinhVien.phong.giaPhong, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span></p>
+                                <a href="/sinh-vien/thong-tin-phong" class="btn btn-primary btn-sm">
+                                    Xem chi tiết
+                                </a>
+                            </div>
+                            <div th:if="${sinhVien.phong == null}" class="text-center py-3">
+                                <p>Bạn chưa được phân phòng</p>
+                                <a href="/sinh-vien/dang-ky-phong" class="btn btn-primary btn-sm">
+                                    Đăng ký phòng ngay
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách phòng trống -->
+                <div class="col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Phòng trống</h6>
+                            <a href="/sinh-vien/danh-sach-phong" class="btn btn-primary btn-sm">
+                                Xem tất cả
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên phòng</th>
+                                            <th>Loại</th>
+                                            <th>Còn trống</th>
+                                            <th>Giá</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="phong : ${phongTrongList}">
+                                            <td th:text="${phong.tenPhong}"></td>
+                                            <td th:text="${phong.loaiPhong}"></td>
+                                            <td th:text="${phong.sucChua - phong.soNguoiHienTai}"></td>
+                                            <td th:text="${#numbers.formatDecimal(phong.giaPhong, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(phongTrongList)}">
+                                            <td colspan="4" class="text-center">Không có phòng trống</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

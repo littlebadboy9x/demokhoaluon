@@ -37,9 +37,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="ngaySinh" class="form-label">Ngày sinh</label>
-                                <input type="date" class="form-control" id="ngaySinh" 
-                                       th:field="*{ngaySinh}" 
-                                       th:value="${#dates.format(sinhVien.ngaySinh, 'yyyy-MM-dd')}">
+                                <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}">
                             </div>
                             <div class="mb-3">
                                 <label for="gioiTinh" class="form-label">Giới tính <span class="text-danger">*</span></label>

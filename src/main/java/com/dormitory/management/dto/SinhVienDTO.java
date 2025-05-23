@@ -11,11 +11,14 @@ public class SinhVienDTO {
     private String tenDangNhap;
     private String hoTen;
     private LocalDate ngaySinh;
+    private SinhVien.GioiTinh gioiTinh;
     private String cccd;
+    private String email;
     private String soDienThoai;
     private String lop;
     private String nganh;
-    private SinhVien.Khoa khoa;
+    private String khoa;
     private String diaChi;
+    private SinhVien.TrangThai trangThai;
     private LocalDateTime ngayDangKy;
 }

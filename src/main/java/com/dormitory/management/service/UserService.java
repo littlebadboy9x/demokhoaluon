@@ -29,17 +29,22 @@ public class UserService implements UserDetailsService {
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         
-        if (nguoiDung.getLoaiNguoiDung() == NguoiDung.LoaiNguoiDung.QUAN_TRI_VIEN) {
-            QuanTriVien quanTriVien = quanTriVienRepository.findByTenDangNhap(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy quản trị viên"));
-            
-            if (quanTriVien.getQuyenHan() == QuanTriVien.QuyenHan.QUAN_TRI) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            } else {
-                authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
-            }
-        } else {
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        switch (nguoiDung.getLoaiNguoiDung()) {
+            case QUAN_TRI_VIEN:
+                QuanTriVien quanTriVien = quanTriVienRepository.findByTenDangNhap(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy quản trị viên"));
+                
+                if (quanTriVien.getQuyenHan() == QuanTriVien.QuyenHan.QUAN_TRI) {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                } else {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
+                }
+                break;
+            case SINH_VIEN:
+                authorities.add(new SimpleGrantedAuthority("ROLE_SINH_VIEN"));
+                break;
+            default:
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
 
         return User.builder()

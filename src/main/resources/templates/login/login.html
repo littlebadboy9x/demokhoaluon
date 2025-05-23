@@ -60,6 +60,10 @@
                                     <i class="fas fa-check-circle me-2"></i>
                                     Bạn đã đăng xuất thành công.
                                 </div>
+                                <div th:if="${success}" class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <span th:text="${success}"></span>
+                                </div>
 
                                 <form th:action="@{/login}" method="post">
                                     <div class="mb-3">
@@ -92,6 +96,9 @@
                                     <button type="submit" class="btn btn-primary w-100 btn-login mb-3">
                                         <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                     </button>
+                                    <a href="/register" class="btn btn-outline-primary w-100 btn-login">
+                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                    </a>
                                 </form>
                             </div>
                         </div>

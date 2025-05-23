@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Thanh toán hóa đơn - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Thanh toán hóa đơn</h1>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Thông tin hóa đơn -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Thông tin hóa đơn</h6>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Mã hóa đơn:</strong> <span th:text="${hoaDon.maHoaDon}"></span></p>
+                        <p><strong>Tiền phòng:</strong> <span th:text="${#numbers.formatDecimal(hoaDon.tienPhong, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span></p>
+                        <p><strong>Tiền điện:</strong> <span th:text="${#numbers.formatDecimal(hoaDon.tienDien, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span></p>
+                        <p><strong>Tiền nước:</strong> <span th:text="${#numbers.formatDecimal(hoaDon.tienNuoc, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Phí dịch vụ:</strong> <span th:text="${#numbers.formatDecimal(hoaDon.phiDichVu, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span></p>
+                        <p><strong>Tổng tiền:</strong> <span class="text-danger font-weight-bold" th:text="${#numbers.formatDecimal(hoaDon.tongTien, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span></p>
+                        <p><strong>Ngày tạo:</strong> <span th:text="${#dates.format(hoaDon.ngayTao, 'dd/MM/yyyy HH:mm')}"></span></p>
+                        <p><strong>Hạn thanh toán:</strong> <span th:text="${#dates.format(hoaDon.hanThanhToan, 'dd/MM/yyyy')}"></span></p>
+                    </div>
+                </div>
+
+                <!-- Chọn phương thức thanh toán -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="mb-3">Chọn phương thức thanh toán</h5>
+                        <div class="d-grid gap-3">
+                            <form th:action="@{/sinh-vien/hoa-don/{maHoaDon}/thanh-toan(maHoaDon=${hoaDon.maHoaDon})}" method="POST" class="d-inline">
+                                <input type="hidden" name="phuongThuc" value="TIEN_MAT">
+                                <button type="submit" class="btn btn-outline-primary btn-lg w-100" onclick="return confirm('Xác nhận thanh toán tiền mặt?')">
+                                    <i class="fas fa-money-bill-wave me-2"></i> Thanh toán tiền mặt
+                                </button>
+                            </form>
+                            
+                            <a th:href="@{/sinh-vien/hoa-don/{maHoaDon}/thanh-toan-momo(maHoaDon=${hoaDon.maHoaDon})}" 
+                               class="btn btn-outline-danger btn-lg"
+                               onclick="return confirm('Xác nhận thanh toán qua MoMo?')">
+                                <i class="fas fa-qrcode me-2"></i> Thanh toán qua MoMo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

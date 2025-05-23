@@ -31,6 +31,15 @@ public class MomoTransaction {
     @Column(name = "order_type", nullable = false)
     private String orderType;
 
+    @Column(name = "redirect_url")
+    private String redirectUrl;
+
+    @Column(name = "ipn_url")
+    private String ipnUrl;
+
+    @Column(name = "request_type")
+    private String requestType;
+
     @Column(name = "trans_id")
     private Long transId;
 

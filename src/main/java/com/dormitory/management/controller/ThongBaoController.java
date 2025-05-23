@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/thong-bao")
+@RequestMapping("/sinh-vien/thong-bao")
 public class ThongBaoController {
 
     @Autowired
@@ -43,11 +43,11 @@ public class ThongBaoController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", thongBaoPage.getTotalPages());
 
-        return "thong-bao/list";
+        return "sinh-vien/thong-bao/list";
     }
 
     @GetMapping("/{id}")
-    public String viewThongBao(@PathVariable Long id, Authentication authentication, Model model) {
+    public String viewThongBao(@PathVariable Long id, Model model, Authentication authentication) {
         // Lấy thông tin sinh viên đang đăng nhập
         String tenDangNhap = authentication.getName();
         SinhVien sinhVien = sinhVienService.findByTenDangNhap(tenDangNhap)
@@ -63,6 +63,6 @@ public class ThongBaoController {
         }
 
         model.addAttribute("thongBao", thongBao);
-        return "thong-bao/view";
+        return "sinh-vien/thong-bao/view";
     }
 } 

@@ -139,6 +139,22 @@ public class AdminDangKyController {
 
             // Kiểm tra sinh viên đã có phòng chưa
             SinhVien sinhVien = dangKyPhong.getSinhVien();
+            
+            // Kiểm tra trạng thái sinh viên
+            if (sinhVien.getTrangThai() != SinhVien.TrangThai.DANG_O) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "Sinh viên " + sinhVien.getHoTen() + " không ở trạng thái hợp lệ để được phân phòng!");
+                return "redirect:/admin/dang-ky";
+            }
+            
+            // Kiểm tra loại phòng phù hợp với giới tính sinh viên
+            if ((sinhVien.getGioiTinh() == SinhVien.GioiTinh.NAM && phong.getLoaiPhong() != Phong.LoaiPhong.NAM) ||
+                (sinhVien.getGioiTinh() == SinhVien.GioiTinh.NU && phong.getLoaiPhong() != Phong.LoaiPhong.NU)) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "Loại phòng không phù hợp với giới tính của sinh viên!");
+                return "redirect:/admin/dang-ky";
+            }
+            
             Optional<PhanBoPhong> phanBoHienTai = phanBoPhongService.findBySinhVienAndTrangThai(
                 sinhVien, PhanBoPhong.TrangThai.DANG_O);
             if (phanBoHienTai.isPresent()) {

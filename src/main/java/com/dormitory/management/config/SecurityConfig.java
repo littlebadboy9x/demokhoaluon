@@ -21,24 +21,21 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/vendor/**").permitAll()
                 .requestMatchers("/login", "/register", "/", "/logout").permitAll()
+                .requestMatchers("/sinh-vien/dang-ky-thong-tin", "/sinh-vien/dang-ky-phong", "/sinh-vien/thong-tin-phong").hasRole("SINH_VIEN")
+                .requestMatchers("/sinh-vien/**").hasRole("SINH_VIEN")
                 .requestMatchers("/thong-bao/**").hasAnyRole("ADMIN", "SINH_VIEN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/admin")
+                .defaultSuccessUrl("/dashboard")
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
                 .permitAll()
-            )
-            .csrf(csrf -> csrf.disable());
-        
+            );
+
         return http.build();
     }
 

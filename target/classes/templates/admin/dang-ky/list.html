@@ -130,7 +130,7 @@
                                 <td th:text="${stat.count}">1</td>
                                 <td th:text="${dangKy.sinhVien.hoTen + ' (' + dangKy.sinhVien.maSv + ')'}">Nguyễn Văn A (SV001)</td>
                                 <td th:text="${dangKy.phong.maPhong}">P101</td>
-                                <td th:text="${#dates.format(dangKy.ngayDangKy, 'dd/MM/yyyy HH:mm')}">22/05/2024 17:30</td>
+                                <td th:text="${#temporals.format(dangKy.ngayDangKy, 'dd/MM/yyyy HH:mm')}">22/05/2024 17:30</td>
                                 <td>
                                     <span th:class="${'badge ' + 
                                             (#strings.equals(dangKy.trangThai, 'CHO_DUYET') ? 'bg-warning text-dark' : 
@@ -156,6 +156,9 @@
                                     <span th:if="${#strings.equals(dangKy.trangThai, 'TU_CHOI')}" 
                                           class="text-danger">Đã xử lý</span>
                                 </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(dangKyPage.content)}">
+                                <td colspan="6" class="text-center">Không có dữ liệu</td>
                             </tr>
                         </tbody>
                     </table>

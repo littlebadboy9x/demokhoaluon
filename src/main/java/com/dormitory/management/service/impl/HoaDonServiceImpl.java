@@ -2,6 +2,7 @@ package com.dormitory.management.service.impl;
 
 import com.dormitory.management.model.HoaDon;
 import com.dormitory.management.model.HoaDon.TrangThai;
+import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.repository.HoaDonRepository;
 import com.dormitory.management.service.HoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,12 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     @Transactional(readOnly = true)
+    public long countBySinhVienAndTrangThai(SinhVien sinhVien, TrangThai trangThai) {
+        return hoaDonRepository.countBySinhVienAndTrangThai(sinhVien, trangThai);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<HoaDon> findByTrangThaiOrderByNgayTaoDesc(TrangThai trangThai, Pageable pageable) {
         return hoaDonRepository.findByTrangThaiOrderByNgayTaoDesc(trangThai, pageable);
     }
@@ -88,5 +95,16 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Transactional(readOnly = true)
     public List<HoaDon> findByTrangThai(TrangThai trangThai) {
         return hoaDonRepository.findByTrangThai(trangThai);
+    }
+
+    @Override
+    public Page<HoaDon> findBySinhVien(SinhVien sinhVien, Pageable pageable) {
+        return hoaDonRepository.findBySinhVien(sinhVien, pageable);
+    }
+
+    @Override
+    public double tinhTongTienChuaThanhToan(SinhVien sinhVien) {
+        Double tongTien = hoaDonRepository.tinhTongTienTheoTrangThai(sinhVien, TrangThai.CHUA_THANH_TOAN);
+        return tongTien != null ? tongTien : 0.0;
     }
 } 

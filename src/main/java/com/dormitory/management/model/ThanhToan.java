@@ -50,6 +50,7 @@ public class ThanhToan {
     public enum PhuongThuc {
         TIEN_MAT,
         CHUYEN_KHOAN,
+        MOMO,
         THE
     }
 }

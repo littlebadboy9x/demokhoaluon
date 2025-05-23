@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Báo cáo sự cố - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Báo cáo sự cố</h1>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Form -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form th:action="@{/sinh-vien/su-co/save}" th:object="${suCo}" method="post">
+                    <input type="hidden" th:field="*{idSuCo}"/>
+                    <input type="hidden" th:field="*{phong}"/>
+                    <input type="hidden" th:field="*{sinhVien}"/>
+                    <input type="hidden" th:field="*{trangThai}"/>
+
+                    <div class="mb-3">
+                        <label for="loaiSuCo" class="form-label">Loại sự cố <span class="text-danger">*</span></label>
+                        <select class="form-select" id="loaiSuCo" th:field="*{loaiSuCo}" required>
+                            <option value="">-- Chọn loại sự cố --</option>
+                            <option th:each="loai : ${loaiSuCoList}"
+                                    th:value="${loai}"
+                                    th:text="${loai.name() == 'DIEN' ? 'Điện' : 
+                                             loai.name() == 'NUOC' ? 'Nước' :
+                                             loai.name() == 'CO_SO_VAT_CHAT' ? 'Cơ sở vật chất' : 'Khác'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="moTa" class="form-label">Mô tả sự cố <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="moTa" th:field="*{moTa}" rows="3" required
+                                  placeholder="Mô tả chi tiết về sự cố..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mucDoUuTien" class="form-label">Mức độ ưu tiên <span class="text-danger">*</span></label>
+                        <select class="form-select" id="mucDoUuTien" th:field="*{mucDoUuTien}" required>
+                            <option value="">-- Chọn mức độ ưu tiên --</option>
+                            <option th:each="muc : ${mucDoUuTienList}"
+                                    th:value="${muc}"
+                                    th:text="${muc.name() == 'THAP' ? 'Thấp' :
+                                             muc.name() == 'TRUNG_BINH' ? 'Trung bình' :
+                                             muc.name() == 'CAO' ? 'Cao' : 'Khẩn cấp'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ghiChu" class="form-label">Ghi chú</label>
+                        <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="2"
+                                  placeholder="Ghi chú thêm (nếu có)..."></textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <a href="/sinh-vien/su-co" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Gửi báo cáo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

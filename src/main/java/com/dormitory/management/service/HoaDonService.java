@@ -2,6 +2,7 @@ package com.dormitory.management.service;
 
 import com.dormitory.management.model.HoaDon;
 import com.dormitory.management.model.HoaDon.TrangThai;
+import com.dormitory.management.model.SinhVien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,6 +22,8 @@ public interface HoaDonService {
     
     long countByTrangThai(TrangThai trangThai);
     
+    long countBySinhVienAndTrangThai(SinhVien sinhVien, TrangThai trangThai);
+    
     Page<HoaDon> findByTrangThaiOrderByNgayTaoDesc(TrangThai trangThai, Pageable pageable);
     
     Double tinhTongDoanhThuTheoThangNam(int thang, int nam);
@@ -32,4 +35,8 @@ public interface HoaDonService {
     long count();
     
     List<HoaDon> findByTrangThai(TrangThai trangThai);
+    
+    Page<HoaDon> findBySinhVien(SinhVien sinhVien, Pageable pageable);
+    
+    double tinhTongTienChuaThanhToan(SinhVien sinhVien);
 }

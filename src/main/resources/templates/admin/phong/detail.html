@@ -63,7 +63,7 @@
                                 <tr th:each="sinhVien : ${sinhVienList}">
                                     <td th:text="${sinhVien.maSv}"></td>
                                     <td th:text="${sinhVien.hoTen}"></td>
-                                    <td th:text="${#dates.format(sinhVien.ngaySinh, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${#temporals.format(sinhVien.ngaySinh, 'dd/MM/yyyy')}"></td>
                                     <td th:text="${sinhVien.gioiTinh}"></td>
                                     <td th:text="${sinhVien.soDienThoai}"></td>
                                     <td th:text="${sinhVien.email}"></td>

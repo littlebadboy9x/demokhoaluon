@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Danh sách phòng</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid py-4">
+            <!-- Thông báo -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Phòng hiện tại -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Phòng hiện tại của bạn</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${phongHienTai != null}">
+                        <h6 th:text="${'Phòng: ' + phongHienTai.tenPhong}"></h6>
+                        <p th:text="${'Loại phòng: ' + phongHienTai.loaiPhong}"></p>
+                        <p th:text="${'Sức chứa: ' + phongHienTai.sucChua + ' người'}"></p>
+                        <p th:text="${'Giá phòng: ' + #numbers.formatDecimal(phongHienTai.giaPhong, 0, 'COMMA', 0, 'POINT') + ' VNĐ/tháng'}"></p>
+                    </div>
+                    <div th:unless="${phongHienTai != null}" class="alert alert-warning">
+                        Bạn chưa được xếp phòng.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách phòng trống -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Danh sách phòng trống phù hợp</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tên phòng</th>
+                                    <th>Loại phòng</th>
+                                    <th>Sức chứa</th>
+                                    <th>Số người hiện tại</th>
+                                    <th>Giá phòng (VNĐ/tháng)</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="phong : ${phongTrongList}">
+                                    <td th:text="${phong.tenPhong}"></td>
+                                    <td th:text="${phong.loaiPhong}"></td>
+                                    <td th:text="${phong.sucChua}"></td>
+                                    <td th:text="${phong.soNguoiHienTai}"></td>
+                                    <td th:text="${#numbers.formatDecimal(phong.giaPhong, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    <td>
+                                        <form th:action="@{/sinh-vien/doi-phong}" method="post" 
+                                              th:if="${phongHienTai != null && phongHienTai.maPhong != phong.maPhong}">
+                                            <input type="hidden" name="maPhongMoi" th:value="${phong.maPhong}" />
+                                            <button type="submit" class="btn btn-primary btn-sm"
+                                                    onclick="return confirm('Bạn có chắc muốn gửi đơn xin đổi sang phòng này?')">
+                                                <i class="fas fa-exchange-alt"></i> Đổi phòng
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(phongTrongList)}">
+                                    <td colspan="6" class="text-center">Không có phòng trống phù hợp.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

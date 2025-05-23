@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký thông tin sinh viên - KTX Lâm Nghiệp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-card">
+                    <div class="text-center mb-4">
+                        <h2 class="mb-0">Đăng ký thông tin sinh viên</h2>
+                        <p class="text-muted">Vui lòng điền đầy đủ thông tin cá nhân</p>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+                    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+                    <form th:action="@{/sinh-vien/dang-ky-thong-tin}" method="post" th:object="${sinhVien}">
+                        <input type="hidden" th:field="*{tenDangNhap}">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="maSv" class="form-label">Mã sinh viên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="maSv" th:field="*{maSv}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="hoTen" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="hoTen" th:field="*{hoTen}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="gioiTinh" class="form-label">Giới tính <span class="text-danger">*</span></label>
+                                <select class="form-select" id="gioiTinh" th:field="*{gioiTinh}" required>
+                                    <option value="">-- Chọn giới tính --</option>
+                                    <option value="NAM">Nam</option>
+                                    <option value="NU">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="soDienThoai" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="soDienThoai" th:field="*{soDienThoai}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ngaySinh" class="form-label">Ngày sinh <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cccd" class="form-label">CCCD <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cccd" th:field="*{cccd}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="khoa" class="form-label">Khoa <span class="text-danger">*</span></label>
+                                <select class="form-select" id="khoa" th:field="*{khoa}" required>
+                                    <option value="">-- Chọn khoa --</option>
+                                    <option value="CNTT">Công nghệ thông tin</option>
+                                    <option value="DIEN_DIEN_TU">Điện - Điện tử</option>
+                                    <option value="CO_KHI">Cơ khí</option>
+                                    <option value="KE_TOAN">Kế toán</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="nganh" class="form-label">Ngành <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nganh" th:field="*{nganh}" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="lop" class="form-label">Lớp <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lop" th:field="*{lop}" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="diaChi" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" id="diaChi" th:field="*{diaChi}" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> Lưu thông tin
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

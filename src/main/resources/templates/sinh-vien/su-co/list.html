@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Danh sách sự cố - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Danh sách sự cố</h1>
+            <a href="/sinh-vien/su-co/create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Báo cáo sự cố
+            </a>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Danh sách sự cố -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Mã sự cố</th>
+                                <th>Phòng</th>
+                                <th>Loại sự cố</th>
+                                <th>Mô tả</th>
+                                <th>Mức độ ưu tiên</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày báo cáo</th>
+                                <th>Ngày hoàn thành</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="suCo : ${suCoPage.content}">
+                                <td th:text="${suCo.idSuCo}"></td>
+                                <td th:text="${suCo.phong.tenPhong}"></td>
+                                <td th:text="${suCo.loaiSuCoDisplay}"></td>
+                                <td th:text="${suCo.moTa}"></td>
+                                <td>
+                                    <span th:with="muc=${suCo.mucDoUuTien}"
+                                          th:class="${'badge ' + 
+                                            (muc == null ? 'bg-secondary' :
+                                            (muc.name() == 'KHAN_CAP' ? 'bg-danger' :
+                                            (muc.name() == 'CAO' ? 'bg-warning' :
+                                            (muc.name() == 'TRUNG_BINH' ? 'bg-primary' : 'bg-secondary'))))}"
+                                          style="color: #ffffff !important;"
+                                          th:text="${mucDoUuTienMap[suCo.mucDoUuTien] ?: 'Không xác định'}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:with="tt=${suCo.trangThai}"
+                                          th:class="${'badge ' + 
+                                            (tt == null ? 'bg-secondary' :
+                                            (tt.name() == 'CHO_XU_LY' ? 'bg-warning' :
+                                            (tt.name() == 'DANG_XU_LY' ? 'bg-primary' :
+                                            (tt.name() == 'DA_HOAN_THANH' ? 'bg-success' : 'bg-danger'))))}"
+                                          style="color: #ffffff !important;"
+                                          th:text="${trangThaiMap[suCo.trangThai] ?: 'Không xác định'}">
+                                    </span>
+                                </td>
+                                <td th:text="${#dates.format(suCo.ngayBaoCao, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${suCo.ngayHoanThanh != null ? #dates.format(suCo.ngayHoanThanh, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(suCoPage.content)}">
+                                <td colspan="8" class="text-center">Không có sự cố nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Phân trang -->
+                <div th:if="${suCoPage.totalPages > 1}" class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/sinh-vien/su-co(page=${currentPage - 1})}">&laquo;</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, suCoPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/sinh-vien/su-co(page=${i})}" th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == suCoPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/sinh-vien/su-co(page=${currentPage + 1})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -109,7 +109,7 @@ public class AdminSinhVienController {
 
             // Thiết lập thông tin sinh viên
             sinhVien.setNgayDangKy(LocalDateTime.now());
-            sinhVien.setTrangThai(SinhVien.TrangThai.HOAT_DONG);
+            sinhVien.setTrangThai(SinhVien.TrangThai.DANG_O);
 
             // Lưu thông tin sinh viên
             sinhVienService.save(sinhVien);

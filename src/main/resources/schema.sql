@@ -261,4 +261,30 @@ ALTER TABLE thong_bao
 ADD COLUMN ma_phong VARCHAR(20),
 ADD CONSTRAINT fk_thong_bao_phong
     FOREIGN KEY (ma_phong)
-    REFERENCES phong(ma_phong); 
+    REFERENCES phong(ma_phong);
+
+-- Drop bảng cũ nếu tồn tại
+DROP TABLE IF EXISTS momo_transaction;
+
+-- Tạo lại bảng mới với đầy đủ các cột
+CREATE TABLE momo_transaction (
+                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                  partner_code VARCHAR(50) NOT NULL,
+                                  order_id VARCHAR(50) NOT NULL,
+                                  request_id VARCHAR(50) NOT NULL,
+                                  amount DOUBLE NOT NULL,
+                                  order_info VARCHAR(255) NOT NULL,
+                                  order_type VARCHAR(50) NOT NULL,
+                                  redirect_url VARCHAR(255),
+                                  ipn_url VARCHAR(255),
+                                  request_type VARCHAR(50),
+                                  trans_id BIGINT,
+                                  result_code INT,
+                                  message VARCHAR(255),
+                                  pay_type VARCHAR(50),
+                                  response_time BIGINT,
+                                  extra_data TEXT,
+                                  signature VARCHAR(255),
+                                  created_at TIMESTAMP,
+                                  updated_at TIMESTAMP
+);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{sinh-vien/layout}">
+<head>
+    <title>Chi tiết thông báo - KTX Lâm Nghiệp</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Chi tiết thông báo</h1>
+            <a href="/sinh-vien/thong-bao" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Thông báo Detail -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="mb-4">
+                    <h4 class="card-title" th:text="${thongBao.tieuDe}">Tiêu đề thông báo</h4>
+                    <div class="text-muted mb-3">
+                        <small>
+                            <i class="fas fa-calendar-alt"></i>
+                            <span th:text="${#dates.format(thongBao.ngayTao, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                            &nbsp;|&nbsp;
+                            <i class="fas fa-user"></i>
+                            <span th:text="${thongBao.nguoiTao}">Admin</span>
+                            &nbsp;|&nbsp;
+                            <i class="fas fa-tag"></i>
+                            <span th:text="${thongBao.loaiThongBaoDisplay}">Loại thông báo</span>
+                            <span th:if="${thongBao.phong != null}">
+                                &nbsp;|&nbsp;
+                                <i class="fas fa-door-open"></i>
+                                <span th:text="${thongBao.phong.tenPhong}">P101</span>
+                            </span>
+                        </small>
+                    </div>
+                    <hr/>
+                    <div class="card-text" th:utext="${thongBao.noiDung}">
+                        Nội dung thông báo...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
