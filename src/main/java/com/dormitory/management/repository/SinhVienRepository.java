@@ -19,4 +19,7 @@ public interface SinhVienRepository extends JpaRepository<SinhVien, String>, Jpa
     Page<SinhVien> findByTrangThaiOrderByNgayDangKyDesc(TrangThai trangThai, Pageable pageable);
     List<SinhVien> findByPhong(Phong phong);
     Optional<SinhVien> findByTenDangNhap(String tenDangNhap);
+    boolean existsByTenDangNhap(String tenDangNhap);
+    boolean existsByEmail(String email);
+    boolean existsByMaSv(String maSv);
 }

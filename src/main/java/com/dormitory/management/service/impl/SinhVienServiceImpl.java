@@ -105,4 +105,19 @@ public class SinhVienServiceImpl implements SinhVienService {
     public Optional<SinhVien> findByTenDangNhap(String tenDangNhap) {
         return sinhVienRepository.findByTenDangNhap(tenDangNhap);
     }
+
+    @Override
+    public boolean existsByTenDangNhap(String tenDangNhap) {
+        return sinhVienRepository.existsByTenDangNhap(tenDangNhap);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return sinhVienRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByMaSv(String maSv) {
+        return sinhVienRepository.existsByMaSv(maSv);
+    }
 } 

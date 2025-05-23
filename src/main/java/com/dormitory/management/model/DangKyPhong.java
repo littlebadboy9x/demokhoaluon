@@ -2,7 +2,7 @@ package com.dormitory.management.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -22,8 +22,7 @@ public class DangKyPhong {
     private Phong phong;
 
     @Column(name = "ngay_dang_ky")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date ngayDangKy;
+    private LocalDateTime ngayDangKy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai")
@@ -33,8 +32,7 @@ public class DangKyPhong {
     private String nguoiDuyet;
 
     @Column(name = "ngay_duyet")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date ngayDuyet;
+    private LocalDateTime ngayDuyet;
 
     @Column(name = "ghi_chu")
     private String ghiChu;
@@ -48,7 +46,7 @@ public class DangKyPhong {
     @PrePersist
     public void prePersist() {
         if (this.ngayDangKy == null) {
-            this.ngayDangKy = new Date();
+            this.ngayDangKy = LocalDateTime.now();
         }
     }
 

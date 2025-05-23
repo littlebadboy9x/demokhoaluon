@@ -2,6 +2,7 @@ package com.dormitory.management.service.impl;
 
 import com.dormitory.management.model.DangKyPhong;
 import com.dormitory.management.model.DangKyPhong.TrangThai;
+import com.dormitory.management.model.SinhVien;
 import com.dormitory.management.repository.DangKyPhongRepository;
 import com.dormitory.management.service.DangKyPhongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 
 @Service
 public class DangKyPhongServiceImpl implements DangKyPhongService {
@@ -61,7 +63,6 @@ public class DangKyPhongServiceImpl implements DangKyPhongService {
         Specification<DangKyPhong> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Tìm kiếm theo tên sinh viên hoặc mã sinh viên
             if (search != null && !search.isEmpty()) {
                 predicates.add(criteriaBuilder.or(
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("sinhVien").get("hoTen")), "%" + search.toLowerCase() + "%"),
@@ -69,12 +70,10 @@ public class DangKyPhongServiceImpl implements DangKyPhongService {
                 ));
             }
 
-            // Lọc theo trạng thái
             if (trangThai != null) {
                 predicates.add(criteriaBuilder.equal(root.get("trangThai"), trangThai));
             }
 
-            // Lọc theo phòng
             if (phong != null && !phong.isEmpty()) {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("phong").get("maPhong")), "%" + phong.toLowerCase() + "%"));
             }
@@ -83,5 +82,20 @@ public class DangKyPhongServiceImpl implements DangKyPhongService {
         };
 
         return dangKyPhongRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public List<DangKyPhong> findByTrangThai(TrangThai trangThai) {
+        return dangKyPhongRepository.findByTrangThai(trangThai);
+    }
+
+    @Override
+    public boolean existsBySinhVienAndTrangThaiIn(SinhVien sinhVien, DangKyPhong.TrangThai... trangThais) {
+        return dangKyPhongRepository.existsBySinhVienAndTrangThaiIn(sinhVien, Arrays.asList(trangThais));
+    }
+
+    @Override
+    public DangKyPhong findBySinhVienAndTrangThaiIn(SinhVien sinhVien, DangKyPhong.TrangThai... trangThais) {
+        return dangKyPhongRepository.findFirstBySinhVienAndTrangThaiInOrderByNgayDangKyDesc(sinhVien, Arrays.asList(trangThais));
     }
 } 

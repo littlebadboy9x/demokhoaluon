@@ -2,8 +2,8 @@ package com.dormitory.management.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -13,31 +13,26 @@ public class SinhVien {
     @Column(name = "ma_sv")
     private String maSv;
 
-    @Column(name = "ten_dang_nhap", nullable = false, unique = true)
-    private String tenDangNhap;
-
     @Column(name = "ho_ten", nullable = false)
     private String hoTen;
 
-    @Column(name = "ngay_sinh")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date ngaySinh;
-
-    @Column(name = "gioi_tinh", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private GioiTinh gioiTinh;
-
-    @Column(name = "cccd", unique = true)
-    private String cccd;
-
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "so_dien_thoai")
     private String soDienThoai;
 
-    @Column(name = "dia_chi")
-    private String diaChi;
+    @Column(name = "ten_dang_nhap", unique = true, nullable = false)
+    private String tenDangNhap;
+
+    @Column(name = "mat_khau", nullable = false)
+    private String matKhau;
+
+    @Column(name = "ngay_sinh")
+    private LocalDate ngaySinh;
+
+    @Column(name = "cccd")
+    private String cccd;
 
     @Column(name = "lop")
     private String lop;
@@ -45,45 +40,46 @@ public class SinhVien {
     @Column(name = "nganh")
     private String nganh;
 
-    @Column(name = "khoa")
-    private String khoa;
+    @Column(name = "khoa", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Khoa khoa;
+
+    @Column(name = "dia_chi")
+    private String diaChi;
+
+    @Column(name = "vai_tro", nullable = false)
+    private String vaiTro;
+
+    @Column(name = "trang_thai", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TrangThai trangThai = TrangThai.HOAT_DONG;
 
     @Column(name = "ngay_dang_ky")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date ngayDangKy;
+    private LocalDateTime ngayDangKy;
 
-    @Column(name = "trang_thai")
-    @Enumerated(EnumType.STRING)
-    private TrangThai trangThai = TrangThai.DANG_O;
-
-    @ManyToOne
-    @JoinColumn(name = "ten_dang_nhap", referencedColumnName = "ten_dang_nhap", insertable = false, updatable = false)
-    private NguoiDung nguoiDung;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ma_phong")
     private Phong phong;
 
-    public enum GioiTinh {
-        NAM, NU
+    public enum Khoa {
+        CNTT,
+        DIEN_DIEN_TU,
+        CO_KHI,
+        KE_TOAN
     }
 
     public enum TrangThai {
-        DANG_O, DA_RUT, BI_DINH_CHI
+        HOAT_DONG,
+        NGUNG_HOAT_DONG
     }
 
-    public String getTrangThaiDisplay() {
-        if (trangThai == null) return "";
-        
-        switch (trangThai) {
-            case DANG_O:
-                return "Đang ở";
-            case DA_RUT:
-                return "Đã rút";
-            case BI_DINH_CHI:
-                return "Bị đình chỉ";
-            default:
-                return "";
+    @PrePersist
+    public void prePersist() {
+        if (ngayDangKy == null) {
+            ngayDangKy = LocalDateTime.now();
+        }
+        if (trangThai == null) {
+            trangThai = TrangThai.HOAT_DONG;
         }
     }
 }

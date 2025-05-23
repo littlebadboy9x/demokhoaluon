@@ -1,22 +1,21 @@
 package com.dormitory.management.dto;
 
+import com.dormitory.management.model.SinhVien;
 import lombok.Data;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class SinhVienDTO {
-    private Long id;
     private String maSv;
     private String tenDangNhap;
     private String hoTen;
-    private Date ngaySinh;
+    private LocalDate ngaySinh;
     private String cccd;
     private String soDienThoai;
-    private String email;
     private String lop;
     private String nganh;
-    private String khoa;
-    private String queQuan;
-    private String trangThai;
-    private Date ngayDangKy;
+    private SinhVien.Khoa khoa;
+    private String diaChi;
+    private LocalDateTime ngayDangKy;
 }

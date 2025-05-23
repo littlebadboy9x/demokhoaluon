@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/admin/sinh-vien")
@@ -108,8 +108,8 @@ public class AdminSinhVienController {
             nguoiDungService.save(nguoiDung);
 
             // Thiết lập thông tin sinh viên
-            sinhVien.setNgayDangKy(new Date());
-            sinhVien.setTrangThai(SinhVien.TrangThai.DANG_O);
+            sinhVien.setNgayDangKy(LocalDateTime.now());
+            sinhVien.setTrangThai(SinhVien.TrangThai.HOAT_DONG);
 
             // Lưu thông tin sinh viên
             sinhVienService.save(sinhVien);

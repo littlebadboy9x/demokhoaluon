@@ -2,7 +2,7 @@ package com.dormitory.management.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
@@ -23,12 +23,12 @@ public class PhanBoPhong {
     private Phong phong;
 
     @Column(name = "ngay_nhan_phong", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date ngayNhanPhong;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime ngayNhanPhong;
 
     @Column(name = "ngay_tra_phong")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date ngayTraPhong;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime ngayTraPhong;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai")

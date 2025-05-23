@@ -2,6 +2,7 @@ package com.dormitory.management.service;
 
 import com.dormitory.management.model.DangKyPhong;
 import com.dormitory.management.model.DangKyPhong.TrangThai;
+import com.dormitory.management.model.SinhVien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,10 @@ public interface DangKyPhongService {
     Page<DangKyPhong> findByTrangThaiOrderByNgayDangKyDesc(TrangThai trangThai, Pageable pageable);
     
     Page<DangKyPhong> search(String search, TrangThai trangThai, String phong, Pageable pageable);
+    
+    boolean existsBySinhVienAndTrangThaiIn(SinhVien sinhVien, DangKyPhong.TrangThai... trangThais);
+    
+    DangKyPhong findBySinhVienAndTrangThaiIn(SinhVien sinhVien, DangKyPhong.TrangThai... trangThais);
+    
+    List<DangKyPhong> findByTrangThai(DangKyPhong.TrangThai trangThai);
 }

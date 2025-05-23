@@ -19,7 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Controller
@@ -149,14 +149,14 @@ public class AdminDangKyController {
             
             // Cập nhật thông tin đăng ký
             dangKyPhong.setTrangThai(DangKyPhong.TrangThai.DA_DUYET);
-            dangKyPhong.setNgayDuyet(new Date());
+            dangKyPhong.setNgayDuyet(LocalDateTime.now());
             dangKyPhongService.save(dangKyPhong);
             
             // Tạo phân bổ phòng mới
             PhanBoPhong phanBoPhong = new PhanBoPhong();
             phanBoPhong.setSinhVien(sinhVien);
             phanBoPhong.setPhong(phong);
-            phanBoPhong.setNgayNhanPhong(new Date());
+            phanBoPhong.setNgayNhanPhong(LocalDateTime.now());
             phanBoPhong.setTrangThai(PhanBoPhong.TrangThai.DANG_O);
             phanBoPhongService.save(phanBoPhong);
 
@@ -192,7 +192,7 @@ public class AdminDangKyController {
             
             // Cập nhật thông tin đăng ký
             dangKyPhong.setTrangThai(DangKyPhong.TrangThai.TU_CHOI);
-            dangKyPhong.setNgayDuyet(new Date());
+            dangKyPhong.setNgayDuyet(LocalDateTime.now());
             dangKyPhongService.save(dangKyPhong);
             
             redirectAttributes.addFlashAttribute("success", "Đã từ chối đăng ký phòng!");

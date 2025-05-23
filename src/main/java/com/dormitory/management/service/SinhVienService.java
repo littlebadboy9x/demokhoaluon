@@ -35,4 +35,10 @@ public interface SinhVienService {
     Page<SinhVien> search(String search, String khoa, String lop, TrangThai trangThai, Pageable pageable);
 
     Optional<SinhVien> findByTenDangNhap(String tenDangNhap);
+
+    boolean existsByTenDangNhap(String tenDangNhap);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByMaSv(String maSv);
 }

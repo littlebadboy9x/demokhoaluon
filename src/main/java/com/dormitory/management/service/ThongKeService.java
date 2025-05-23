@@ -72,9 +72,10 @@ public class ThongKeService {
         // Đếm số sinh viên theo khoa
         Map<String, Integer> demTheoKhoa = new HashMap<>();
         for (SinhVien sv : danhSachSinhVien) {
-            String khoa = sv.getKhoa();
-            if (khoa != null && !khoa.trim().isEmpty()) {
-                demTheoKhoa.merge(khoa, 1, Integer::sum);
+            SinhVien.Khoa khoa = sv.getKhoa();
+            if (khoa != null) {
+                String tenKhoa = khoa.name();
+                demTheoKhoa.merge(tenKhoa, 1, Integer::sum);
             }
         }
 
