@@ -72,7 +72,7 @@
                             <tr th:each="phong : ${phongPage.content}">
                                 <td th:text="${phong.maPhong}">P101</td>
                                 <td th:text="${phong.tenPhong}">Phòng 101</td>
-                                <td th:text="${phong.loaiPhongDisplay}">Nam</td>
+                                <td th:text="${phong.getLoaiPhongDisplay()}"></td>
                                 <td th:text="${phong.sucChua}">4</td>
                                 <td th:text="${phong.soNguoiHienTai}">2</td>
                                 <td th:text="${#numbers.formatDecimal(phong.giaPhong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">1,500,000 VNĐ</td>

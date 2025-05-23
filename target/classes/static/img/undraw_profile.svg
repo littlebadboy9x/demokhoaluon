@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Default Profile</title>
+    <g id="Profile" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Background" fill="#E5E5E5" cx="18" cy="18" r="18"></circle>
+        <path d="M18,7 C20.209139,7 22,8.790861 22,11 C22,13.209139 20.209139,15 18,15 C15.790861,15 14,13.209139 14,11 C14,8.790861 15.790861,7 18,7 Z M18,17 C22.9705627,17 27,19.0147186 27,21.5 C27,23.9852814 22.9705627,26 18,26 C13.0294373,26 9,23.9852814 9,21.5 C9,19.0147186 13.0294373,17 18,17 Z" id="Profile-Icon" fill="#757575"></path>
+    </g>
+</svg> 

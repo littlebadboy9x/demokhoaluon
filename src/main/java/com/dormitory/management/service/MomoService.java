@@ -48,8 +48,8 @@ public class MomoService {
 
     public String createPayment(HoaDon hoaDon) {
         try {
-            String orderId = "HD" + hoaDon.getMaHoaDon();
-            String requestId = UUID.randomUUID().toString();
+            String orderId = String.format("HD%s_%s", hoaDon.getMaHoaDon(), System.currentTimeMillis());
+            String requestId = String.format("RQ%s_%s", hoaDon.getMaHoaDon(), System.currentTimeMillis());
             
             // Tạo giao dịch MoMo mới
             MomoTransaction transaction = new MomoTransaction();
@@ -57,39 +57,43 @@ public class MomoService {
             transaction.setOrderId(orderId);
             transaction.setRequestId(requestId);
             transaction.setAmount(hoaDon.getTongTien());
-            transaction.setOrderInfo("Thanh toán hóa đơn KTX - " + hoaDon.getMaHoaDon());
+            transaction.setOrderInfo("Thanh toan hoa don KTX - " + hoaDon.getMaHoaDon());
             transaction.setOrderType("billpayment");
             transaction.setRedirectUrl(returnUrl);
             transaction.setIpnUrl(notifyUrl);
-            transaction.setRequestType("captureMoMoWallet");
+            transaction.setRequestType("captureWallet");
             transaction.setExtraData("");
             transaction.setCreatedAt(new Date());
             
             // Tạo payload cho API MoMo
-            Map<String, Object> requestBody = new HashMap<>();
+            Map<String, Object> requestBody = new LinkedHashMap<>();
             requestBody.put("partnerCode", partnerCode);
-            requestBody.put("accessKey", accessKey);
             requestBody.put("requestId", requestId);
             requestBody.put("amount", hoaDon.getTongTien().longValue());
             requestBody.put("orderId", orderId);
             requestBody.put("orderInfo", transaction.getOrderInfo());
-            requestBody.put("returnUrl", transaction.getRedirectUrl());
-            requestBody.put("notifyUrl", transaction.getIpnUrl());
-            requestBody.put("requestType", transaction.getRequestType());
+            requestBody.put("redirectUrl", returnUrl);
+            requestBody.put("ipnUrl", notifyUrl);
+            requestBody.put("requestType", "captureWallet");
             requestBody.put("extraData", "");
+            requestBody.put("lang", "vi");
             
             // Tạo chữ ký
-            String rawSignature = "partnerCode=" + partnerCode +
-                    "&accessKey=" + accessKey +
-                    "&requestId=" + requestId +
-                    "&amount=" + hoaDon.getTongTien().longValue() +
-                    "&orderId=" + orderId +
-                    "&orderInfo=" + transaction.getOrderInfo() +
-                    "&returnUrl=" + transaction.getRedirectUrl() +
-                    "&notifyUrl=" + transaction.getIpnUrl() +
-                    "&extraData=";
+            StringBuilder rawSignature = new StringBuilder();
+            rawSignature.append("accessKey=").append(accessKey)
+                    .append("&amount=").append(hoaDon.getTongTien().longValue())
+                    .append("&extraData=")
+                    .append("&ipnUrl=").append(notifyUrl)
+                    .append("&orderId=").append(orderId)
+                    .append("&orderInfo=").append(transaction.getOrderInfo())
+                    .append("&partnerCode=").append(partnerCode)
+                    .append("&redirectUrl=").append(returnUrl)
+                    .append("&requestId=").append(requestId)
+                    .append("&requestType=captureWallet");
 
-            String signature = generateSignature(rawSignature, secretKey);
+            logger.debug("Raw signature: {}", rawSignature.toString());
+            
+            String signature = generateSignature(rawSignature.toString(), secretKey);
             requestBody.put("signature", signature);
             transaction.setSignature(signature);
             
@@ -108,22 +112,33 @@ public class MomoService {
             
             logger.debug("MoMo API response: {}", response);
             
-            if (response != null && response.get("payUrl") != null) {
-                String payUrl = response.get("payUrl").toString();
-                if (response.get("errorCode") != null) {
-                    transaction.setResultCode(Integer.parseInt(response.get("errorCode").toString()));
-                }
-                if (response.get("message") != null) {
-                    transaction.setMessage(response.get("message").toString());
+            if (response != null) {
+                if (response.containsKey("resultCode")) {
+                    Integer resultCode = Integer.parseInt(response.get("resultCode").toString());
+                    transaction.setResultCode(resultCode);
+                    
+                    if (resultCode != 0) {
+                        String message = response.containsKey("message") ? 
+                            response.get("message").toString() : "Unknown error";
+                        transaction.setMessage(message);
+                        momoTransactionRepository.save(transaction);
+                        throw new RuntimeException("Lỗi từ MoMo: " + message);
+                    }
                 }
                 
-                // Lưu thông tin giao dịch
-                momoTransactionRepository.save(transaction);
-                
-                return payUrl;
-            } else {
-                throw new RuntimeException("Không nhận được payUrl từ MoMo");
+                if (response.containsKey("payUrl")) {
+                    String payUrl = response.get("payUrl").toString();
+                    transaction.setMessage(response.containsKey("message") ? 
+                        response.get("message").toString() : "Success");
+                    
+                    // Lưu thông tin giao dịch
+                    momoTransactionRepository.save(transaction);
+                    
+                    return payUrl;
+                }
             }
+            
+            throw new RuntimeException("Không nhận được payUrl từ MoMo");
         } catch (Exception e) {
             logger.error("Lỗi khi tạo giao dịch MoMo", e);
             throw new RuntimeException("Không thể tạo giao dịch MoMo: " + e.getMessage());
@@ -132,8 +147,8 @@ public class MomoService {
 
     public String createBulkPayment(List<HoaDon> danhSachHoaDon, double tongTien) {
         try {
-            String orderId = UUID.randomUUID().toString();
-            String requestId = UUID.randomUUID().toString();
+            String orderId = String.format("HD_BULK_%s", System.currentTimeMillis());
+            String requestId = String.format("RQ_BULK_%s", System.currentTimeMillis());
             
             // Tạo giao dịch MoMo mới
             MomoTransaction transaction = new MomoTransaction();
@@ -141,39 +156,43 @@ public class MomoService {
             transaction.setOrderId(orderId);
             transaction.setRequestId(requestId);
             transaction.setAmount(tongTien);
-            transaction.setOrderInfo("Thanh toán nhiều hóa đơn KTX");
+            transaction.setOrderInfo("Thanh toan nhieu hoa don KTX");
             transaction.setOrderType("billpayment");
             transaction.setRedirectUrl(returnUrl);
             transaction.setIpnUrl(notifyUrl);
-            transaction.setRequestType("captureMoMoWallet");
+            transaction.setRequestType("captureWallet");
             transaction.setExtraData("");
             transaction.setCreatedAt(new Date());
             
             // Tạo payload cho API MoMo
-            Map<String, Object> requestBody = new HashMap<>();
+            Map<String, Object> requestBody = new LinkedHashMap<>();
             requestBody.put("partnerCode", partnerCode);
-            requestBody.put("accessKey", accessKey);
             requestBody.put("requestId", requestId);
             requestBody.put("amount", (long) tongTien);
             requestBody.put("orderId", orderId);
             requestBody.put("orderInfo", transaction.getOrderInfo());
-            requestBody.put("returnUrl", transaction.getRedirectUrl());
-            requestBody.put("notifyUrl", transaction.getIpnUrl());
-            requestBody.put("requestType", transaction.getRequestType());
+            requestBody.put("redirectUrl", returnUrl);
+            requestBody.put("ipnUrl", notifyUrl);
+            requestBody.put("requestType", "captureWallet");
             requestBody.put("extraData", "");
+            requestBody.put("lang", "vi");
             
             // Tạo chữ ký
-            String rawSignature = "partnerCode=" + partnerCode +
-                    "&accessKey=" + accessKey +
-                    "&requestId=" + requestId +
-                    "&amount=" + (long) tongTien +
-                    "&orderId=" + orderId +
-                    "&orderInfo=" + transaction.getOrderInfo() +
-                    "&returnUrl=" + transaction.getRedirectUrl() +
-                    "&notifyUrl=" + transaction.getIpnUrl() +
-                    "&extraData=";
-
-            String signature = generateSignature(rawSignature, secretKey);
+            StringBuilder rawSignature = new StringBuilder();
+            rawSignature.append("accessKey=").append(accessKey)
+                    .append("&amount=").append((long) tongTien)
+                    .append("&extraData=")
+                    .append("&ipnUrl=").append(notifyUrl)
+                    .append("&orderId=").append(orderId)
+                    .append("&orderInfo=").append(transaction.getOrderInfo())
+                    .append("&partnerCode=").append(partnerCode)
+                    .append("&redirectUrl=").append(returnUrl)
+                    .append("&requestId=").append(requestId)
+                    .append("&requestType=captureWallet.");
+            
+            logger.debug("Raw signature: {}", rawSignature.toString());
+            
+            String signature = generateSignature(rawSignature.toString(), secretKey);
             requestBody.put("signature", signature);
             transaction.setSignature(signature);
             
@@ -192,22 +211,33 @@ public class MomoService {
             
             logger.debug("MoMo API response: {}", response);
             
-            if (response != null && response.get("payUrl") != null) {
-                String payUrl = response.get("payUrl").toString();
-                if (response.get("errorCode") != null) {
-                    transaction.setResultCode(Integer.parseInt(response.get("errorCode").toString()));
-                }
-                if (response.get("message") != null) {
-                    transaction.setMessage(response.get("message").toString());
+            if (response != null) {
+                if (response.containsKey("resultCode")) {
+                    Integer resultCode = Integer.parseInt(response.get("resultCode").toString());
+                    transaction.setResultCode(resultCode);
+                    
+                    if (resultCode != 0) {
+                        String message = response.containsKey("message") ? 
+                            response.get("message").toString() : "Unknown error";
+                        transaction.setMessage(message);
+                        momoTransactionRepository.save(transaction);
+                        throw new RuntimeException("Lỗi từ MoMo: " + message);
+                    }
                 }
                 
-                // Lưu thông tin giao dịch
-                momoTransactionRepository.save(transaction);
-                
-                return payUrl;
-            } else {
-                throw new RuntimeException("Không nhận được payUrl từ MoMo");
+                if (response.containsKey("payUrl")) {
+                    String payUrl = response.get("payUrl").toString();
+                    transaction.setMessage(response.containsKey("message") ? 
+                        response.get("message").toString() : "Success");
+                    
+                    // Lưu thông tin giao dịch
+                    momoTransactionRepository.save(transaction);
+                    
+                    return payUrl;
+                }
             }
+            
+            throw new RuntimeException("Không nhận được payUrl từ MoMo");
         } catch (Exception e) {
             logger.error("Lỗi khi tạo giao dịch MoMo", e);
             throw new RuntimeException("Không thể tạo giao dịch MoMo: " + e.getMessage());
@@ -219,6 +249,10 @@ public class MomoService {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         hmacSHA256.init(secretKey);
         byte[] hash = hmacSHA256.doFinal(message.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(hash);
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 } 
