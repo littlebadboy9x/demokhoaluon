@@ -94,21 +94,25 @@
                                     <td th:text="${suCo.moTa}"></td>
                                     <td th:text="${suCo.loaiSuCoDisplay}"></td>
                                     <td>
-                                        <span th:class="${'badge ' + 
-                                            (suCo.mucDoUuTien == T(com.dormitory.management.model.SuCo.MucDoUuTien).KHAN_CAP ? 'bg-danger' : 
-                                            (suCo.mucDoUuTien == T(com.dormitory.management.model.SuCo.MucDoUuTien).CAO ? 'bg-warning' : 
-                                            (suCo.mucDoUuTien == T(com.dormitory.management.model.SuCo.MucDoUuTien).TRUNG_BINH ? 'bg-primary' : 'bg-secondary')))}"
-                                            style="color: #ffffff !important;"
-                                            th:text="${mucDoUuTienMap[suCo.mucDoUuTien]}">
+                                        <span th:with="muc=${suCo.mucDoUuTien}"
+                                              th:class="${'badge ' + 
+                                                (muc == null ? 'bg-secondary' :
+                                                (muc.name() == 'KHAN_CAP' ? 'bg-danger' :
+                                                (muc.name() == 'CAO' ? 'bg-warning' :
+                                                (muc.name() == 'TRUNG_BINH' ? 'bg-primary' : 'bg-secondary'))))}"
+                                              style="color: #ffffff !important;"
+                                              th:text="${mucDoUuTienMap[suCo.mucDoUuTien] ?: 'Không xác định'}">
                                         </span>
                                     </td>
                                     <td>
-                                        <span th:class="${'badge ' + 
-                                            (suCo.trangThai == T(com.dormitory.management.model.SuCo.TrangThai).CHO_XU_LY ? 'bg-warning' : 
-                                            (suCo.trangThai == T(com.dormitory.management.model.SuCo.TrangThai).DANG_XU_LY ? 'bg-primary' : 
-                                            (suCo.trangThai == T(com.dormitory.management.model.SuCo.TrangThai).DA_HOAN_THANH ? 'bg-success' : 'bg-danger')))}"
-                                            style="color: #ffffff !important;"
-                                            th:text="${trangThaiMap[suCo.trangThai]}">
+                                        <span th:with="tt=${suCo.trangThai}"
+                                              th:class="${'badge ' + 
+                                                (tt == null ? 'bg-secondary' :
+                                                (tt.name() == 'CHO_XU_LY' ? 'bg-warning' :
+                                                (tt.name() == 'DANG_XU_LY' ? 'bg-primary' :
+                                                (tt.name() == 'DA_HOAN_THANH' ? 'bg-success' : 'bg-danger'))))}"
+                                              style="color: #ffffff !important;"
+                                              th:text="${trangThaiMap[suCo.trangThai] ?: 'Không xác định'}">
                                         </span>
                                     </td>
                                     <td th:text="${#dates.format(suCo.ngayBaoCao, 'dd/MM/yyyy HH:mm')}"></td>

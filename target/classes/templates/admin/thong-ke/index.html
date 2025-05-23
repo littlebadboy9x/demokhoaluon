@@ -4,7 +4,6 @@
       layout:decorate="~{admin/layout}">
 <head>
     <title>Thống kê</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div layout:fragment="content">
@@ -75,7 +74,10 @@
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                         Doanh thu tháng</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#numbers.formatDecimal(doanhThuThangHienTai != null ? doanhThuThangHienTai : 0, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" 
+                                         th:text="${#numbers.formatDecimal(doanhThuThangHienTai != null ? doanhThuThangHienTai : 0, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                        0 VND
+                                    </div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -86,32 +88,55 @@
                 </div>
             </div>
 
-            <!-- Charts -->
-            <div class="row">
-                <!-- Biểu đồ doanh thu 6 tháng gần nhất -->
-                <div class="col-xl-8 col-lg-7">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Doanh thu 6 tháng gần nhất</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="doanhThuChart"></canvas>
-                            </div>
+            <!-- Thống kê doanh thu 6 tháng gần nhất -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Doanh thu 6 tháng gần nhất</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${doanhThu6ThangGanNhat}">
+                                        <td th:text="'Tháng ' + ${item.thang} + '/' + ${item.nam}">Tháng/Năm</td>
+                                        <td th:text="${#numbers.formatDecimal(item.doanhThu != null ? item.doanhThu : 0, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Biểu đồ tỷ lệ sinh viên theo khoa -->
-                <div class="col-xl-4 col-lg-5">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Tỷ lệ sinh viên theo khoa</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-pie">
-                                <canvas id="sinhVienChart"></canvas>
-                            </div>
+            <!-- Thống kê tỷ lệ sinh viên theo khoa -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Tỷ lệ sinh viên theo khoa</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Khoa</th>
+                                        <th>Tỷ lệ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="entry : ${tyLeSinhVienTheoKhoa}">
+                                        <td th:text="${entry.key}">Tên khoa</td>
+                                        <td th:text="${entry.value + '%'}">0%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -130,15 +155,15 @@
                                 <table class="table">
                                     <tr>
                                         <td>Đang chờ duyệt:</td>
-                                        <td><span class="badge badge-warning" th:text="${soDangKyChoDuyet}">0</span></td>
+                                        <td><span class="badge bg-warning text-dark" th:text="${soDangKyChoDuyet}">0</span></td>
                                     </tr>
                                     <tr>
                                         <td>Đã duyệt:</td>
-                                        <td><span class="badge badge-success" th:text="${soDangKyDaDuyet}">0</span></td>
+                                        <td><span class="badge bg-success" th:text="${soDangKyDaDuyet}">0</span></td>
                                     </tr>
                                     <tr>
                                         <td>Từ chối:</td>
-                                        <td><span class="badge badge-danger" th:text="${soDangKyTuChoi}">0</span></td>
+                                        <td><span class="badge bg-danger" th:text="${soDangKyTuChoi}">0</span></td>
                                     </tr>
                                 </table>
                             </div>
@@ -157,15 +182,15 @@
                                 <table class="table">
                                     <tr>
                                         <td>Chưa xử lý:</td>
-                                        <td><span class="badge badge-warning" th:text="${soSuCoChuaXuLy}">0</span></td>
+                                        <td><span class="badge bg-warning text-dark" th:text="${soSuCoChuaXuLy}">0</span></td>
                                     </tr>
                                     <tr>
                                         <td>Đang xử lý:</td>
-                                        <td><span class="badge badge-info" th:text="${soSuCoDangXuLy}">0</span></td>
+                                        <td><span class="badge bg-info" th:text="${soSuCoDangXuLy}">0</span></td>
                                     </tr>
                                     <tr>
                                         <td>Đã xử lý:</td>
-                                        <td><span class="badge badge-success" th:text="${soSuCoDaXuLy}">0</span></td>
+                                        <td><span class="badge bg-success" th:text="${soSuCoDaXuLy}">0</span></td>
                                     </tr>
                                 </table>
                             </div>
@@ -175,66 +200,5 @@
             </div>
         </div>
     </div>
-
-    <th:block layout:fragment="script">
-        <script th:inline="javascript">
-            // Dữ liệu doanh thu
-            var doanhThuData = /*[[${doanhThu6ThangGanNhat}]]*/ [];
-            var labels = doanhThuData.map(function(item) {
-                return 'Tháng ' + item.thang + '/' + item.nam;
-            });
-            var values = doanhThuData.map(function(item) {
-                return item.doanhThu;
-            });
-
-            // Biểu đồ doanh thu
-            var ctx = document.getElementById('doanhThuChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Doanh thu (VNĐ)',
-                        data: values,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // Dữ liệu sinh viên theo khoa
-            var tyLeSinhVienData = /*[[${tyLeSinhVienTheoKhoa}]]*/ {};
-            var khoaLabels = Object.keys(tyLeSinhVienData);
-            var tyLeValues = Object.values(tyLeSinhVienData);
-
-            // Biểu đồ sinh viên theo khoa
-            var ctx2 = document.getElementById('sinhVienChart').getContext('2d');
-            new Chart(ctx2, {
-                type: 'pie',
-                data: {
-                    labels: khoaLabels,
-                    datasets: [{
-                        data: tyLeValues,
-                        backgroundColor: [
-                            'rgb(255, 99, 132)',
-                            'rgb(54, 162, 235)',
-                            'rgb(255, 205, 86)',
-                            'rgb(75, 192, 192)',
-                            'rgb(153, 102, 255)',
-                            'rgb(255, 159, 64)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        </script>
-    </th:block>
 </body>
 </html> 

@@ -8,6 +8,7 @@ import com.dormitory.management.service.PhongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -39,13 +40,29 @@ public class AdminSinhVienController {
     public String listSinhVien(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String khoa,
+            @RequestParam(required = false) String lop,
+            @RequestParam(required = false) SinhVien.TrangThai trangThai,
+            @RequestParam(required = false, defaultValue = "maSv") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir,
             Model model) {
-        Page<SinhVien> sinhVienPage = sinhVienService.findAll(PageRequest.of(page, size));
+        Sort sort = Sort.by(sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Page<SinhVien> sinhVienPage = sinhVienService.search(search, khoa, lop, trangThai, PageRequest.of(page, size, sort));
         
         model.addAttribute("sinhVienPage", sinhVienPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", sinhVienPage.getTotalPages());
         model.addAttribute("totalItems", sinhVienPage.getTotalElements());
+        
+        // Add search parameters to model
+        model.addAttribute("search", search);
+        model.addAttribute("khoa", khoa);
+        model.addAttribute("lop", lop);
+        model.addAttribute("trangThai", trangThai);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         
         return "admin/sinh-vien/list";
     }

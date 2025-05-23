@@ -8,8 +8,11 @@ import com.dormitory.management.service.SinhVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.criteria.Predicate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,5 +65,44 @@ public class SinhVienServiceImpl implements SinhVienService {
     @Override
     public List<SinhVien> findByPhong(Phong phong) {
         return sinhVienRepository.findByPhong(phong);
+    }
+
+    @Override
+    public Page<SinhVien> search(String search, String khoa, String lop, TrangThai trangThai, Pageable pageable) {
+        Specification<SinhVien> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Tìm kiếm theo tên hoặc mã sinh viên
+            if (search != null && !search.isEmpty()) {
+                predicates.add(criteriaBuilder.or(
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("hoTen")), "%" + search.toLowerCase() + "%"),
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("maSv")), "%" + search.toLowerCase() + "%")
+                ));
+            }
+
+            // Lọc theo khoa
+            if (khoa != null && !khoa.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("khoa"), khoa));
+            }
+
+            // Lọc theo lớp
+            if (lop != null && !lop.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("lop"), lop));
+            }
+
+            // Lọc theo trạng thái
+            if (trangThai != null) {
+                predicates.add(criteriaBuilder.equal(root.get("trangThai"), trangThai));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return sinhVienRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public Optional<SinhVien> findByTenDangNhap(String tenDangNhap) {
+        return sinhVienRepository.findByTenDangNhap(tenDangNhap);
     }
 } 

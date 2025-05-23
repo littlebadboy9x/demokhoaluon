@@ -256,3 +256,9 @@ CREATE INDEX idx_thong_bao_loai ON thong_bao(loai_thong_bao);
 CREATE INDEX idx_doc_thong_bao_ma_sv ON doc_thong_bao(ma_sv);
 CREATE INDEX idx_tai_san_ma_phong ON tai_san_phong(ma_phong);
 CREATE INDEX idx_kiem_tra_ma_phong ON kiem_tra_phong(ma_phong); 
+
+ALTER TABLE thong_bao
+ADD COLUMN ma_phong VARCHAR(20),
+ADD CONSTRAINT fk_thong_bao_phong
+    FOREIGN KEY (ma_phong)
+    REFERENCES phong(ma_phong); 

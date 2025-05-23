@@ -56,6 +56,13 @@ public class AdminSuCoController {
         return map;
     }
 
+    private void addCommonAttributes(Model model) {
+        model.addAttribute("phongList", phongService.findAll());
+        model.addAttribute("trangThaiMap", getTrangThaiMap());
+        model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
+        model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
+    }
+
     @GetMapping
     public String listSuCo(
             @RequestParam(defaultValue = "0") int page,
@@ -76,10 +83,8 @@ public class AdminSuCoController {
         model.addAttribute("trangThai", trangThai);
         model.addAttribute("mucDoUuTien", mucDoUuTien);
         model.addAttribute("maPhong", maPhong);
-        model.addAttribute("trangThaiMap", getTrangThaiMap());
-        model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-        model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-        model.addAttribute("phongList", phongService.findAll());
+        
+        addCommonAttributes(model);
         
         return "admin/su-co/list";
     }
@@ -87,36 +92,27 @@ public class AdminSuCoController {
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("suCo", new SuCo());
-        model.addAttribute("phongList", phongService.findAll());
-        model.addAttribute("trangThaiMap", getTrangThaiMap());
-        model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-        model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-        return "admin/su-co/add";
+        addCommonAttributes(model);
+        return "admin/su-co/form";
     }
 
     @PostMapping("/add")
     public String addSuCo(@ModelAttribute SuCo suCo, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("phongList", phongService.findAll());
-            model.addAttribute("trangThaiMap", getTrangThaiMap());
-            model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-            model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-            return "admin/su-co/add";
+            addCommonAttributes(model);
+            return "admin/su-co/form";
         }
 
         try {
             suCo.setNgayBaoCao(new Date());
             suCo.setTrangThai(TrangThai.CHO_XU_LY);
             suCoService.save(suCo);
-            redirectAttributes.addFlashAttribute("success", "Thêm sự cố mới thành công!");
+            redirectAttributes.addFlashAttribute("success", "Thêm sự cố thành công!");
             return "redirect:/admin/su-co";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
-            model.addAttribute("phongList", phongService.findAll());
-            model.addAttribute("trangThaiMap", getTrangThaiMap());
-            model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-            model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-            return "admin/su-co/add";
+            addCommonAttributes(model);
+            return "admin/su-co/form";
         }
     }
 
@@ -126,11 +122,8 @@ public class AdminSuCoController {
             SuCo suCo = suCoService.findById(idSuCo)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy sự cố với ID: " + idSuCo));
             model.addAttribute("suCo", suCo);
-            model.addAttribute("phongList", phongService.findAll());
-            model.addAttribute("trangThaiMap", getTrangThaiMap());
-            model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-            model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-            return "admin/su-co/edit";
+            addCommonAttributes(model);
+            return "admin/su-co/form";
         } catch (Exception e) {
             return "redirect:/admin/su-co";
         }
@@ -139,11 +132,8 @@ public class AdminSuCoController {
     @PostMapping("/edit")
     public String editSuCo(@ModelAttribute SuCo suCo, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("phongList", phongService.findAll());
-            model.addAttribute("trangThaiMap", getTrangThaiMap());
-            model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-            model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-            return "admin/su-co/edit";
+            addCommonAttributes(model);
+            return "admin/su-co/form";
         }
 
         try {
@@ -163,11 +153,8 @@ public class AdminSuCoController {
             return "redirect:/admin/su-co";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
-            model.addAttribute("phongList", phongService.findAll());
-            model.addAttribute("trangThaiMap", getTrangThaiMap());
-            model.addAttribute("mucDoUuTienMap", getMucDoUuTienMap());
-            model.addAttribute("loaiSuCoMap", getLoaiSuCoMap());
-            return "admin/su-co/edit";
+            addCommonAttributes(model);
+            return "admin/su-co/form";
         }
     }
 

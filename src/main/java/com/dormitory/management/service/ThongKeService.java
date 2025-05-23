@@ -23,12 +23,18 @@ public class ThongKeService {
 
     public Double tinhDoanhThuThangHienTai() {
         LocalDate now = LocalDate.now();
-        return hoaDonRepository.tinhTongDoanhThuTheoThangNam(now.getMonthValue(), now.getYear(), TrangThai.DA_THANH_TOAN);
+        Double doanhThu = hoaDonRepository.tinhTongDoanhThuTheoThangNam(
+            now.getMonthValue(), 
+            now.getYear(), 
+            TrangThai.DA_THANH_TOAN
+        );
+        return doanhThu != null ? doanhThu : 0.0;
     }
 
     public Double tinhDoanhThuNamHienTai() {
         int namHienTai = LocalDate.now().getYear();
-        return hoaDonRepository.tinhTongDoanhThu(null, namHienTai);
+        Double doanhThu = hoaDonRepository.tinhTongDoanhThu(null, namHienTai, TrangThai.DA_THANH_TOAN);
+        return doanhThu != null ? doanhThu : 0.0;
     }
 
     public List<Map<String, Object>> thongKeDoanhThu6ThangGanNhat() {
@@ -48,6 +54,7 @@ public class ThongKeService {
             thongKe.put("nam", date.getYear());
             thongKe.put("doanhThu", doanhThu != null ? doanhThu : 0.0);
             
+            System.out.println("Thống kê tháng " + date.getMonthValue() + "/" + date.getYear() + ": " + doanhThu);
             result.add(thongKe);
         }
         
@@ -76,6 +83,7 @@ public class ThongKeService {
         demTheoKhoa.forEach((khoa, soLuong) -> {
             double tyLe = (soLuong * 100.0) / tongSo;
             result.put(khoa, Math.round(tyLe * 10.0) / 10.0); // Làm tròn 1 chữ số thập phân
+            System.out.println("Tỷ lệ khoa " + khoa + ": " + tyLe + "%");
         });
 
         return result;

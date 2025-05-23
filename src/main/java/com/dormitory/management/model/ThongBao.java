@@ -17,7 +17,7 @@ public class ThongBao {
     @Column(name = "tieu_de", nullable = false)
     private String tieuDe;
 
-    @Column(name = "noi_dung", nullable = false)
+    @Column(name = "noi_dung", columnDefinition = "TEXT")
     private String noiDung;
 
     @Column(name = "ngay_tao")
@@ -40,6 +40,10 @@ public class ThongBao {
     @Column(name = "ngay_het_han")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date ngayHetHan;
+
+    @ManyToOne
+    @JoinColumn(name = "ma_phong")
+    private Phong phong;
 
     public enum LoaiThongBao {
         THONG_BAO_CHUNG,

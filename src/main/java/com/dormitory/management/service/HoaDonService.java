@@ -25,7 +25,7 @@ public interface HoaDonService {
     
     Double tinhTongDoanhThuTheoThangNam(int thang, int nam);
     
-    Double tinhTongDoanhThu(Integer thang, Integer nam);
+    Double tinhTongDoanhThu(Integer thang, Integer nam, TrangThai trangThai);
     
     Page<HoaDon> search(String keyword, TrangThai trangThai, Integer thang, Integer nam, Pageable pageable);
     

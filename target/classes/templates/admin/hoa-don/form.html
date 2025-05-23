@@ -3,71 +3,117 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/layout}">
 <head>
-    <title>Cập nhật Hóa đơn - KTX Lâm Nghiệp</title>
+    <title th:text="${hoaDon.maHoaDon == null ? 'Thêm Hóa đơn mới' : 'Cập nhật Hóa đơn'} + ' - KTX Lâm Nghiệp'">Thêm/Sửa Hóa đơn</title>
 </head>
 <body>
     <div layout:fragment="content">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Cập nhật Hóa đơn</h1>
+            <h1 class="h3 mb-0 text-gray-800" th:text="${hoaDon.maHoaDon == null ? 'Thêm Hóa đơn mới' : 'Cập nhật Hóa đơn'}">
+                Thêm/Sửa Hóa đơn
+            </h1>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
         <!-- Form Card -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                <form th:action="@{/admin/hoa-don/update}" th:object="${hoaDon}" method="post">
-                    <input type="hidden" th:field="*{maHoaDon}"/>
-                    <input type="hidden" th:field="*{ngayTao}"/>
+                <form th:action="@{${hoaDon.maHoaDon == null ? '/admin/hoa-don/add' : '/admin/hoa-don/edit'}}" 
+                      method="post" 
+                      th:object="${hoaDon}"
+                      class="needs-validation" novalidate>
+                    
+                    <input type="hidden" th:field="*{maHoaDon}" th:if="${hoaDon.maHoaDon != null}"/>
+                    <input type="hidden" th:field="*{ngayTao}" th:if="${hoaDon.ngayTao != null}"/>
                     <input type="hidden" th:field="*{ngayThanhToan}" th:if="${hoaDon.ngayThanhToan != null}"/>
                     
                     <!-- Thông tin cơ bản -->
-                    <div class="row mb-4">
-                        <div class="col-md-12">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
                             <h5 class="border-bottom pb-2">Thông tin cơ bản</h5>
                         </div>
+                        
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="maHoaDon" class="form-label">Mã hóa đơn</label>
-                                <input type="text" class="form-control" id="maHoaDon" th:value="${hoaDon.maHoaDon}" readonly>
-                            </div>
                             <div class="mb-3">
                                 <label for="sinhVien" class="form-label">Sinh viên <span class="text-danger">*</span></label>
                                 <select class="form-select" id="sinhVien" th:field="*{sinhVien}" required>
                                     <option value="">-- Chọn sinh viên --</option>
                                     <option th:each="sv : ${sinhVienList}"
                                             th:value="${sv.maSv}"
-                                            th:text="${sv.hoTen + ' (' + sv.maSv + ')'}">Nguyễn Văn A (SV001)</option>
+                                            th:text="${sv.hoTen + ' (' + sv.maSv + ')'}">
+                                    </option>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Vui lòng chọn sinh viên
+                                </div>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="phong" class="form-label">Phòng <span class="text-danger">*</span></label>
                                 <select class="form-select" id="phong" th:field="*{phong}" required>
                                     <option value="">-- Chọn phòng --</option>
                                     <option th:each="p : ${phongList}"
                                             th:value="${p.maPhong}"
-                                            th:text="${p.tenPhong}">P101</option>
+                                            th:text="${p.tenPhong}">
+                                    </option>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Vui lòng chọn phòng
+                                </div>
                             </div>
                         </div>
+                        
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="thang" class="form-label">Tháng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="thang" th:field="*{thang}" required min="1" max="12">
-                            </div>
-                            <div class="mb-3">
-                                <label for="nam" class="form-label">Năm <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="nam" th:field="*{nam}" required min="2024">
-                            </div>
-                            <div class="mb-3">
-                                <label for="hanThanhToan" class="form-label">Hạn thanh toán <span class="text-danger">*</span></label>
-                                <input type="datetime-local" class="form-control" id="hanThanhToan" 
-                                    th:field="*{hanThanhToan}"
-                                    th:value="${hoaDon.hanThanhToan != null ? #dates.format(hoaDon.hanThanhToan, 'yyyy-MM-dd''T''HH:mm') : ''}"
-                                    required>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="thang" class="form-label">Tháng <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="thang" th:field="*{thang}" required>
+                                            <option value="">-- Chọn tháng --</option>
+                                            <option th:each="i : ${#numbers.sequence(1, 12)}"
+                                                    th:value="${i}"
+                                                    th:text="${i}">
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Vui lòng chọn tháng
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nam" class="form-label">Năm <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="nam" th:field="*{nam}" 
+                                               th:min="${#dates.year(#dates.createNow())}" 
+                                               th:max="${#dates.year(#dates.createNow()) + 1}" required>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập năm hợp lệ
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="hanThanhToan" class="form-label">Hạn thanh toán <span class="text-danger">*</span></label>
+                                        <input type="datetime-local" class="form-control" id="hanThanhToan" 
+                                               th:field="*{hanThanhToan}" required>
+                                        <div class="invalid-feedback">
+                                            Vui lòng chọn hạn thanh toán
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Thông tin chi phí -->
                     <div class="row mb-4">
                         <div class="col-md-12">
@@ -76,62 +122,147 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tienPhong" class="form-label">Tiền phòng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienPhong" th:field="*{tienPhong}" required min="0">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tienPhong" th:field="*{tienPhong}" required min="0">
+                                    <span class="input-group-text">VNĐ</span>
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập tiền phòng
+                                    </div>
+                                </div>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="tienDien" class="form-label">Tiền điện <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienDien" th:field="*{tienDien}" required min="0">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tienDien" th:field="*{tienDien}" required min="0">
+                                    <span class="input-group-text">VNĐ</span>
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập tiền điện
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tienNuoc" class="form-label">Tiền nước <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienNuoc" th:field="*{tienNuoc}" required min="0">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tienNuoc" th:field="*{tienNuoc}" required min="0">
+                                    <span class="input-group-text">VNĐ</span>
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập tiền nước
+                                    </div>
+                                </div>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="phiDichVu" class="form-label">Phí dịch vụ <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="phiDichVu" th:field="*{phiDichVu}" required min="0">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="phiDichVu" th:field="*{phiDichVu}" required min="0">
+                                    <span class="input-group-text">VNĐ</span>
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập phí dịch vụ
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Trạng thái -->
-                    <div class="row mb-4">
                         <div class="col-md-12">
-                            <h5 class="border-bottom pb-2">Trạng thái</h5>
-                        </div>
-                        <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="trangThai" class="form-label">Trạng thái</label>
-                                <select class="form-select" id="trangThai" th:field="*{trangThai}">
-                                    <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
-                                    <option value="DA_THANH_TOAN">Đã thanh toán</option>
-                                    <option value="QUA_HAN">Quá hạn</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="ghiChu" class="form-label">Ghi chú</label>
-                                <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="3"></textarea>
+                                <label for="tongTien" class="form-label">Tổng tiền</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tongTien" th:field="*{tongTien}" readonly>
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Ghi chú -->
+                    <div class="mb-3">
+                        <label for="ghiChu" class="form-label">Ghi chú</label>
+                        <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="3"></textarea>
+                    </div>
 
-                    <!-- Buttons -->
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="/admin/hoa-don" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Lưu
-                            </button>
-                        </div>
+                    <div class="text-end">
+                        <a th:href="@{/admin/hoa-don}" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i> Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Lưu
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    
+    <!-- Custom scripts -->
+    <th:block layout:fragment="scripts">
+        <script>
+            // Form validation
+            (() => {
+                'use strict'
+                const forms = document.querySelectorAll('.needs-validation')
+                Array.from(forms).forEach(form => {
+                    form.addEventListener('submit', event => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+            })()
+
+            // Tính tổng tiền tự động khi thay đổi các khoản phí
+            function tinhTongTien() {
+                const tienPhong = parseFloat($('#tienPhong').val()) || 0;
+                const tienDien = parseFloat($('#tienDien').val()) || 0;
+                const tienNuoc = parseFloat($('#tienNuoc').val()) || 0;
+                const phiDichVu = parseFloat($('#phiDichVu').val()) || 0;
+                
+                const tongTien = tienPhong + tienDien + tienNuoc + phiDichVu;
+                $('#tongTien').val(tongTien);
+            }
+            
+            // Gắn sự kiện cho các trường input
+            $('#tienPhong, #tienDien, #tienNuoc, #phiDichVu').on('input', tinhTongTien);
+            
+            // Tính tổng tiền khi trang load
+            $(document).ready(function() {
+                tinhTongTien();
+
+                // Set hạn thanh toán mặc định là cuối tháng
+                const thangSelect = $('#thang');
+                const namInput = $('#nam');
+                const hanThanhToanInput = $('#hanThanhToan');
+
+                function updateHanThanhToan() {
+                    const thang = parseInt(thangSelect.val());
+                    const nam = parseInt(namInput.val());
+                    
+                    if (!isNaN(thang) && !isNaN(nam)) {
+                        const lastDay = new Date(nam, thang, 0); // Ngày cuối cùng của tháng
+                        lastDay.setHours(23, 59);
+                        
+                        // Format datetime-local string
+                        const month = (lastDay.getMonth() + 1).toString().padStart(2, '0');
+                        const day = lastDay.getDate().toString().padStart(2, '0');
+                        const dateString = `${lastDay.getFullYear()}-${month}-${day}T23:59`;
+                        
+                        hanThanhToanInput.val(dateString);
+                    }
+                }
+
+                // Cập nhật hạn thanh toán khi thay đổi tháng hoặc năm
+                thangSelect.on('change', updateHanThanhToan);
+                namInput.on('input', updateHanThanhToan);
+
+                // Set giá trị mặc định
+                if (!hanThanhToanInput.val()) {
+                    updateHanThanhToan();
+                }
+            });
+        </script>
+    </th:block>
 </body>
 </html> 

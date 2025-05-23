@@ -20,21 +20,19 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
     @Query("SELECT SUM(h.tongTien) FROM HoaDon h WHERE h.thang = :thang AND h.nam = :nam AND h.trangThai = :trangThai")
     Double tinhTongDoanhThuTheoThangNam(@Param("thang") int thang, @Param("nam") int nam, @Param("trangThai") TrangThai trangThai);
 
-    @Query("SELECT h FROM HoaDon h WHERE " +
-            "(:keyword IS NULL OR h.maHoaDon LIKE %:keyword% OR h.sinhVien.hoTen LIKE %:keyword% OR h.phong.tenPhong LIKE %:keyword%) " +
-            "AND (:trangThai IS NULL OR h.trangThai = :trangThai) " +
-            "AND (:thang IS NULL OR h.thang = :thang) " +
-            "AND (:nam IS NULL OR h.nam = :nam)")
-    Page<HoaDon> search(
-            @Param("keyword") String keyword,
-            @Param("trangThai") TrangThai trangThai,
-            @Param("thang") Integer thang, 
-            @Param("nam") Integer nam, 
-            Pageable pageable);
+    @Query("SELECT SUM(h.tongTien) FROM HoaDon h WHERE (:thang IS NULL OR h.thang = :thang) AND h.nam = :nam AND h.trangThai = :trangThai")
+    Double tinhTongDoanhThu(@Param("thang") Integer thang, @Param("nam") Integer nam, @Param("trangThai") TrangThai trangThai);
 
-    @Query("SELECT SUM(h.tongTien) FROM HoaDon h WHERE " +
-            "(:thang IS NULL OR h.thang = :thang) " +
-            "AND (:nam IS NULL OR h.nam = :nam) " +
-            "AND h.trangThai = 'DA_THANH_TOAN'")
-    Double tinhTongDoanhThu(@Param("thang") Integer thang, @Param("nam") Integer nam);
+    @Query("SELECT h FROM HoaDon h WHERE " +
+           "(:keyword IS NULL OR h.maHoaDon LIKE %:keyword% OR h.phong.maPhong LIKE %:keyword%) AND " +
+           "(:trangThai IS NULL OR h.trangThai = :trangThai) AND " +
+           "(:thang IS NULL OR h.thang = :thang) AND " +
+           "(:nam IS NULL OR h.nam = :nam)")
+    Page<HoaDon> search(
+        @Param("keyword") String keyword,
+        @Param("trangThai") TrangThai trangThai,
+        @Param("thang") Integer thang,
+        @Param("nam") Integer nam,
+        Pageable pageable
+    );
 }

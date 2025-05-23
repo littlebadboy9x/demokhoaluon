@@ -68,8 +68,8 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     @Transactional(readOnly = true)
-    public Double tinhTongDoanhThu(Integer thang, Integer nam) {
-        return hoaDonRepository.tinhTongDoanhThu(thang, nam);
+    public Double tinhTongDoanhThu(Integer thang, Integer nam, TrangThai trangThai) {
+        return hoaDonRepository.tinhTongDoanhThu(thang, nam, trangThai);
     }
 
     @Override

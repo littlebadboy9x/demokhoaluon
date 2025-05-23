@@ -21,6 +21,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/vendor/**").permitAll()
                 .requestMatchers("/login", "/register", "/", "/logout").permitAll()
+                .requestMatchers("/thong-bao/**").hasAnyRole("ADMIN", "SINH_VIEN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

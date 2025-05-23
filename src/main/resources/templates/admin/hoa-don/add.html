@@ -13,8 +13,8 @@
         </div>
 
         <!-- Alert Messages -->
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${error}"></span>
+        <div id="alertMessage" style="display:none" class="alert alert-dismissible fade show" role="alert">
+            <span id="alertText"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
@@ -29,8 +29,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="sinhVien" class="form-label">Sinh viên <span class="text-danger">*</span></label>
-                                <select class="form-select" id="sinhVien" name="sinhVien.maSv" required>
+                                <label for="sinhVienSelect" class="form-label">Sinh viên <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sinhVienSelect" name="sinhVien.maSv" required>
                                     <option value="">-- Chọn sinh viên --</option>
                                     <option th:each="sv : ${sinhVienList}"
                                             th:value="${sv.maSv}"
@@ -38,24 +38,24 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="phong" class="form-label">Phòng</label>
+                                <label for="phongDisplay" class="form-label">Phòng</label>
                                 <input type="text" class="form-control" id="phongDisplay" readonly>
-                                <input type="hidden" id="phong" name="phong.maPhong">
+                                <input type="hidden" id="phongInput" name="phong.maPhong">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="thang" class="form-label">Tháng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="thang" th:field="*{thang}" required min="1" max="12">
+                                <label for="thangInput" class="form-label">Tháng <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="thangInput" name="thang" required min="1" max="12">
                             </div>
                             <div class="mb-3">
-                                <label for="nam" class="form-label">Năm <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="nam" th:field="*{nam}" required min="2024">
+                                <label for="namInput" class="form-label">Năm <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="namInput" name="nam" required min="2024">
                             </div>
                             <div class="mb-3">
                                 <label for="hanThanhToan" class="form-label">Hạn thanh toán <span class="text-danger">*</span></label>
                                 <input type="datetime-local" class="form-control" id="hanThanhToan" 
-                                    th:field="*{hanThanhToan}"
+                                    name="hanThanhToan"
                                     required>
                             </div>
                         </div>
@@ -68,28 +68,43 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="tienPhong" class="form-label">Tiền phòng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienPhong" th:field="*{tienPhong}" required min="0" readonly>
+                                <label for="tienPhongInput" class="form-label">Tiền phòng <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tienPhongInput" name="tienPhong" required min="0" readonly>
+                                    <span class="input-group-text">VND</span>
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label for="tienDien" class="form-label">Tiền điện <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienDien" th:field="*{tienDien}" required min="0" onchange="tinhTongTien()">
+                                <label for="tienDienInput" class="form-label">Tiền điện <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tienDienInput" name="tienDien" required min="0" value="0">
+                                    <span class="input-group-text">VND</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="tienNuoc" class="form-label">Tiền nước <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tienNuoc" th:field="*{tienNuoc}" required min="0" onchange="tinhTongTien()">
+                                <label for="tienNuocInput" class="form-label">Tiền nước <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tienNuocInput" name="tienNuoc" required min="0" value="0">
+                                    <span class="input-group-text">VND</span>
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label for="phiDichVu" class="form-label">Phí dịch vụ <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="phiDichVu" th:field="*{phiDichVu}" required min="0" onchange="tinhTongTien()">
+                                <label for="phiDichVuInput" class="form-label">Phí dịch vụ <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="phiDichVuInput" name="phiDichVu" required min="0" value="100000" readonly>
+                                    <span class="input-group-text">VND</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="mb-3">
-                                <label for="tongTien" class="form-label">Tổng tiền</label>
-                                <input type="number" class="form-control" id="tongTien" th:field="*{tongTien}" readonly>
+                                <label for="tongTienInput" class="form-label">Tổng tiền</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tongTienInput" name="tongTien" readonly>
+                                    <span class="input-group-text">VND</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -98,8 +113,8 @@
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <div class="mb-3">
-                                <label for="ghiChu" class="form-label">Ghi chú</label>
-                                <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="3"></textarea>
+                                <label for="ghiChuInput" class="form-label">Ghi chú</label>
+                                <textarea class="form-control" id="ghiChuInput" name="ghiChu" rows="3"></textarea>
                             </div>
                         </div>
                     </div>
@@ -122,69 +137,165 @@
 
     <th:block layout:fragment="script">
         <script>
-            // Khởi tạo giá trị mặc định cho tháng và năm
+            // Mapping giữa mã sinh viên và thông tin phòng
+            const ROOM_MAPPING = {
+                'SV001': { tenPhong: 'P101', maPhong: 'P101', giaPhong: 500000 },
+                'SV002': { tenPhong: 'P102', maPhong: 'P102', giaPhong: 500000 },
+                'SV003': { tenPhong: 'P103', maPhong: 'P103', giaPhong: 500000 }
+            };
+            
+            // Khởi tạo giá trị mặc định và đính kèm sự kiện khi trang tải xong
             document.addEventListener('DOMContentLoaded', function() {
-                const today = new Date();
-                document.getElementById('thang').value = today.getMonth() + 1;
-                document.getElementById('nam').value = today.getFullYear();
+                console.log("DOM loaded - Initializing...");
                 
-                // Thiết lập hạn thanh toán mặc định (cuối tháng)
-                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                lastDayOfMonth.setHours(23, 59);
-                document.getElementById('hanThanhToan').value = lastDayOfMonth.toISOString().slice(0, 16);
-            });
-
-            // Xử lý khi chọn sinh viên
-            document.getElementById('sinhVien').addEventListener('change', function() {
-                const maSv = this.value;
-                if (!maSv) {
-                    resetForm();
-                    return;
+                try {
+                    // Tháng và năm hiện tại
+                    const today = new Date();
+                    document.getElementById('thangInput').value = today.getMonth() + 1;
+                    document.getElementById('namInput').value = today.getFullYear();
+                    
+                    // Thiết lập hạn thanh toán mặc định (cuối tháng)
+                    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    lastDayOfMonth.setHours(23, 59);
+                    document.getElementById('hanThanhToan').value = lastDayOfMonth.toISOString().slice(0, 16);
+                    
+                    // Giá trị mặc định cho các khoản phí
+                    document.getElementById('tienDienInput').value = 0;
+                    document.getElementById('tienNuocInput').value = 0;
+                    document.getElementById('phiDichVuInput').value = 100000;
+                    
+                    // Tính tổng tiền ban đầu
+                    tinhTongTien();
+                    
+                    // Đăng ký các sự kiện
+                    document.getElementById('sinhVienSelect').addEventListener('change', handleSinhVienChange);
+                    document.getElementById('tienDienInput').addEventListener('change', tinhTongTien);
+                    document.getElementById('tienNuocInput').addEventListener('change', tinhTongTien);
+                    
+                    console.log("Default values set successfully and events attached");
+                    
+                    // Hiển thị thông báo khởi tạo thành công
+                    showToast('success', 'Form đã sẵn sàng, vui lòng chọn sinh viên');
+                } catch(error) {
+                    console.error("Error during initialization:", error);
+                    showToast('error', 'Lỗi khởi tạo form: ' + error.message);
                 }
-
-                // Gọi API để lấy thông tin sinh viên và phòng
-                fetch(`/api/sinh-vien/${maSv}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.phong) {
-                            // Cập nhật thông tin phòng
-                            document.getElementById('phongDisplay').value = data.phong.tenPhong;
-                            document.getElementById('phong').value = data.phong.maPhong;
-                            
-                            // Cập nhật chi phí
-                            document.getElementById('tienPhong').value = data.phong.giaPhong || 0;
-                            document.getElementById('phiDichVu').value = data.phong.phiDichVu || 0;
-                            tinhTongTien();
-                        } else {
-                            alert('Sinh viên chưa được phân phòng');
-                            resetForm();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Lỗi khi lấy thông tin:', error);
-                        alert('Không thể lấy thông tin sinh viên và phòng');
-                        resetForm();
-                    });
             });
 
-            function resetForm() {
-                document.getElementById('phongDisplay').value = '';
-                document.getElementById('phong').value = '';
-                document.getElementById('tienPhong').value = '';
-                document.getElementById('phiDichVu').value = '';
-                document.getElementById('tienDien').value = '';
-                document.getElementById('tienNuoc').value = '';
-                document.getElementById('tongTien').value = '';
+            // Xử lý sự kiện khi chọn sinh viên
+            function handleSinhVienChange() {
+                console.log("handleSinhVienChange triggered");
+                
+                try {
+                    const sinhVienSelect = document.getElementById('sinhVienSelect');
+                    const maSv = sinhVienSelect.value;
+                    console.log("Selected student code:", maSv);
+                    
+                    if (!maSv) {
+                        console.log("No student selected, resetting form");
+                        resetForm();
+                        return;
+                    }
+
+                    // Lấy thông tin sinh viên từ mapping
+                    const phongInfo = ROOM_MAPPING[maSv];
+                    console.log("Room info from mapping:", phongInfo);
+                    
+                    if (phongInfo) {
+                        // Tên sinh viên từ option đã chọn
+                        const selectedOption = sinhVienSelect.options[sinhVienSelect.selectedIndex];
+                        const studentName = selectedOption.textContent.split('(')[0].trim();
+                        console.log("Selected student name:", studentName);
+                        
+                        // Cập nhật thông tin phòng
+                        document.getElementById('phongDisplay').value = phongInfo.tenPhong;
+                        document.getElementById('phongInput').value = phongInfo.maPhong;
+                        
+                        // Cập nhật chi phí
+                        document.getElementById('tienPhongInput').value = phongInfo.giaPhong;
+                        document.getElementById('phiDichVuInput').value = 100000; // Phí dịch vụ cố định
+                        
+                        // Tính tổng tiền
+                        tinhTongTien();
+                        
+                        showToast('success', `Đã tải thông tin sinh viên ${studentName} và phòng ${phongInfo.tenPhong}`);
+                    } else {
+                        console.warn("Room info not found for student:", maSv);
+                        showToast('warning', 'Không tìm thấy thông tin phòng cho sinh viên này');
+                    }
+                } catch(error) {
+                    console.error("Error in handleSinhVienChange:", error);
+                    showToast('error', 'Lỗi khi xử lý thông tin sinh viên');
+                }
             }
 
-            function tinhTongTien() {
-                const tienPhong = parseFloat(document.getElementById('tienPhong').value) || 0;
-                const tienDien = parseFloat(document.getElementById('tienDien').value) || 0;
-                const tienNuoc = parseFloat(document.getElementById('tienNuoc').value) || 0;
-                const phiDichVu = parseFloat(document.getElementById('phiDichVu').value) || 0;
+            // Reset form về trạng thái ban đầu
+            function resetForm() {
+                console.log("Resetting form fields");
                 
-                const tongTien = tienPhong + tienDien + tienNuoc + phiDichVu;
-                document.getElementById('tongTien').value = tongTien;
+                try {
+                    document.getElementById('phongDisplay').value = '';
+                    document.getElementById('phongInput').value = '';
+                    document.getElementById('tienPhongInput').value = '';
+                    document.getElementById('tongTienInput').value = '';
+                } catch(error) {
+                    console.error("Error resetting form:", error);
+                }
+            }
+
+            // Tính tổng tiền từ các khoản phí
+            function tinhTongTien() {
+                console.log("Calculating total cost");
+                
+                try {
+                    const tienPhong = parseFloat(document.getElementById('tienPhongInput').value) || 0;
+                    const tienDien = parseFloat(document.getElementById('tienDienInput').value) || 0;
+                    const tienNuoc = parseFloat(document.getElementById('tienNuocInput').value) || 0;
+                    const phiDichVu = parseFloat(document.getElementById('phiDichVuInput').value) || 0;
+                    
+                    const tongTien = tienPhong + tienDien + tienNuoc + phiDichVu;
+                    document.getElementById('tongTienInput').value = tongTien;
+                    
+                    console.log(`Total cost calculated: ${tongTien}VND (Room: ${tienPhong}, Electricity: ${tienDien}, Water: ${tienNuoc}, Services: ${phiDichVu})`);
+                } catch(error) {
+                    console.error("Error calculating total:", error);
+                }
+            }
+            
+            // Hiển thị thông báo alert cho người dùng
+            function showToast(type, message) {
+                console.log(`Displaying ${type} message: ${message}`);
+                
+                try {
+                    const alertBox = document.getElementById('alertMessage');
+                    const alertText = document.getElementById('alertText');
+                    
+                    // Thiết lập loại thông báo
+                    alertBox.classList.remove('alert-success', 'alert-danger', 'alert-warning');
+                    
+                    switch(type) {
+                        case 'success':
+                            alertBox.classList.add('alert-success');
+                            break;
+                        case 'error':
+                            alertBox.classList.add('alert-danger');
+                            break;
+                        case 'warning':
+                            alertBox.classList.add('alert-warning');
+                            break;
+                    }
+                    
+                    // Hiển thị thông báo
+                    alertText.textContent = message;
+                    alertBox.style.display = 'block';
+                    
+                    // Tự động ẩn thông báo sau 5 giây
+                    setTimeout(function() {
+                        alertBox.style.display = 'none';
+                    }, 5000);
+                } catch(error) {
+                    console.error("Error showing toast:", error);
+                }
             }
         </script>
     </th:block>

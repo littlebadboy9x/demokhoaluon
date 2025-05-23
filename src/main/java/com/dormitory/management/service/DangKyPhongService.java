@@ -22,4 +22,6 @@ public interface DangKyPhongService {
     long countByTrangThai(TrangThai trangThai);
     
     Page<DangKyPhong> findByTrangThaiOrderByNgayDangKyDesc(TrangThai trangThai, Pageable pageable);
+    
+    Page<DangKyPhong> search(String search, TrangThai trangThai, String phong, Pageable pageable);
 }

@@ -94,4 +94,16 @@ INSERT INTO kiem_tra_phong (ma_phong, ngay_kiem_tra, nguoi_kiem_tra, danh_gia, n
 ('P101', '2024-05-01', 'admin', 'TOT', 'Kiểm tra định kỳ tháng 5', 'Phòng sạch sẽ, ngăn nắp'),
 ('P201', '2024-05-01', 'admin', 'KHA', 'Kiểm tra định kỳ tháng 5', 'Cần dọn dẹp thêm');
 
- 
+--Thêm dữ lệu
+INSERT INTO nguoi_dung (ten_dang_nhap, mat_khau, loai_nguoi_dung, trang_thai) VALUES
+('sv007', '$2a$12$kgdEsi9NRMVl5jzoxz5Nt.U85irGvVnKEqGUWxTpXmfQNqaokzM5O', 'SINH_VIEN', true),
+('sv008', '$2a$12$kgdEsi9NRMVl5jzoxz5Nt.U85irGvVnKEqGUWxTpXmfQNqaokzM5O', 'SINH_VIEN', true),
+('sv009', '$2a$12$kgdEsi9NRMVl5jzoxz5Nt.U85irGvVnKEqGUWxTpXmfQNqaokzM5O', 'SINH_VIEN', true);
+INSERT INTO sinh_vien (ma_sv, ten_dang_nhap, ho_ten, ngay_sinh, gioi_tinh, cccd, email, so_dien_thoai, lop, nganh, khoa) VALUES
+('SV007', 'sv007', 'Nguyễn Văn D1', '2003-05-15', 'NAM', '00120301234512', 'sva@gmail.com', '0123456789', 'CNTT1', 'Công nghệ thông tin', 'Công nghệ thông tin'),
+('SV008', 'sv008', 'Nguyễn Văn D2', '2003-05-15', 'NAM', '00120301234513', 'sva@gmail.com', '0123456789', 'CNTT1', 'Công nghệ thông tin', 'Công nghệ thông tin'),
+ ('SV009', 'sv009', 'Nguyễn Văn D3', '2003-05-15', 'NAM', '00120301234514', 'sva@gmail.com', '0123456789', 'CNTT1', 'Công nghệ thông tin', 'Công nghệ thông tin');
+INSERT INTO dang_ky_phong (ma_sv, ma_phong, ngay_dang_ky, trang_thai, ghi_chu) VALUES
+('SV007', 'P201', '2024-05-22 11:15:00', 'CHO_DUYET', 'Đăng ký ở từ học kỳ 1'),
+('SV008', 'P202', '2024-05-22 11:15:00', 'CHO_DUYET', 'Đăng ký ở từ học kỳ 1'),
+('SV009', 'P101', '2024-05-22 11:15:00', 'CHO_DUYET', 'Đăng ký ở từ học kỳ 1');

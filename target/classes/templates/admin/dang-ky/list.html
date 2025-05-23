@@ -3,158 +3,205 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/layout}">
 <head>
-    <title>Quản lý đăng ký phòng</title>
+    <title>Quản lý đăng ký phòng - KTX Lâm Nghiệp</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="container-fluid">
-            <h1 class="h3 mb-2 text-gray-800">Quản lý đăng ký phòng</h1>
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Quản lý đăng ký phòng</h1>
+        </div>
 
-            <!-- Search Form -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tìm kiếm đăng ký</h6>
-                </div>
-                <div class="card-body">
-                    <form th:action="@{/admin/dang-ky}" method="get">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" name="search" th:value="${search}"
-                                       placeholder="Tìm theo mã SV, tên SV...">
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-control" name="trangThai">
-                                    <option value="">-- Trạng thái --</option>
-                                    <option th:each="tt : ${trangThaiValues}"
-                                            th:value="${tt}"
-                                            th:text="${tt}"
-                                            th:selected="${tt == trangThai}">
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-control" name="maPhong">
-                                    <option value="">-- Phòng --</option>
-                                    <option th:each="phong : ${phongList}"
-                                            th:value="${phong.maPhong}"
-                                            th:text="${phong.tenPhong}"
-                                            th:selected="${phong.maPhong == maPhong}">
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Tìm kiếm
-                                </button>
-                                <a th:href="@{/admin/dang-ky/add}" class="btn btn-success">
-                                    <i class="fas fa-plus"></i> Thêm mới
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <!-- Search Box -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="search" th:value="${search}"
+                               placeholder="Tìm kiếm theo tên sinh viên...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="trangThai">
+                            <option value="">-- Trạng thái --</option>
+                            <option value="CHO_DUYET" th:selected="${trangThai == 'CHO_DUYET'}">Chờ duyệt</option>
+                            <option value="DA_DUYET" th:selected="${trangThai == 'DA_DUYET'}">Đã duyệt</option>
+                            <option value="TU_CHOI" th:selected="${trangThai == 'TU_CHOI'}">Từ chối</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" name="phong" th:value="${phong}"
+                               placeholder="Mã phòng...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a th:href="@{/admin/dang-ky}" class="btn btn-secondary w-100">
+                            <i class="fas fa-sync"></i> Làm mới
+                        </a>
+                    </div>
+                    <input type="hidden" name="sortBy" th:value="${sortBy}">
+                    <input type="hidden" name="sortDir" th:value="${sortDir}">
+                </form>
             </div>
+        </div>
 
-            <!-- Alert Messages -->
-            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
-            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-            <!-- DataTales -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Danh sách đăng ký phòng</h6>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>
+                                    <a th:href="@{/admin/dang-ky(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        phong=${phong},
+                                        sortBy='sinhVien.hoTen',
+                                        sortDir=${sortBy == 'sinhVien.hoTen' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Sinh viên
+                                        <i th:if="${sortBy == 'sinhVien.hoTen'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/admin/dang-ky(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        phong=${phong},
+                                        sortBy='phong.maPhong',
+                                        sortDir=${sortBy == 'phong.maPhong' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Phòng
+                                        <i th:if="${sortBy == 'phong.maPhong'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/admin/dang-ky(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        phong=${phong},
+                                        sortBy='ngayDangKy',
+                                        sortDir=${sortBy == 'ngayDangKy' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Ngày đăng ký
+                                        <i th:if="${sortBy == 'ngayDangKy'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/admin/dang-ky(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        phong=${phong},
+                                        sortBy='trangThai',
+                                        sortDir=${sortBy == 'trangThai' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Trạng thái
+                                        <i th:if="${sortBy == 'trangThai'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="dangKy, stat : ${dangKyPage.content}">
+                                <td th:text="${stat.count}">1</td>
+                                <td th:text="${dangKy.sinhVien.hoTen + ' (' + dangKy.sinhVien.maSv + ')'}">Nguyễn Văn A (SV001)</td>
+                                <td th:text="${dangKy.phong.maPhong}">P101</td>
+                                <td th:text="${#dates.format(dangKy.ngayDangKy, 'dd/MM/yyyy HH:mm')}">22/05/2024 17:30</td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                            (#strings.equals(dangKy.trangThai, 'CHO_DUYET') ? 'bg-warning text-dark' : 
+                                            (#strings.equals(dangKy.trangThai, 'DA_DUYET') ? 'bg-success' : 'bg-danger'))}"
+                                          th:text="${#strings.equals(dangKy.trangThai, 'CHO_DUYET') ? 'Chờ duyệt' : 
+                                                   (#strings.equals(dangKy.trangThai, 'DA_DUYET') ? 'Đã duyệt' : 'Từ chối')}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" th:if="${#strings.equals(dangKy.trangThai, 'CHO_DUYET')}">
+                                        <a th:href="@{/admin/dang-ky/duyet/{id}(id=${dangKy.idDangKy})}" 
+                                           class="btn btn-sm btn-success" title="Duyệt">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a th:href="@{/admin/dang-ky/tu-choi/{id}(id=${dangKy.idDangKy})}"
+                                           class="btn btn-sm btn-danger" title="Từ chối"
+                                           onclick="return confirm('Bạn có chắc chắn muốn từ chối đăng ký này?')">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                    <span th:if="${#strings.equals(dangKy.trangThai, 'DA_DUYET')}" 
+                                          class="text-success">Đã xử lý</span>
+                                    <span th:if="${#strings.equals(dangKy.trangThai, 'TU_CHOI')}" 
+                                          class="text-danger">Đã xử lý</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Sinh viên</th>
-                                    <th>Phòng</th>
-                                    <th>Ngày đăng ký</th>
-                                    <th>Ngày bắt đầu</th>
-                                    <th>Ngày kết thúc</th>
-                                    <th>Trạng thái</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="dangKy : ${dangKyPage.content}">
-                                    <td th:text="${dangKy.idDangKy}"></td>
-                                    <td>
-                                        <div th:text="${dangKy.sinhVien.hoTen}"></div>
-                                        <small class="text-muted" th:text="${dangKy.sinhVien.maSinhVien}"></small>
-                                    </td>
-                                    <td th:text="${dangKy.phong.tenPhong}"></td>
-                                    <td th:text="${#dates.format(dangKy.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></td>
-                                    <td th:text="${#dates.format(dangKy.ngayBatDau, 'dd/MM/yyyy')}"></td>
-                                    <td th:text="${#dates.format(dangKy.ngayKetThuc, 'dd/MM/yyyy')}"></td>
-                                    <td>
-                                        <span th:class="${'badge badge-' + 
-                                            (dangKy.trangThai == T(com.dormitory.management.model.DangKyPhong.TrangThai).CHO_DUYET ? 'warning' : 
-                                            (dangKy.trangThai == T(com.dormitory.management.model.DangKyPhong.TrangThai).DA_DUYET ? 'success' : 'danger'))}"
-                                              th:text="${dangKy.trangThai}">
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div th:if="${dangKy.trangThai == T(com.dormitory.management.model.DangKyPhong.TrangThai).CHO_DUYET}">
-                                            <a th:href="@{/admin/dang-ky/duyet/{id}(id=${dangKy.idDangKy})}"
-                                               class="btn btn-success btn-sm"
-                                               onclick="return confirm('Bạn có chắc chắn muốn duyệt đăng ký này?')">
-                                                <i class="fas fa-check"></i>
-                                            </a>
-                                            <a th:href="@{/admin/dang-ky/tu-choi/{id}(id=${dangKy.idDangKy})}"
-                                               class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Bạn có chắc chắn muốn từ chối đăng ký này?')">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        </div>
-                                        <a th:href="@{/admin/dang-ky/edit/{id}(id=${dangKy.idDangKy})}"
-                                           class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a th:href="@{/admin/dang-ky/delete/{id}(id=${dangKy.idDangKy})}"
-                                           class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Bạn có chắc chắn muốn xóa đăng ký này?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
 
-                    <!-- Pagination -->
-                    <div th:if="${dangKyPage.totalPages > 0}" class="row">
-                        <div class="col-sm-12 col-md-5">
-                            <div class="dataTables_info" role="status" aria-live="polite">
-                                Hiển thị từ [[${dangKyPage.number * dangKyPage.size + 1}]] 
-                                đến [[${dangKyPage.number * dangKyPage.size + dangKyPage.numberOfElements}]]
-                                trong tổng số [[${dangKyPage.totalElements}]] bản ghi
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-7">
-                            <div class="dataTables_paginate paging_simple_numbers">
-                                <ul class="pagination justify-content-end">
-                                    <li class="paginate_button page-item previous" th:classappend="${dangKyPage.first ? 'disabled' : ''}">
-                                        <a th:href="@{/admin/dang-ky(page=${dangKyPage.number - 1}, size=${dangKyPage.size}, search=${search}, trangThai=${trangThai}, maPhong=${maPhong})}"
-                                           class="page-link">Trước</a>
-                                    </li>
-                                    <li th:each="i : ${#numbers.sequence(0, dangKyPage.totalPages - 1)}" 
-                                        class="paginate_button page-item" 
-                                        th:classappend="${i == dangKyPage.number ? 'active' : ''}">
-                                        <a th:href="@{/admin/dang-ky(page=${i}, size=${dangKyPage.size}, search=${search}, trangThai=${trangThai}, maPhong=${maPhong})}"
-                                           class="page-link" th:text="${i + 1}"></a>
-                                    </li>
-                                    <li class="paginate_button page-item next" th:classappend="${dangKyPage.last ? 'disabled' : ''}">
-                                        <a th:href="@{/admin/dang-ky(page=${dangKyPage.number + 1}, size=${dangKyPage.size}, search=${search}, trangThai=${trangThai}, maPhong=${maPhong})}"
-                                           class="page-link">Sau</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Pagination -->
+                <div th:if="${dangKyPage.totalPages > 0}" class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/dang-ky(
+                                    page=${currentPage - 1},
+                                    search=${search},
+                                    trangThai=${trangThai},
+                                    phong=${phong},
+                                    sortBy=${sortBy},
+                                    sortDir=${sortDir}
+                                )}">
+                                    <span>&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, dangKyPage.totalPages - 1)}"
+                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/admin/dang-ky(
+                                    page=${i},
+                                    search=${search},
+                                    trangThai=${trangThai},
+                                    phong=${phong},
+                                    sortBy=${sortBy},
+                                    sortDir=${sortDir}
+                                )}" th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == dangKyPage.totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/dang-ky(
+                                    page=${currentPage + 1},
+                                    search=${search},
+                                    trangThai=${trangThai},
+                                    phong=${phong},
+                                    sortBy=${sortBy},
+                                    sortDir=${sortDir}
+                                )}">
+                                    <span>&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>

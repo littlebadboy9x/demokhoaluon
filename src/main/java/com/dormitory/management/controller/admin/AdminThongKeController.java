@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -54,17 +55,27 @@ public class AdminThongKeController {
         model.addAttribute("soHoaDonDaThanhToan", hoaDonService.countByTrangThai(HoaDon.TrangThai.DA_THANH_TOAN));
 
         // Thống kê sự cố
-                model.addAttribute("soSuCoChuaXuLy", suCoService.countByTrangThai(SuCo.TrangThai.CHO_XU_LY));        
-                model.addAttribute("soSuCoDangXuLy", suCoService.countByTrangThai(SuCo.TrangThai.DANG_XU_LY));        
-                model.addAttribute("soSuCoDaXuLy", suCoService.countByTrangThai(SuCo.TrangThai.DA_HOAN_THANH));
+        model.addAttribute("soSuCoChuaXuLy", suCoService.countByTrangThai(SuCo.TrangThai.CHO_XU_LY));        
+        model.addAttribute("soSuCoDangXuLy", suCoService.countByTrangThai(SuCo.TrangThai.DANG_XU_LY));        
+        model.addAttribute("soSuCoDaXuLy", suCoService.countByTrangThai(SuCo.TrangThai.DA_HOAN_THANH));
 
         // Thống kê doanh thu
-        model.addAttribute("doanhThuThangHienTai", thongKeService.tinhDoanhThuThangHienTai());
-        model.addAttribute("doanhThuNamHienTai", thongKeService.tinhDoanhThuNamHienTai());
-        model.addAttribute("doanhThu6ThangGanNhat", thongKeService.thongKeDoanhThu6ThangGanNhat());
+        Double doanhThuThangHienTai = thongKeService.tinhDoanhThuThangHienTai();
+        Double doanhThuNamHienTai = thongKeService.tinhDoanhThuNamHienTai();
+        List<Map<String, Object>> doanhThu6ThangGanNhat = thongKeService.thongKeDoanhThu6ThangGanNhat();
+
+        System.out.println("Doanh thu 6 tháng gần nhất: " + doanhThu6ThangGanNhat);
+        System.out.println("Doanh thu tháng hiện tại: " + doanhThuThangHienTai);
+        System.out.println("Doanh thu năm hiện tại: " + doanhThuNamHienTai);
+
+        model.addAttribute("doanhThuThangHienTai", doanhThuThangHienTai != null ? doanhThuThangHienTai : 0.0);
+        model.addAttribute("doanhThuNamHienTai", doanhThuNamHienTai != null ? doanhThuNamHienTai : 0.0);
+        model.addAttribute("doanhThu6ThangGanNhat", doanhThu6ThangGanNhat);
 
         // Thống kê tỷ lệ sinh viên theo khoa
-        model.addAttribute("tyLeSinhVienTheoKhoa", thongKeService.thongKeTyLeSinhVienTheoKhoa());
+        Map<String, Double> tyLeSinhVienTheoKhoa = thongKeService.thongKeTyLeSinhVienTheoKhoa();
+        System.out.println("Tỷ lệ sinh viên theo khoa: " + tyLeSinhVienTheoKhoa);
+        model.addAttribute("tyLeSinhVienTheoKhoa", tyLeSinhVienTheoKhoa);
 
         return "admin/thong-ke/index";
     }

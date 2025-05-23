@@ -31,4 +31,8 @@ public interface SinhVienService {
     default long demTongSoSinhVien() {
         return count();
     }
+
+    Page<SinhVien> search(String search, String khoa, String lop, TrangThai trangThai, Pageable pageable);
+
+    Optional<SinhVien> findByTenDangNhap(String tenDangNhap);
 }

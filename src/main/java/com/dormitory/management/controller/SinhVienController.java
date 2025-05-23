@@ -2,13 +2,17 @@ package com.dormitory.management.controller;
 
 import com.dormitory.management.dto.SinhVienDTO;
 import com.dormitory.management.exception.ResourceNotFoundException;
+import com.dormitory.management.model.Phong;
 import com.dormitory.management.model.SinhVien;
+import com.dormitory.management.service.PhongService;
 import com.dormitory.management.service.SinhVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -17,6 +21,9 @@ public class SinhVienController {
 
     @Autowired
     private SinhVienService sinhVienService;
+    
+    @Autowired
+    private PhongService phongService;
 
     @GetMapping
     public List<SinhVienDTO> getAllSinhVien() {
@@ -26,9 +33,25 @@ public class SinhVienController {
     }
 
     @GetMapping("/{maSv}")
-    public ResponseEntity<SinhVien> getSinhVien(@PathVariable String maSv) {
+    public ResponseEntity<Map<String, Object>> getSinhVien(@PathVariable String maSv) {
         return sinhVienService.findById(maSv)
-                .map(ResponseEntity::ok)
+                .map(sinhVien -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("maSv", sinhVien.getMaSv());
+                    response.put("hoTen", sinhVien.getHoTen());
+                    
+                    if (sinhVien.getPhong() != null) {
+                        Phong phong = sinhVien.getPhong();
+                        Map<String, Object> phongInfo = new HashMap<>();
+                        phongInfo.put("maPhong", phong.getMaPhong());
+                        phongInfo.put("tenPhong", phong.getTenPhong());
+                        phongInfo.put("giaPhong", phong.getGiaPhong());
+                        phongInfo.put("phiDichVu", 100000.0); // Giả định phí dịch vụ cố định
+                        response.put("phong", phongInfo);
+                    }
+                    
+                    return ResponseEntity.ok(response);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

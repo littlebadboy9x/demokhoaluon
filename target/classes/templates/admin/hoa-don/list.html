@@ -20,24 +20,33 @@
             <div class="card-body">
                 <form method="get" class="row g-3">
                     <div class="col-md-3">
-                        <input type="text" class="form-control" name="search" placeholder="Tìm kiếm theo mã hóa đơn...">
+                        <input type="text" class="form-control" name="search" th:value="${search}"
+                               placeholder="Tìm kiếm theo mã hóa đơn...">
                     </div>
                     <div class="col-md-2">
                         <select class="form-select" name="trangThai">
                             <option value="">-- Trạng thái --</option>
-                            <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
-                            <option value="DA_THANH_TOAN">Đã thanh toán</option>
-                            <option value="QUA_HAN">Quá hạn</option>
+                            <option value="CHUA_THANH_TOAN" th:selected="${trangThai == 'CHUA_THANH_TOAN'}">Chưa thanh toán</option>
+                            <option value="DA_THANH_TOAN" th:selected="${trangThai == 'DA_THANH_TOAN'}">Đã thanh toán</option>
+                            <option value="QUA_HAN" th:selected="${trangThai == 'QUA_HAN'}">Quá hạn</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input type="month" class="form-control" name="thangNam" placeholder="Tháng/Năm">
+                        <input type="month" class="form-control" name="thangNam" th:value="${thangNam}"
+                               placeholder="Tháng/Năm">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-search"></i> Tìm kiếm
                         </button>
                     </div>
+                    <div class="col-md-2">
+                        <a th:href="@{/admin/hoa-don}" class="btn btn-secondary w-100">
+                            <i class="fas fa-sync"></i> Làm mới
+                        </a>
+                    </div>
+                    <input type="hidden" name="sortBy" th:value="${sortBy}">
+                    <input type="hidden" name="sortDir" th:value="${sortDir}">
                 </form>
             </div>
         </div>
@@ -49,14 +58,54 @@
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Mã hóa đơn</th>
-                                <th>Phòng</th>
-                                <th>Tháng/Năm</th>
+                                <th>
+                                    <a th:href="@{/admin/hoa-don(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        thangNam=${thangNam},
+                                        sortBy='maHoaDon',
+                                        sortDir=${sortBy == 'maHoaDon' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Mã hóa đơn
+                                        <i th:if="${sortBy == 'maHoaDon'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/admin/hoa-don(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        thangNam=${thangNam},
+                                        sortBy='phong.maPhong',
+                                        sortDir=${sortBy == 'phong.maPhong' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Phòng
+                                        <i th:if="${sortBy == 'phong.maPhong'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/admin/hoa-don(
+                                        page=${currentPage},
+                                        search=${search},
+                                        trangThai=${trangThai},
+                                        thangNam=${thangNam},
+                                        sortBy='thang',
+                                        sortDir=${sortBy == 'thang' ? reverseSortDir : 'asc'}
+                                    )}">
+                                        Tháng/Năm
+                                        <i th:if="${sortBy == 'thang'}" 
+                                           th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                    </a>
+                                </th>
                                 <th>Tiền phòng</th>
                                 <th>Tiền điện</th>
                                 <th>Tiền nước</th>
                                 <th>Phí dịch vụ</th>
                                 <th>Tổng tiền</th>
+                                <th>Hạn thanh toán</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -71,6 +120,7 @@
                                 <td th:text="${#numbers.formatDecimal(hoaDon.tienNuoc, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100000</td>
                                 <td th:text="${#numbers.formatDecimal(hoaDon.phiDichVu, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">50000</td>
                                 <td th:text="${#numbers.formatDecimal(hoaDon.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">850000</td>
+                                <td th:text="${#dates.format(hoaDon.hanThanhToan, 'dd/MM/yyyy HH:mm')}">31/01/2024 23:59</td>
                                 <td>
                                     <span th:class="${'badge ' + 
                                             (#strings.equals(hoaDon.trangThai, 'CHUA_THANH_TOAN') ? 'bg-warning text-dark' : 
@@ -109,16 +159,37 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                                <a class="page-link" th:href="@{/admin/hoa-don(page=${currentPage - 1})}">
+                                <a class="page-link" th:href="@{/admin/hoa-don(
+                                    page=${currentPage - 1},
+                                    search=${search},
+                                    trangThai=${trangThai},
+                                    thangNam=${thangNam},
+                                    sortBy=${sortBy},
+                                    sortDir=${sortDir}
+                                )}">
                                     <span>&laquo;</span>
                                 </a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, hoaDonPage.totalPages - 1)}"
                                 th:classappend="${currentPage == i ? 'active' : ''}">
-                                <a class="page-link" th:href="@{/admin/hoa-don(page=${i})}" th:text="${i + 1}">1</a>
+                                <a class="page-link" th:href="@{/admin/hoa-don(
+                                    page=${i},
+                                    search=${search},
+                                    trangThai=${trangThai},
+                                    thangNam=${thangNam},
+                                    sortBy=${sortBy},
+                                    sortDir=${sortDir}
+                                )}" th:text="${i + 1}">1</a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == hoaDonPage.totalPages - 1 ? 'disabled' : ''}">
-                                <a class="page-link" th:href="@{/admin/hoa-don(page=${currentPage + 1})}">
+                                <a class="page-link" th:href="@{/admin/hoa-don(
+                                    page=${currentPage + 1},
+                                    search=${search},
+                                    trangThai=${trangThai},
+                                    thangNam=${thangNam},
+                                    sortBy=${sortBy},
+                                    sortDir=${sortDir}
+                                )}">
                                     <span>&raquo;</span>
                                 </a>
                             </li>

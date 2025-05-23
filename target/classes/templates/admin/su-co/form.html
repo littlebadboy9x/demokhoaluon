@@ -17,10 +17,13 @@
         <!-- Form Card -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                <form th:action="@{/admin/su-co/save}" th:object="${suCo}" method="post">
+                <form th:action="@{${suCo.idSuCo == null ? '/admin/su-co/add' : '/admin/su-co/edit'}}" 
+                      method="post" 
+                      th:object="${suCo}">
+                    
                     <input type="hidden" th:field="*{idSuCo}" th:if="${suCo.idSuCo != null}"/>
                     <input type="hidden" th:field="*{ngayBaoCao}" th:if="${suCo.ngayBaoCao != null}"/>
-                    <input type="hidden" th:field="*{ngayXuLy}" th:if="${suCo.ngayXuLy != null}"/>
+                    <input type="hidden" th:field="*{ngayHoanThanh}" th:if="${suCo.ngayHoanThanh != null}"/>
                     
                     <!-- Thông tin cơ bản -->
                     <div class="row mb-4">
@@ -28,10 +31,6 @@
                             <h5 class="border-bottom pb-2">Thông tin cơ bản</h5>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="tieuDe" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="tieuDe" th:field="*{tieuDe}" required>
-                            </div>
                             <div class="mb-3">
                                 <label for="phong" class="form-label">Phòng <span class="text-danger">*</span></label>
                                 <select class="form-select" id="phong" th:field="*{phong}" required>
@@ -41,61 +40,63 @@
                                             th:text="${p.tenPhong}">P101</option>
                                 </select>
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="mucDo" class="form-label">Mức độ <span class="text-danger">*</span></label>
-                                <select class="form-select" id="mucDo" th:field="*{mucDo}" required>
-                                    <option value="BINH_THUONG">Bình thường</option>
-                                    <option value="QUAN_TRONG">Quan trọng</option>
-                                    <option value="KHAN_CAP">Khẩn cấp</option>
+                                <label for="loaiSuCo" class="form-label">Loại sự cố <span class="text-danger">*</span></label>
+                                <select class="form-select" id="loaiSuCo" th:field="*{loaiSuCo}" required>
+                                    <option value="">-- Chọn loại sự cố --</option>
+                                    <option th:each="loai : ${loaiSuCoMap.entrySet()}"
+                                            th:value="${loai.key}"
+                                            th:text="${loai.value}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="mucDoUuTien" class="form-label">Mức độ ưu tiên <span class="text-danger">*</span></label>
+                                <select class="form-select" id="mucDoUuTien" th:field="*{mucDoUuTien}" required>
+                                    <option value="">-- Chọn mức độ ưu tiên --</option>
+                                    <option th:each="mucDo : ${mucDoUuTienMap.entrySet()}"
+                                            th:value="${mucDo.key}"
+                                            th:text="${mucDo.value}">
+                                    </option>
                                 </select>
                             </div>
                         </div>
+                        
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="moTa" class="form-label">Mô tả <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="moTa" th:field="*{moTa}" rows="4" required></textarea>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Thông tin xử lý -->
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h5 class="border-bottom pb-2">Thông tin xử lý</h5>
-                        </div>
-                        <div class="col-md-6">
+                            
                             <div class="mb-3">
                                 <label for="trangThai" class="form-label">Trạng thái</label>
                                 <select class="form-select" id="trangThai" th:field="*{trangThai}">
-                                    <option value="CHUA_XU_LY">Chưa xử lý</option>
-                                    <option value="DANG_XU_LY">Đang xử lý</option>
-                                    <option value="DA_XU_LY">Đã xử lý</option>
-                                    <option value="DA_HUY">Đã hủy</option>
+                                    <option th:each="trangThai : ${trangThaiMap.entrySet()}"
+                                            th:value="${trangThai.key}"
+                                            th:text="${trangThai.value}">
+                                    </option>
                                 </select>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="nguoiXuLy" class="form-label">Người xử lý</label>
                                 <input type="text" class="form-control" id="nguoiXuLy" th:field="*{nguoiXuLy}">
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="ghiChu" class="form-label">Ghi chú</label>
-                                <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="4"></textarea>
-                            </div>
-                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ghiChu" class="form-label">Ghi chú</label>
+                        <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="3"></textarea>
                     </div>
 
-                    <!-- Buttons -->
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="/admin/su-co" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Lưu
-                            </button>
-                        </div>
+                    <div class="text-end">
+                        <a th:href="@{/admin/su-co}" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu
+                        </button>
                     </div>
                 </form>
             </div>
