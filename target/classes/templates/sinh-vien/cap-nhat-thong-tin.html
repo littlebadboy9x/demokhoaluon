@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title>Cập nhật thông tin sinh viên</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-4">
+            <h2 class="mb-4">Cập nhật thông tin sinh viên</h2>
+
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" role="alert">
+                <span th:text="${success}"></span>
+            </div>
+
+            <form th:action="@{/sinh-vien/cap-nhat-thong-tin}" th:object="${sinhVien}" method="post" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="maSv" class="form-label">Mã sinh viên</label>
+                        <input type="text" class="form-control" id="maSv" th:field="*{maSv}" readonly>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="hoTen" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="hoTen" th:field="*{hoTen}" required>
+                        <div class="invalid-feedback">Vui lòng nhập họ tên</div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <div class="invalid-feedback">Vui lòng nhập email hợp lệ</div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="soDienThoai" class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="soDienThoai" th:field="*{soDienThoai}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="ngaySinh" class="form-label">Ngày sinh</label>
+                        <input type="date" class="form-control" id="ngaySinh" name="ngaySinh"
+                               th:attr="value=${#temporals.format(sinhVien.ngaySinh, 'yyyy-MM-dd')}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="gioiTinh" class="form-label">Giới tính <span class="text-danger">*</span></label>
+                        <select class="form-select" id="gioiTinh" th:field="*{gioiTinh}" required>
+                            <option value="NAM">Nam</option>
+                            <option value="NU">Nữ</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="cccd" class="form-label">CCCD/CMND</label>
+                        <input type="text" class="form-control" id="cccd" th:field="*{cccd}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="lop" class="form-label">Lớp</label>
+                        <input type="text" class="form-control" id="lop" th:field="*{lop}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="nganh" class="form-label">Ngành</label>
+                        <input type="text" class="form-control" id="nganh" th:field="*{nganh}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="khoa" class="form-label">Khoa</label>
+                        <input type="text" class="form-control" id="khoa" th:field="*{khoa}">
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="diaChi" class="form-label">Địa chỉ</label>
+                        <textarea class="form-control" id="diaChi" th:field="*{diaChi}" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a th:href="@{/sinh-vien/thong-tin}" class="btn btn-secondary me-md-2">Hủy</a>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            // Form validation
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        </script>
+    </div>
+</body>
+</html> 

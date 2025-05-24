@@ -665,6 +665,55 @@ public class SinhVienController {
         }
     }
 
+    @GetMapping("/cap-nhat-thong-tin")
+    public String showCapNhatThongTinForm(Model model, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        String tenDangNhap = authentication.getName();
+        SinhVien sinhVien = sinhVienService.findByTenDangNhap(tenDangNhap)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin sinh viên"));
+
+        model.addAttribute("sinhVien", sinhVien);
+        return "sinh-vien/cap-nhat-thong-tin";
+    }
+
+    @PostMapping("/cap-nhat-thong-tin")
+    public String capNhatThongTin(@ModelAttribute SinhVien sinhVienCapNhat,
+                                 BindingResult result,
+                                 RedirectAttributes redirectAttributes,
+                                 Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        try {
+            String tenDangNhap = authentication.getName();
+            SinhVien sinhVienHienTai = sinhVienService.findByTenDangNhap(tenDangNhap)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin sinh viên"));
+
+            // Cập nhật thông tin có thể thay đổi
+            sinhVienHienTai.setHoTen(sinhVienCapNhat.getHoTen());
+            sinhVienHienTai.setEmail(sinhVienCapNhat.getEmail());
+            sinhVienHienTai.setSoDienThoai(sinhVienCapNhat.getSoDienThoai());
+            sinhVienHienTai.setNgaySinh(sinhVienCapNhat.getNgaySinh());
+            sinhVienHienTai.setGioiTinh(sinhVienCapNhat.getGioiTinh());
+            sinhVienHienTai.setCccd(sinhVienCapNhat.getCccd());
+            sinhVienHienTai.setLop(sinhVienCapNhat.getLop());
+            sinhVienHienTai.setNganh(sinhVienCapNhat.getNganh());
+            sinhVienHienTai.setKhoa(sinhVienCapNhat.getKhoa());
+            sinhVienHienTai.setDiaChi(sinhVienCapNhat.getDiaChi());
+
+            sinhVienService.save(sinhVienHienTai);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật thông tin thành công!");
+            return "redirect:/sinh-vien/thong-tin";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            return "redirect:/sinh-vien/cap-nhat-thong-tin";
+        }
+    }
+
     private SinhVienDTO convertToDTO(SinhVien sinhVien) {
         SinhVienDTO dto = new SinhVienDTO();
         dto.setMaSv(sinhVien.getMaSv());
