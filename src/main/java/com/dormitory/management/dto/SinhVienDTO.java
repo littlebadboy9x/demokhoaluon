@@ -21,4 +21,47 @@ public class SinhVienDTO {
     private String diaChi;
     private SinhVien.TrangThai trangThai;
     private LocalDateTime ngayDangKy;
+    
+    // Constructor đơn giản cho API
+    public SinhVienDTO() {}
+    
+    public SinhVienDTO(String maSv, String hoTen, String email, String soDienThoai) {
+        this.maSv = maSv;
+        this.hoTen = hoTen;
+        this.email = email;
+        this.soDienThoai = soDienThoai;
+    }
+    
+    // Getters and Setters
+    public String getMaSv() {
+        return maSv;
+    }
+    
+    public void setMaSv(String maSv) {
+        this.maSv = maSv;
+    }
+    
+    public String getHoTen() {
+        return hoTen;
+    }
+    
+    public void setHoTen(String hoTen) {
+        this.hoTen = hoTen;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getSoDienThoai() {
+        return soDienThoai;
+    }
+    
+    public void setSoDienThoai(String soDienThoai) {
+        this.soDienThoai = soDienThoai;
+    }
 }

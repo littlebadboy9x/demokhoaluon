@@ -44,20 +44,6 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="sinhVien" class="form-label">Sinh viên <span class="text-danger">*</span></label>
-                                <select class="form-select" id="sinhVien" th:field="*{sinhVien}" required>
-                                    <option value="">-- Chọn sinh viên --</option>
-                                    <option th:each="sv : ${sinhVienList}"
-                                            th:value="${sv.maSv}"
-                                            th:text="${sv.hoTen + ' (' + sv.maSv + ')'}">
-                                    </option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Vui lòng chọn sinh viên
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
                                 <label for="phong" class="form-label">Phòng <span class="text-danger">*</span></label>
                                 <select class="form-select" id="phong" th:field="*{phong}" required>
                                     <option value="">-- Chọn phòng --</option>
@@ -69,6 +55,23 @@
                                 <div class="invalid-feedback">
                                     Vui lòng chọn phòng
                                 </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="sinhVien" class="form-label">Sinh viên <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sinhVien" th:field="*{sinhVien}" required>
+                                    <option value="">-- Chọn sinh viên --</option>
+                                    <option th:each="sv : ${sinhVienList}"
+                                            th:value="${sv.maSv}"
+                                            th:text="${sv.hoTen + ' (' + sv.maSv + ')'}">
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Vui lòng chọn sinh viên
+                                </div>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle"></i> Chọn phòng trước để hiển thị danh sách sinh viên trong phòng đó
+                                </small>
                             </div>
                         </div>
                         
@@ -227,9 +230,90 @@
             // Gắn sự kiện cho các trường input
             $('#tienPhong, #tienDien, #tienNuoc, #phiDichVu').on('input', tinhTongTien);
             
+            // Function để load sinh viên theo phòng
+            function loadSinhVienTheoPhong(maPhong) {
+                const sinhVienSelect = $('#sinhVien');
+                const currentValue = sinhVienSelect.val();
+                
+                if (!maPhong) {
+                    // Reset về danh sách tất cả sinh viên
+                    sinhVienSelect.html('<option value="">-- Chọn sinh viên --</option>');
+                    sinhVienSelect.prop('disabled', false);
+                    // Thêm lại tất cả sinh viên từ danh sách ban đầu
+                    window.allSinhVien.forEach(function(sv) {
+                        sinhVienSelect.append(`<option value="${sv.maSv}">${sv.hoTen} (${sv.maSv})</option>`);
+                    });
+                    return;
+                }
+                
+                // Hiển thị loading
+                sinhVienSelect.html('<option value="">Đang tải...</option>');
+                sinhVienSelect.prop('disabled', true);
+                
+                console.log('Loading sinh vien for phong:', maPhong);
+                $.ajax({
+                    url: `/api/sinh-vien/by-phong/${maPhong}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        console.log('Sending request to:', `/api/sinh-vien/by-phong/${maPhong}`);
+                    },
+                    success: function(data) {
+                        console.log('Received data:', data);
+                        sinhVienSelect.html('<option value="">-- Chọn sinh viên --</option>');
+                        sinhVienSelect.prop('disabled', false);
+                        
+                        if (data && data.length > 0) {
+                            data.forEach(function(sv) {
+                                const selected = sv.maSv === currentValue ? 'selected' : '';
+                                sinhVienSelect.append(`<option value="${sv.maSv}" ${selected}>${sv.hoTen} (${sv.maSv})</option>`);
+                            });
+                        } else {
+                            sinhVienSelect.append('<option value="" disabled style="color: #6c757d;"><i>Không có sinh viên nào trong phòng này</i></option>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi tải danh sách sinh viên:', error);
+                        sinhVienSelect.html('<option value="" disabled style="color: #dc3545;"><i>Lỗi tải dữ liệu - Vui lòng thử lại</i></option>');
+                        sinhVienSelect.prop('disabled', false);
+                        
+                        // Show toast notification nếu có
+                        if (typeof bootstrap !== 'undefined') {
+                            // Có thể thêm toast notification ở đây
+                        }
+                    }
+                });
+            }
+            
             // Tính tổng tiền khi trang load
             $(document).ready(function() {
+                // Lưu danh sách tất cả sinh viên ban đầu
+                window.allSinhVien = [];
+                $('#sinhVien option').each(function() {
+                    if ($(this).val()) {
+                        window.allSinhVien.push({
+                            maSv: $(this).val(),
+                            hoTen: $(this).text().split(' (')[0]
+                        });
+                    }
+                });
+                
                 tinhTongTien();
+                
+                // Gắn sự kiện thay đổi phòng
+                $('#phong').on('change', function() {
+                    const maPhong = $(this).val();
+                    loadSinhVienTheoPhong(maPhong);
+                });
+                
+                // Nếu đang edit và đã có phòng được chọn, load sinh viên theo phòng đó
+                const selectedPhong = $('#phong').val();
+                if (selectedPhong) {
+                    // Delay một chút để đảm bảo form đã render xong
+                    setTimeout(function() {
+                        loadSinhVienTheoPhong(selectedPhong);
+                    }, 100);
+                }
 
                 // Set hạn thanh toán mặc định là cuối tháng
                 const thangSelect = $('#thang');

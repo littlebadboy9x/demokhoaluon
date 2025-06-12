@@ -288,3 +288,14 @@ CREATE TABLE momo_transaction (
                                   created_at TIMESTAMP,
                                   updated_at TIMESTAMP
 );
+
+-- Migration script để cập nhật schema database
+-- Thêm giá trị MOMO vào ENUM phuong_thuc trong bảng thanh_toan
+
+USE dormitory_management;
+
+-- Cập nhật ENUM để thêm giá trị MOMO
+ALTER TABLE thanh_toan MODIFY COLUMN phuong_thuc ENUM('TIEN_MAT', 'CHUYEN_KHOAN', 'MOMO', 'THE') NOT NULL;
+
+-- Kiểm tra kết quả
+DESCRIBE thanh_toan; 

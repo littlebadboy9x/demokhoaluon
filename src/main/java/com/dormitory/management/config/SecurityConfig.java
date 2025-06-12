@@ -19,6 +19,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/sinh-vien/**").hasAnyRole("ADMIN", "SINH_VIEN")
+                .requestMatchers("/api/momo/**").permitAll()
+                .requestMatchers("/sinh-vien/hoa-don/momo-return").hasRole("SINH_VIEN")
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/vendor/**").permitAll()
                 .requestMatchers("/login", "/register", "/", "/logout").permitAll()
                 .requestMatchers("/sinh-vien/dang-ky-thong-tin", "/sinh-vien/dang-ky-phong", "/sinh-vien/thong-tin-phong").hasRole("SINH_VIEN")
@@ -34,6 +37,9 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
+            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/momo/**")
             );
 
         return http.build();
